@@ -6,7 +6,7 @@
 <meta name="generator" content="Docutils 0.6: http://docutils.sourceforge.net/" />
 <title>TriBITS Developers Guide and Reference</title>
 <meta name="author" content="Roscoe A. Bartlett (bartlettra&#64;ornl.gov)" />
-<meta name="date" content="2014-11-11" />
+<meta name="date" content="2014-11-19" />
 <style type="text/css">
 
 /*
@@ -315,9 +315,9 @@ ul.auto-toc {
 <tr><th class="docinfo-name">Author:</th>
 <td>Roscoe A. Bartlett (<a class="reference external" href="mailto:bartlettra&#64;ornl.gov">bartlettra&#64;ornl.gov</a>)</td></tr>
 <tr><th class="docinfo-name">Date:</th>
-<td>2014-11-11</td></tr>
+<td>2014-11-19</td></tr>
 <tr><th class="docinfo-name">Version:</th>
-<td>TriBITS Development at 2014-11-11</td></tr>
+<td>TriBITS Development at 2014-11-19</td></tr>
 </tbody>
 </table>
 <table class="docutils field-list" frame="void" rules="none">
@@ -8111,10 +8111,11 @@ time (TRIBITS_ADD_TEST())</a>).</p>
 case-by-case basis.  The name <tt class="docutils literal">&lt;testName&gt;</tt> must be the <em>exact</em> name
 that shows up in <tt class="docutils literal">ctest <span class="pre">-N</span></tt> when running the test.</p>
 <p id="debugging-and-examining-test-generation-tribits-add-advanced-test"><strong>Debugging and Examining Test Generation (TRIBITS_ADD_ADVANCED_TEST())</strong></p>
-<p>In order to see if the test gets added and to debug some issues in test
-creation, one can set the cache variable
-<tt class="docutils literal">${PROJECT_NAME}_VERBOSE_CONFIGURE=ON</tt>.  This will result in the printout
-of some information about the test getting added or not.</p>
+<p>In order to see what tests get added and if not then why, configure with
+<tt class="docutils literal">${PROJECT_NAME}_TRACE_ADD_TEST=ON</tt>.  That will print one line per show
+that the test got added and if not then why the test was not added (i.e. due
+to <tt class="docutils literal">COMM</tt>, <tt class="docutils literal">OVERALL_NUM_MPI_PROCS</tt>, <tt class="docutils literal">NUM_MPI_PROCS</tt>, <tt class="docutils literal">CATEGORIES</tt>,
+<tt class="docutils literal">HOST</tt>, <tt class="docutils literal">XHOST</tt>, <tt class="docutils literal">HOSTTYPE</tt>, or <tt class="docutils literal">XHOSTTYPE</tt>).</p>
 <p>Likely the best way to debugging test generation using this function is to
 examine the generated file <tt class="docutils literal"><span class="pre">&lt;testName&gt;.cmake</span></tt> in the current binary
 directory (see <a class="reference internal" href="#implementation-details-tribits-add-advanced-test">Implementation Details (TRIBITS_ADD_ADVANCED_TEST())</a>) and
@@ -9092,10 +9093,11 @@ IF (myProg_TEST_NAME)
 ENDIF()
 </pre>
 <p id="debugging-and-examining-test-generation-tribits-add-test"><strong>Debugging and Examining Test Generation (TRIBITS_ADD_TEST())</strong></p>
-<p>In order to see what tests are getting added and to debug some issues in
-test creation, one can set the cache variable
-<tt class="docutils literal">${PROJECT_NAME}_VERBOSE_CONFIGURE=ON</tt>.  This will result in the printout
-of some information about the test getting added or not.</p>
+<p>In order to see what tests get added and if not then why, configure with
+<tt class="docutils literal">${PROJECT_NAME}_TRACE_ADD_TEST=ON</tt>.  That will print one line per show
+that the test got added and if not then why the test was not added (i.e. due
+to <tt class="docutils literal">COMM</tt>, <tt class="docutils literal">NUM_MPI_PROCS</tt>, <tt class="docutils literal">CATEGORIES</tt>, <tt class="docutils literal">HOST</tt>, <tt class="docutils literal">XHOST</tt>,
+<tt class="docutils literal">HOSTTYPE</tt>, or <tt class="docutils literal">XHOSTTYPE</tt>).</p>
 <p>Also, CMake writes a file <tt class="docutils literal">CTestTestfile.cmake</tt> in the current binary
 directory which contains all of the added tests and test properties that are
 set.  This is the file that is read by <tt class="docutils literal">ctest</tt> when it runs to determine
@@ -11073,7 +11075,9 @@ example.</p>
 run the <tt class="docutils literal">date</tt> command.  Therefore, it only works on Unix/Linux and other
 systems that have a standard <tt class="docutils literal">date</tt> command.  Since this uses
 <tt class="docutils literal">EXECUTE_PROCESS()</tt>, this function should only be used to time very
-course-grained operations (i.e. that take longer than a second).</p>
+course-grained operations (i.e. that take longer than a second).  If the
+<cite>date</cite> command does not exist, then ${&lt;rawSecondsVar&gt;} will be empty on
+output!</p>
 </div>
 <div class="section" id="timer-get-rel-seconds">
 <h3><a class="toc-backref" href="#id176">TIMER_GET_REL_SECONDS()</a></h3>
