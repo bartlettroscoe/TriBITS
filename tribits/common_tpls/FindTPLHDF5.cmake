@@ -56,7 +56,10 @@
 #
 # First search for HDF5 components using standard FIND_PACKAGE(HDF5 ...)
 #
-IF ("${TPL_HDF5_INCLUDE_DIRS}" STREQUAL "" AND "${TPL_HDF5_LIBRARIES}" STREQUAL "")
+TRIBITS_TPL_ALLOW_PRE_FIND_PACKAGE(HDF5  HDF5_ALLOW_PREFIND)
+IF (HDF5_ALLOW_PREFIND)
+
+  MESSAGE("-- Using FIND_PACKAGE(HDF5 ...) ...") 
 
   SET(HDF5_COMPNENTS C)
   IF (HDF5_REQUIRE_FORTRAN)
@@ -77,8 +80,8 @@ IF ("${TPL_HDF5_INCLUDE_DIRS}" STREQUAL "" AND "${TPL_HDF5_LIBRARIES}" STREQUAL 
 ENDIF()
 
 #
-# Set up default find operation using TriBITS system in case the default
-# FIND_PACKAGE(HDF5 command was not used).
+# Second, set up default find operation using TriBITS system in case the
+# default FIND_PACKAGE(HDF5 command was not used).
 #
 
 SET(REQUIRED_HEADERS hdf5.h)
