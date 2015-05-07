@@ -37,11 +37,6 @@
 # ************************************************************************
 # @HEADER
 
-IF (MESSAGE_WRAPPER_INCLUDED)
-  RETURN()
-ENDIF()
-SET(MESSAGE_WRAPPER_INCLUDED TRUE)
-
 INCLUDE(PrintVar)
 INCLUDE(GlobalSet)
 

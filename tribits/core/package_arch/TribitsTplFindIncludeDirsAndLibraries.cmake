@@ -37,12 +37,6 @@
 # ************************************************************************
 # @HEADER
 
-IF (TribitsTplFindIncludeDirsAndLibraries_INCLUDED)
-  RETURN()
-ELSE()
-  SET(TribitsTplFindIncludeDirsAndLibraries_INCLUDED TRUE)
-ENDIF()
-
 INCLUDE(AdvancedSet)
 INCLUDE(AppendSet)
 INCLUDE(AssertDefined)

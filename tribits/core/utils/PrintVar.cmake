@@ -37,11 +37,6 @@
 # ************************************************************************
 # @HEADER
 
-IF (PRINT_VAR_INCLUDED)
-  RETURN()
-ENDIF()
-SET(PRINT_VAR_INCLUDED TRUE)
-
 #
 # @FUNCTION: PRINT_VAR()
 #
