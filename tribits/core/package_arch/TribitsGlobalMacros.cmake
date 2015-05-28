@@ -582,19 +582,26 @@ MACRO(TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS)
   # Even if a project does not support an extra repos file, it can always
   # support extra repositories defined by the user by the very nature of
   # Tribits.
+
+  ADVANCED_SET(${PROJECT_NAME}_PRE_REPOSITORIES
+    ""
+    CACHE STRING
+    "List of pre-extra repositories that contain extra ${PROJECT_NAME} packages."
+    )
+  SPLIT("${${PROJECT_NAME}_PRE_REPOSITORIES}"  "," ${PROJECT_NAME}_PRE_REPOSITORIES)
+
   ADVANCED_SET(${PROJECT_NAME}_EXTRA_REPOSITORIES
     ""
     CACHE STRING
-    "List of external repositories that contain extra ${PROJECT_NAME} packages."
+    "List of post-extra repositories that contain extra ${PROJECT_NAME} packages."
     )
   SPLIT("${${PROJECT_NAME}_EXTRA_REPOSITORIES}"  "," ${PROJECT_NAME}_EXTRA_REPOSITORIES)
 
-  SET(${PROJECT_NAME}_CHECK_EXTRAREPOS_EXIST TRUE)
+  SET(${PROJECT_NAME}_CHECK_EXTRAREPOS_EXIST  TRUE)
   TRIBITS_GET_AND_PROCESS_EXTRA_REPOSITORIES_LISTS()
 
   ADVANCED_SET(${PROJECT_NAME}_INSTALLATION_DIR
-    ""
-    CACHE STRING
+    ""  CACHE  STRING
     "Location of an installed version of ${PROJECT_NAME} that will be built against during installation testing"
     )
 
@@ -850,24 +857,25 @@ ENDMACRO()
 #
 # Combine native and extra repos lists into a single list.
 #
-# Combines ${PROJECT_NAME}_NATIVE_REPOSITORIES and
-# ${PROJECT_NAME}_EXTRA_REPOSITORIES into a single list
-# ${PROJECT_NAME}_EXTRA_REPOSITORIES.
+# Combines ${PROJECT_NAME}_PRE_REPOSITORIES
+# ${PROJECT_NAME}_NATIVE_REPOSITORIES and ${PROJECT_NAME}_EXTRA_REPOSITORIES
+# into a single list ${PROJECT_NAME}_ALL_REPOSITORIES.
 #
 MACRO(TRIBITS_COMBINE_NATIVE_AND_EXTRA_REPOS)
   # Define a single variable that will loop over native and extra Repositories
   #
-  # NOTE: ${PROJECT_NAME}_EXTRA_REPOSITORIES should be defined after the above
-  # options call.
+  # NOTE: The input varaibles should be defined after the above options call.
   #
+  # ToDo: TriBITS:73: Assert ${PROJECT_NAME}_PRE_REPOSITORIES.
   ASSERT_DEFINED(${PROJECT_NAME}_NATIVE_REPOSITORIES)
   #PRINT_VAR(${PROJECT_NAME}_NATIVE_REPOSITORIES)
   ASSERT_DEFINED(${PROJECT_NAME}_EXTRA_REPOSITORIES)
   #PRINT_VAR(${PROJECT_NAME}_EXTRA_REPOSITORIES)
-  SET(${PROJECT_NAME}_ALL_REPOSITORIES ${${PROJECT_NAME}_NATIVE_REPOSITORIES}
-    ${${PROJECT_NAME}_EXTRA_REPOSITORIES})
-  # ToDo: Update this function to put pre-extra repos first followed by native
-  # repos, followed by post-extra repos.
+  SET( ${PROJECT_NAME}_ALL_REPOSITORIES
+    ${${PROJECT_NAME}_PRE_REPOSITORIES}
+    ${${PROJECT_NAME}_NATIVE_REPOSITORIES}
+    ${${PROJECT_NAME}_EXTRA_REPOSITORIES}
+    )
 ENDMACRO()
 
 
@@ -993,19 +1001,16 @@ FUNCTION(TRIBITS_GENERATE_REPO_VERSION_FILE_STRING  PROJECT_REPO_VERSION_FILE_ST
     "*** Base Git Repo: ${PROJECT_NAME}\n"
     "${SINGLE_REPO_VERSION}\n" )
 
-  # Allow list to be seprated by ',' instead of just by ';'
-  SPLIT("${${PROJECT_NAME}_EXTRA_REPOSITORIES}"  "," ${PROJECT_NAME}_EXTRA_REPOSITORIES)
-
   SET(EXTRAREPO_IDX 0)
-  FOREACH(EXTRA_REPO ${${PROJECT_NAME}_EXTRA_REPOSITORIES})
+  FOREACH(EXTRA_REPO ${${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES})
 
     #PRINT_VAR(EXTRA_REPO)
     #PRINT_VAR(EXTRAREPO_IDX)
-    #PRINT_VAR(${PROJECT_NAME}_EXTRA_REPOSITORIES_DIRS)
+    #PRINT_VAR(${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_DIRS)
 
-    IF (${PROJECT_NAME}_EXTRA_REPOSITORIES_DIRS)
+    IF (${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_DIRS)
       # Read from an extra repo file with potentially different dir.
-      LIST(GET ${PROJECT_NAME}_EXTRA_REPOSITORIES_DIRS ${EXTRAREPO_IDX}
+      LIST(GET ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_DIRS ${EXTRAREPO_IDX}
         EXTRAREPO_DIR )
     ELSE()
        # Not read from extra repo file so dir is same as name
@@ -1194,16 +1199,21 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
   # C) Read extra repos
   #
 
-  # Allow list to be seprated by ',' instead of just by ';'.  This is needed
-  # by the unit test driver code
-  SPLIT("${${PROJECT_NAME}_EXTRA_REPOSITORIES}"  "," ${PROJECT_NAME}_EXTRA_REPOSITORIES)
+  IF ("${${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES}"   STREQUAL  "")
+    # Allow list to be seprated by ',' instead of just by ';'.  This is needed
+    # by the unit test driver code
+    SPLIT("${${PROJECT_NAME}_EXTRA_REPOSITORIES}"  ","
+      ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES)
+    # ToDo: TriBITS:73: Decide how to deal with this once we add pre-extra
+    # repos?
+  ENDIF()
 
   SET(EXTRAREPO_IDX 0)
-  FOREACH(EXTRA_REPO ${${PROJECT_NAME}_EXTRA_REPOSITORIES})
+  FOREACH(EXTRA_REPO  ${${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES})
 
     #PRINT_VAR(EXTRA_REPO)
     #PRINT_VAR(EXTRAREPO_IDX)
-    #PRINT_VAR(${PROJECT_NAME}_EXTRA_REPOSITORIES_PACKSTATS)
+    #PRINT_VAR(${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_PACKSTATS)
 
     # Need to make sure this gets set because logic in Dependencies.cmake files
     # looks for the presents of this variable.
@@ -1213,8 +1223,8 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
     ENDIF()
 
     SET(EXTRAREPO_PACKSTAT "")
-    IF (${PROJECT_NAME}_EXTRA_REPOSITORIES_PACKSTATS)
-      LIST(GET ${PROJECT_NAME}_EXTRA_REPOSITORIES_PACKSTATS ${EXTRAREPO_IDX}
+    IF (${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_PACKSTATS)
+      LIST(GET ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_PACKSTATS ${EXTRAREPO_IDX}
         EXTRAREPO_PACKSTAT )
     ENDIF()
 
