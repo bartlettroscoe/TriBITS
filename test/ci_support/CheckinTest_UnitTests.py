@@ -573,7 +573,7 @@ class test_TribitsGetExtraReposForCheckinTest(unittest.TestCase):
       "test_ExtraReposEmptyList",
       "ExtraReposListEmptyList.cmake",
       ["Will never get compared"],
-      expectedErrOutput="Trilinos_EXTRAREPOS_DIR_REPOTYPE_REPOURL_PACKSTAT_CATEGORY is not defined!",
+      expectedErrOutput="Trilinos_EXTRAREPOS_DIR_VCTYPE_REPOURL_PACKSTAT_CATEGORY is not defined!",
       )
 
   def test_ExtraReposEmptyFile(self):
@@ -582,7 +582,7 @@ class test_TribitsGetExtraReposForCheckinTest(unittest.TestCase):
       "test_ExtraReposEmptyFile",
       "ExtraReposListEmptyFile.cmake",
       ["Will never get compared"],
-      expectedErrOutput="Trilinos_EXTRAREPOS_DIR_REPOTYPE_REPOURL_PACKSTAT_CATEGORY is not defined!",
+      expectedErrOutput="Trilinos_EXTRAREPOS_DIR_VCTYPE_REPOURL_PACKSTAT_CATEGORY is not defined!",
       )
 
 
