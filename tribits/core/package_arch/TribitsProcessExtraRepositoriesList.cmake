@@ -74,10 +74,12 @@ INCLUDE(TribitsSortListAccordingToMasterList)
 #    package name!
 #
 # 2. **REPO_TYPE** (``<repoi_type>``): The version control (VC) type of the
-#    repo.  Value choices include ``GIT`` and ``SVN`` (i.e. Subversion).
-#    *WARNING:* Only VC repos of type ``GIT`` can fully participate in the
-#    TriBITS development tool workflows.  The other VC types are supported for
-#    basic cloning and updating using `TRIBITS_CTEST_DRIVER()`_ script.
+#    repo.  Value choices include ``GIT`` and ``SVN`` (i.e. Subversion).  A
+#    valid choice is also empty "".  In that case, ``<repoi_url>`` must be
+#    empty as well.  *WARNING:* Only VC repos of type ``GIT`` can fully
+#    participate in the TriBITS development tool workflows.  The other VC
+#    types are only supported for basic cloning and updating using
+#    `TRIBITS_CTEST_DRIVER()`_ script.
 #
 # 3. **REPO_URL** (``<repoi_url>``): The URL of the VC repo.  This info is
 #    used to initially obtain the repo source code using the VC tool listed in
@@ -102,16 +104,20 @@ INCLUDE(TribitsSortListAccordingToMasterList)
 # This command is used to put together one or more VC and/or TriBITS
 # repositories to construct a composite `TriBITS Project`_.  The option
 # `<Project>_EXTRAREPOS_FILE`_ is used to point to files that call this macro.
+#
 # Repositories with ``<repoi_packstat>=NOPACKAGES`` are **not** TriBITS
 # Repositories and are technically not considered at all during the basic
 # configuration of the a TriBITS project.  They are only listed in this file
 # so that they can be used in the version control logic for tools that perform
-# version control with the repositories (such as cloning, updating, looking
-# for changed files, etc.).  For example, a non-TriBITS repo can be used to
-# grab a set of directories and files that fill in the definition of a package
-# in an upstream repository (see `How to insert a package into an upstream
-# repo`_).  Also, non-TriBITS repos can be used to provide extra test data for
-# a given package or a set of packages so that extra tests can be run.
+# version control with the repositories (such as getting git versions,
+# cloning, updating, looking for changed files, etc.).  For example, a
+# non-TriBITS repo can be used to grab a set of directories and files that
+# fill in the definition of a package in an upstream repository (see `How to
+# insert a package into an upstream repo`_).  Also, non-TriBITS repos can be
+# used to provide extra test data for a given package or a set of packages so
+# that extra tests can be run.
+#
+# Repositories with ``<repoi_repotype>=''`` are not VC repos.
 #
 # It is also allowed for a repository to have ``<repoi_url>=""`` and
 # ``<repoi_packstat>=""`` which means that the given repository directory
@@ -170,6 +176,7 @@ FUNCTION(TRIBITS_DUMP_EXTRA_REPOSITORIES_LIST)
     PRINT_VAR(${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_REPOTYPES)
     PRINT_VAR(${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_REPOURLS)
     PRINT_VAR(${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_PACKSTATS)
+    PRINT_VAR(${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_PREPOSTS)
     PRINT_VAR(${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_CATEGORIES)
     PRINT_VAR(${PROJECT_NAME}_PRE_REPOSITORIES_DEFAULT)
     PRINT_VAR(${PROJECT_NAME}_EXTRA_REPOSITORIES_DEFAULT)
@@ -186,6 +193,7 @@ ENDFUNCTION()
 #   ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_REPOTYPES
 #   ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_REPOURLS
 #   ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_PACKSTATS
+#   ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_PREPOSTS
 #   ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_CATEGORIES
 #
 # The macro responds to ${PROJECT_NAME}_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE
@@ -218,6 +226,7 @@ MACRO(TRIBITS_PROCESS_EXTRAREPOS_LISTS)
   SET(${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_REPOTYPES)
   SET(${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_REPOURLS)
   SET(${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_PACKSTATS)
+  SET(${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_PREPOSTS)
   SET(${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_CATEGORIES)
   SET(${PROJECT_NAME}_PRE_REPOSITORIES_DEFAULT)
   SET(${PROJECT_NAME}_EXTRA_REPOSITORIES_DEFAULT)
@@ -268,9 +277,11 @@ MACRO(TRIBITS_PROCESS_EXTRAREPOS_LISTS)
       OR EXTRAREPO_REPOTYPE STREQUAL SVN
       )
       # Okay
-    ELSEIF(EXTRAREPO_REPOTYPE STREQUAL HG)
+    ELSEIF (EXTRAREPO_REPOTYPE  STREQUAL  HG)
       # not quite okay
       MESSAGE(WARNING "Warning: the repo ${EXTRAREPO_NAME} is a Mercurial repo: these are tolerated, but not fully supported.")
+    ELSEIF (EXTRAREPO_REPOTYPE  STREQUAL  "")
+      # We are okay with no VC type
     ELSE()
       MESSAGE(FATAL_ERROR "Error, the repo type of '${EXTRAREPO_REPOTYPE}' for"
         " extra repo ${EXTRAREPO_NAME} is *not* valid.  Valid choices are 'GIT', 'HG' and 'SVN'!")
@@ -291,7 +302,7 @@ MACRO(TRIBITS_PROCESS_EXTRAREPOS_LISTS)
       PRINT_VAR(EXTRAREPO_REPOURL)
     ENDIF()
 
-    # PACKSTAT
+    # PACKSTAT (PACKSTAT and PREPOST)
     MATH(EXPR EXTRAREPO_PACKSTAT_IDX
       "${EXTRAREPO_IDX}*${ERP_NUM_FIELDS_PER_REPO}+${ERP_REPO_PACKSTAT_OFFSET}")
     LIST(GET ${PROJECT_NAME}_EXTRAREPOS_DIR_REPOTYPE_REPOURL_PACKSTAT_CATEGORY
@@ -345,7 +356,6 @@ MACRO(TRIBITS_PROCESS_EXTRAREPOS_LISTS)
       PRINT_VAR(ADD_EXTRAREPO)
     ENDIF()
 
-
     # B.3) Add the extrarepo to the list if the classification matches
 
     IF (ADD_EXTRAREPO)
@@ -354,6 +364,7 @@ MACRO(TRIBITS_PROCESS_EXTRAREPOS_LISTS)
       LIST(APPEND ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_REPOTYPES ${EXTRAREPO_REPOTYPE})
       LIST(APPEND ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_REPOURLS ${EXTRAREPO_REPOURL})
       LIST(APPEND ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_PACKSTATS ${EXTRAREPO_PACKSTAT})
+      LIST(APPEND ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_PREPOSTS ${EXTRAREPO_PREPOST})
       LIST(APPEND ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_CATEGORIES
         ${EXTRAREPO_CLASSIFICATION})
       IF (EXTRAREPO_PREPOST  STREQUAL  "PRE")
