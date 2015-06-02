@@ -42,6 +42,8 @@ INCLUDE(SetCacheOnOffEmpty)
 INCLUDE(MultilineSet)
 INCLUDE(AdvancedOption)
 INCLUDE(AssertDefined)
+INCLUDE(Split)
+INCLUDE(MessageWrapper)
 INCLUDE(TribitsSortListAccordingToMasterList)
 
 
@@ -183,6 +185,50 @@ FUNCTION(TRIBITS_DUMP_EXTRA_REPOSITORIES_LIST)
   ENDIF()
 ENDFUNCTION()
 
+
+#
+# Function that parses the PACKSTAT field in the array
+# ${PROJECT_NAME}_EXTRAREPOS_DIR_VCTYPE_REPOURL_PACKSTAT_CATEGORY and returns
+# HASPKGS and PREPOST.
+#
+FUNCTION(TRIBITS_PARSE_EXTRAREPO_PACKSTAT  PACKSTAT_IN
+  HASPKGS_OUT  PREPOST_OUT
+  )
+
+  #PRINT_VAR(PACKSTAT_IN)
+  SPLIT("${PACKSTAT_IN}"  ","  PACKSTAT_IN_ARRAY)
+ 
+  # Set the defaults
+  SET(HASPKGS  "HASPACKAGES")
+  SET(PREPOST  "POST")
+
+  FOREACH(PACKSTAT_ELE  ${PACKSTAT_IN_ARRAY})
+    #PRINT_VAR(PACKSTAT_ELE)
+    STRING(STRIP "${PACKSTAT_ELE}" PACKSTAT_ELE)
+    #PRINT_VAR(PACKSTAT_ELE)
+    IF (PACKSTAT_ELE  STREQUAL  "HASPACKAGES")
+      SET(HASPKGS  "HASPACKAGES")
+    ELSEIF (PACKSTAT_ELE  STREQUAL  "NOPACKAGES")
+      SET(HASPKGS  "NOPACKAGES")
+    ELSEIF (PACKSTAT_ELE  STREQUAL  "PRE")
+      SET(PREPOST  "PRE")
+    ELSEIF (PACKSTAT_ELE  STREQUAL  "POST")
+      SET(PREPOST  "POST")
+    ELSE()
+      MESSAGE_WRAPPER(FATAL_ERROR  "Error, the value of 'PACKSTAT' element"
+        " '${PACKSTAT_ELE}' is not valid!  Valid choices are '' (empty),"
+        " 'HASPACKAGES', 'NOPACKAGES', 'PRE', and 'POST'.  The defaults if all"
+        " fields are empty are 'HASPACKAGES' and 'POST'") 
+    ENDIF()
+  ENDFOREACH()
+  # NOTE: In the above FOREACH(PACKSTAT_ELE ${PACKSTAT_IN_ARRAY}) loop, empty
+  # elements are skipped!
+
+  # Set the output arguments
+  SET(${HASPKGS_OUT}  "${HASPKGS}"  PARENT_SCOPE)
+  SET(${PREPOST_OUT}  "${PREPOST}"  PARENT_SCOPE)
+
+ENDFUNCTION()
 
 #
 # Macro that processes the list varaible contents in
