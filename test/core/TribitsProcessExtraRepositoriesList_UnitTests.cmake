@@ -124,8 +124,6 @@ FUNCTION(UNITTEST_TRIBITS_PARSE_EXTRAREPO_PACKSTAT)
   UNITTEST_COMPARE_CONST( HASPKGS "HASPACKAGES")
   UNITTEST_COMPARE_CONST( PREPOST "POST")
 
-  # ToDo: TriBITS:73: Test invalid input that causes error
-
 ENDFUNCTION()
 
 
@@ -268,6 +266,24 @@ FUNCTION(UNITTEST_TRIBITS_PROCESS_EXTRAREPOS_LISTS)
   # ToDo: Test error when setting non-empty REPOURL when REPOTYPE is empty
 
   # ToDo: Test error when invalid VC type is given
+
+  MESSAGE("\n***")
+  MESSAGE("*** Test TRIBITS_PROCESS_EXTRAREPOS_LISTS() POST before PRE")
+  MESSAGE("***\n")
+
+  SET(${PROJECT_NAME}_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE  Nightly)
+  SET(MESSAGE_WRAPPER_UNIT_TEST_MODE  TRUE)
+  GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
+
+  TRIBITS_PROJECT_DEFINE_EXTRA_REPOSITORIES(
+     repo0_name  ""              GIT   "git@url0.com:repo0"  POST  Continuous
+     repo1_name  "some/sub/dir"  SVN   "git@url1.com:repo1"  PRE   Nightly
+     )
+  
+  TRIBITS_PROCESS_EXTRAREPOS_LISTS()
+
+  UNITTEST_COMPARE_CONST(MESSAGE_WRAPPER_INPUT
+    "FATAL_ERROR;Error, the 'PRE' extra repo 'repo1_name'; specified in the PACKSTAT field 'PRE' came directly after; a 'POST' extra repo!  All 'PRE' extra repos must be listed before all; 'POST' extra repos!")
 
   # ToDo: Test that all PRE repos come before all POST repos
 
@@ -569,4 +585,4 @@ UNITTEST_TRIBITS_PROCESS_EXTRAREPOS_LISTS_OLD_REPOTYPE()
 UNITTEST_TRIBITS_GET_AND_PROCESS_EXTRA_REPOSITORIES_LISTS()
 
 # Pass in the number of expected tests that must pass!
-UNITTEST_FINAL_RESULT(142)
+UNITTEST_FINAL_RESULT(143)

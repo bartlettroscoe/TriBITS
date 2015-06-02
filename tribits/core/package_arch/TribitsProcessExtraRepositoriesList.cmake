@@ -292,6 +292,8 @@ MACRO(TRIBITS_PROCESS_EXTRAREPOS_LISTS)
   SET(${PROJECT_NAME}_PRE_REPOSITORIES_DEFAULT)
   SET(${PROJECT_NAME}_EXTRA_REPOSITORIES_DEFAULT)
 
+  SET(PROCESSED_POST_EXTRAREPO  FALSE)
+
   FOREACH(EXTRAREPO_IDX RANGE ${${PROJECT_NAME}_LAST_EXTRAREPO_IDX})
 
     # B.1) Extract the fields for the current extrarepo row
@@ -404,6 +406,17 @@ MACRO(TRIBITS_PROCESS_EXTRAREPOS_LISTS)
 
     IF (TRIBITS_PROCESS_EXTRAREPOS_LISTS_DEBUG)
       PRINT_VAR(ADD_EXTRAREPO)
+    ENDIF()
+
+    # Assert that PRE repos never come after a POST repo
+    IF (NOT  PROCESSED_POST_EXTRAREPO  AND  EXTRAREPO_PREPOST  STREQUAL  "POST")
+      SET(PROCESSED_POST_EXTRAREPO  TRUE)
+    ELSEIF (PROCESSED_POST_EXTRAREPO  AND  EXTRAREPO_PREPOST  STREQUAL  "PRE")
+      MESSAGE_WRAPPER(FATAL_ERROR  "Error, the 'PRE' extra repo '${EXTRAREPO_NAME}'"
+        " specified in the PACKSTAT field '${EXTRAREPO_PACKSTAT}' came directly after"
+        " a 'POST' extra repo!  All 'PRE' extra repos must be listed before all"
+        " 'POST' extra repos!"
+        ) 
     ENDIF()
 
     # B.3) Add the extrarepo to the list if the classification matches
