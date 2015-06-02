@@ -262,7 +262,6 @@ MACRO(TRIBITS_PROCESS_EXTRAREPOS_LISTS)
       "${${PROJECT_NAME}_EXTRAREPOS_DIR_REPOTYPE_REPOURL_PACKSTAT_CATEGORY}" )
   ENDIF()
 
-
   # A) Get the total number of extrarepos defined
 
   IF (TRIBITS_PROCESS_EXTRAREPOS_LISTS_DEBUG)
@@ -456,7 +455,7 @@ ENDMACRO()
 #
 FUNCTION(TRIBITS_EXTRA_REPOSITORIES_ASSERT_SUBSET_AND_ORDER_WRT_FILE)
   SET(ALL_EXTRA_REPOSITORIES_IN
-    ${${PROJECT_NAME}_PRE_REPOSITORIES} ${${PROJECT_NAME}_EXTRA_REPOSITORIES})
+    ${${PROJECT_NAME}_PRE_REPOSITORIES}  ${${PROJECT_NAME}_EXTRA_REPOSITORIES})
   SET(ALL_EXTRA_REPOSITORIES_SORTED ${ALL_EXTRA_REPOSITORIES_IN})
   TRIBITS_SORT_LIST_ACCORDING_TO_MASTER_LIST(
     "${${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_DEFAULT}" ALL_EXTRA_REPOSITORIES_SORTED)
@@ -523,9 +522,6 @@ ENDFUNCTION()
 #
 FUNCTION(TRIBITS_FILTER_OR_ASSERT_EXTRA_REPOS)
 
-  #PRINT_VAR(${PROJECT_NAME}_PRE_REPOSITORIES)
-  #PRINT_VAR(${PROJECT_NAME}_EXTRA_REPOSITORIES)
-
   # Get the list of repos to filter
 
   IF ("${${PROJECT_NAME}_PRE_REPOSITORIES}"  STREQUAL "")
@@ -542,7 +538,11 @@ FUNCTION(TRIBITS_FILTER_OR_ASSERT_EXTRA_REPOS)
 
   SET(ALL_EXTRA_REPOSITORIES_IN
     ${${PROJECT_NAME}_PRE_REPOSITORIES_IN} ${${PROJECT_NAME}_EXTRA_REPOSITORIES_IN})
-  #PRINT_VAR(ALL_EXTRA_REPOSITORIES_IN)
+
+  # Get out of function if there are no pre-extra or post-extra repos
+  IF ("${ALL_EXTRA_REPOSITORIES_IN}"  STREQUAL  "")
+    RETURN()
+  ENDIF()
 
   # A) Loop through and copy info for existing repos to temp arrays
 
@@ -556,17 +556,11 @@ FUNCTION(TRIBITS_FILTER_OR_ASSERT_EXTRA_REPOS)
   SET(ALL_EXTRA_REPOSITORIES_PREPOSTS_TMP)
   SET(ALL_EXTRA_REPOSITORIES_CATEGORIES_TMP)
 
-  # ToDo: TriBITS:73: Remove logic that allows ALL_EXTRA_REPOSITORIES_IN to be
-  # empty but ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_DEFAULT not empty.  You
-  # don't need it anymore.
-
   # Set-up for filtering based on ALL_EXTRA_REPOSITORIES_IN != ""
   LIST(LENGTH  ALL_EXTRA_REPOSITORIES_IN  ALL_EXTRA_REPOSITORIES_IN_LEN)
   #PRINT_VAR(ALL_EXTRA_REPOSITORIES_IN_LEN)
   SET(EXTRAREPO_IN_IDX  0)
-  IF (ALL_EXTRA_REPOSITORIES_IN_LEN  GREATER  0)
-    LIST(GET  ALL_EXTRA_REPOSITORIES_IN  ${EXTRAREPO_IN_IDX}  EXTRAREPO_IN)
-  ENDIF()
+  LIST(GET  ALL_EXTRA_REPOSITORIES_IN  ${EXTRAREPO_IN_IDX}  EXTRAREPO_IN)
 
   # Loop over full list of extra repos from extra repos file
   SET(EXTRAREPO_IDX 0)
@@ -590,33 +584,25 @@ FUNCTION(TRIBITS_FILTER_OR_ASSERT_EXTRA_REPOS)
       EXTRAREPO_CATEGORY )
 
     # A.2) Determine if to add the extra repo EXTRAREPO_NAME
-    IF (ALL_EXTRA_REPOSITORIES_IN_LEN  GREATER  0)
-      IF (EXTRAREPO_IN_IDX  EQUAL  ALL_EXTRA_REPOSITORIES_IN_LEN)
-        # All of the extra repos in ALL_EXTRA_REPOSITORIES_IN have already
-        # been processed.
-        SET(ADD_EXTRAREPO  FALSE)
-      ELSEIF (EXTRAREPO_IN  STREQUAL  EXTRAREPO_NAME)
-        # We have a match, add the extra repo!
-        SET(ADD_EXTRAREPO  TRUE)
-        # Update EXTRAREPO_IN to look for next!
-        MATH(EXPR  EXTRAREPO_IN_IDX  "${EXTRAREPO_IN_IDX}+1")
-        IF (EXTRAREPO_IN_IDX  LESS  ALL_EXTRA_REPOSITORIES_IN_LEN)
-          LIST(GET  ALL_EXTRA_REPOSITORIES_IN  ${EXTRAREPO_IN_IDX}  EXTRAREPO_IN)
-        ELSE()
-          # We have found the last repo already so move on
-          SET(EXTRAREPO_IN  "")
-        ENDIF()
-      ELSE()
-        # We are not at the end of the list in ALL_EXTRA_REPOSITORIES_IN yet
-        # and have not reached the next entry in the list so don't add.
-        SET(ADD_EXTRAREPO  FALSE)
-      ENDIF()
-    ELSEIF (ALL_EXTRA_REPOSITORIES_IN_LEN  EQUAL  0)
-      # There were no explicit extra repos listed so just add all of the extra
-      # repos from the extra repos file!
+    IF (EXTRAREPO_IN_IDX  EQUAL  ALL_EXTRA_REPOSITORIES_IN_LEN)
+      # All of the extra repos in ALL_EXTRA_REPOSITORIES_IN have already
+      # been processed.
+      SET(ADD_EXTRAREPO  FALSE)
+    ELSEIF (EXTRAREPO_IN  STREQUAL  EXTRAREPO_NAME)
+      # We have a match, add the extra repo!
       SET(ADD_EXTRAREPO  TRUE)
+      # Update EXTRAREPO_IN to look for next!
+      MATH(EXPR  EXTRAREPO_IN_IDX  "${EXTRAREPO_IN_IDX}+1")
+      IF (EXTRAREPO_IN_IDX  LESS  ALL_EXTRA_REPOSITORIES_IN_LEN)
+        LIST(GET  ALL_EXTRA_REPOSITORIES_IN  ${EXTRAREPO_IN_IDX}  EXTRAREPO_IN)
+      ELSE()
+        # We have found the last repo already so move on
+        SET(EXTRAREPO_IN  "")
+      ENDIF()
     ELSE()
-      MESSAGE(FATAL_ERROR "Error, negative value for ALL_EXTRA_REPOSITORIES_IN_LEN?")
+      # We are not at the end of the list in ALL_EXTRA_REPOSITORIES_IN yet
+      # and have not reached the next entry in the list so don't add.
+      SET(ADD_EXTRAREPO  FALSE)
     ENDIF()
 
     #PRINT_VAR(ADD_EXTRAREPO)
@@ -723,11 +709,11 @@ ENDFUNCTION()
 #
 MACRO(TRIBITS_GET_AND_PROCESS_EXTRA_REPOSITORIES_LISTS)
 
-  #
-  # A) Read in the extra repos list variable and process the list
-  #
-
   IF (${PROJECT_NAME}_EXTRAREPOS_FILE AND ${PROJECT_NAME}_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE)
+
+    #
+    # A) Read in the extra repos list variable and process the list
+    #
 
     MESSAGE("")
     MESSAGE("Reading the list of extra repositories from ${${PROJECT_NAME}_EXTRAREPOS_FILE}")
@@ -742,15 +728,17 @@ MACRO(TRIBITS_GET_AND_PROCESS_EXTRA_REPOSITORIES_LISTS)
     #
     # B) Sort and assert the list of extra repos according to the list read into the file
     #
-
-    IF (${PROJECT_NAME}_EXTRA_REPOSITORIES AND ${PROJECT_NAME}_EXTRA_REPOSITORIES_DEFAULT)
+    IF (
+      (${PROJECT_NAME}_PRE_REPOSITORIES  OR  ${PROJECT_NAME}_EXTRA_REPOSITORIES)
+      AND
+      ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_DEFAULT
+      )
       TRIBITS_EXTRA_REPOSITORIES_ASSERT_SUBSET_AND_ORDER_WRT_FILE()
     ENDIF()
 
     #
     # C) Filter out the missing extra repos or assert errors
     #
-
     IF (NOT  UNITTEST_SKIP_FILTER_OR_ASSERT_EXTRA_REPOS)
       MESSAGE("")
       MESSAGE("Filtering and asserting existance (or ignore missing) extra repos ...")
