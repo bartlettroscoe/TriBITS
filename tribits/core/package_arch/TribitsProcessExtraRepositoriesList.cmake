@@ -56,8 +56,8 @@ INCLUDE(TribitsSortListAccordingToMasterList)
 # Usage::
 #
 #   TRIBITS_PROJECT_DEFINE_EXTRA_REPOSITORIES(
-#     <repo0_name> <repo0_dir> <repo0_type> <repo0_url> <repo0_packstat> <repo0_classif>
-#     <repo1_name> <repo1_dir> <repo1_type> <repo1_url> <rep10_packstat> <repo1_classif>
+#     <repo0_name> <repo0_dir> <repo0_vctype> <repo0_url> <repo0_packstat> <repo0_classif>
+#     <repo1_name> <repo1_dir> <repo1_vctype> <repo1_url> <rep10_packstat> <repo1_classif>
 #     ...
 #    )
 #
@@ -71,37 +71,49 @@ INCLUDE(TribitsSortListAccordingToMasterList)
 #    under the project directory ``${PROJECT_SOURCE_DIR}`` (or
 #    ``<projectDir>``).  If this is set to empty quoted string ``""``, then
 #    the relative directory name is assumed to be same as the repository name
-#    ``<repoi_name>``.  NOTE: If the repo provides packages (see
-#    ``REPO_PACKSTAT`` below) then the repo dir must be the same as the
-#    package name!
+#    ``<repoi_name>``.  NOTE: If the repo is a `TriBITS Repository`_ (see
+#    ``REPO_PACKSTAT`` below) then, currently, the repo dir must be the same
+#    as the package name.
 #
-# 2. **REPO_TYPE** (``<repoi_type>``): The version control (VC) type of the
-#    repo.  Value choices include ``GIT`` and ``SVN`` (i.e. Subversion).  A
-#    valid choice is also empty "".  In that case, ``<repoi_url>`` must be
-#    empty as well.  *WARNING:* Only VC repos of type ``GIT`` can fully
-#    participate in the TriBITS development tool workflows.  The other VC
-#    types are only supported for basic cloning and updating using
-#    `TRIBITS_CTEST_DRIVER()`_ script.
+# 2. **REPO_VCTYPE** (``<repoi_vctype>``): The version control (VC) type of
+#    the repo.  Value choices include ``GIT``, ``SVN`` (i.e. Subversion) or
+#    empty ``""`` (in which case ``<repoi_url>`` must be empty as well).
+#    WARNING: Only VC repos of type ``GIT`` can fully participate in the
+#    TriBITS development tool workflows.  The other VC types are only
+#    supported for basic cloning and updating using `TRIBITS_CTEST_DRIVER()`_
+#    scripts.
 #
 # 3. **REPO_URL** (``<repoi_url>``): The URL of the VC repo.  This info is
 #    used to initially obtain the repo source code using the VC tool listed in
-#    ``<repoi_type>``.  If the repos don't need to be cloned for the needed
-#    use cases, then this can be the empty quoted string ``""``.
+#    ``<repoi_vctype>``.  If the repo does not need to be cloned for the
+#    needed use cases, then this can be the empty quoted string ``""``.  Also,
+#    this field must be the empty string ``""`` if ``<repoi_vctype>`` is empty
+#    ``""``.
 #
-# 4. **REPO_PACKSTAT** (``<repoi_packstat>``): Determines if the VC repository
-#    contains any TriBITS packages or if it just provides directories and
-#    files.  If the VC repo contains TriBITS packages, then this field must be
-#    the empty quoted string ``""``, and this repository is considered to be a
-#    `TriBITS Repository`_ and must therefore contain the files described in
-#    `TriBITS Repository Core Files`_.  If the listed repository is **not** a
-#    TriBITS repository, and just provides directories and files, then this
-#    field must be set as ``NOPACKAGES``.
+# 4. **REPO_PACKSTAT** (``<repoi_packstat>``): Determines if the repository is
+#    a `TriBITS Repository`_ and contains any TriBITS packages (or if it just
+#    provides directories and files) and if its packages are listed before or
+#    after the project's own native packages.  If this is a TriBITS Repository
+#    (and therefore contains `TriBITS Repository Core Files`_) then this field
+#    must contain the keyword ``HASPACKAGES`` or left empty.  If the listed
+#    repository is **not** a TriBITS repository, and just provides directories
+#    and files, then this field must contain the keyword ``NOPACKAGES``.  The
+#    default is assumed to be ``HASPACKAGES`` if neither of these keywords are
+#    provided.  If the keyword ``PRE`` is provided, then the TriBITS packages
+#    in this repo come before the project's native packages.  If the keyword
+#    ``POST`` is provided then the packages are listed after the project's
+#    native packages. The default is assumed to be ``POST`` if neither of
+#    these keywords are provided.  The keywords must be separated by a comm
+#    with no spaces such as with "``PRE,HASPACKAGES``",
+#    "``HASPACKAGES,POST``", "``POST,NOPACKAGES``", etc.  If no keywords are
+#    provided, then the empty string "" must be used (which defaults to
+#    ``"HASPACKAGES,POST"``).
 #
 # 5. **REPO_CLASSIFICATION** (``<repoi_classif>``): Gives the `Repository Test
-#    Classification`_ also happens to be the CTest/CDash testing mode and the
-#    default dashboard track.  Valid values are ``Continuous``, ``Nightly``,
-#    and ``Experimental``.  See `Repository Test Classification`_ for a
-#    detailed description.
+#    Classification`_ which also happens to be the CTest/CDash testing mode
+#    and the default dashboard track.  Valid values are ``Continuous``,
+#    ``Nightly``, and ``Experimental``.  See `Repository Test Classification`_
+#    for a detailed description.
 #
 # This command is used to put together one or more VC and/or TriBITS
 # repositories to construct a composite `TriBITS Project`_.  The option
@@ -119,12 +131,9 @@ INCLUDE(TribitsSortListAccordingToMasterList)
 # used to provide extra test data for a given package or a set of packages so
 # that extra tests can be run.
 #
-# Repositories with ``<repoi_repotype>=''`` are not VC repos.
-#
-# It is also allowed for a repository to have ``<repoi_url>=""`` and
-# ``<repoi_packstat>=""`` which means that the given repository directory
-# **is** a TriBITS Repository (and therefore provides TriBITS packages and
-# TPLs) but that there is no independent VC repo used to manage the software.
+# Repositories with ``<repoi_repotype>=''`` are not VC repos.  This can be
+# used, for example, to represent the project's native repos or it can be used
+# to point to a TriBITS repository that was cloned in an early listed VC repo.
 #
 # NOTE: These repositories must be listed in the order of package
 # dependencies.  That is, all of the packages listed in repository ``i`` must
@@ -144,6 +153,8 @@ INCLUDE(TribitsSortListAccordingToMasterList)
 #   ``${PROJECT_NAME}_EXTRAREPOS_DIR_VCTYPE_REPOURL_PACKSTAT_CATEGORY``.  If
 #   one misspells the name of a macro, it is an immediate error in CMake.  A
 #   misspelled set variable is just ignored.
+#
+# * The variable name can change in the future as an implementation detail.
 #
 MACRO(TRIBITS_PROJECT_DEFINE_EXTRA_REPOSITORIES)
   ASSERT_DEFINED(PROJECT_NAME)
