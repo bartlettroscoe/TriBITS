@@ -1207,9 +1207,12 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
     # by the unit test driver code
     SPLIT("${${PROJECT_NAME}_EXTRA_REPOSITORIES}"  ","
       ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES)
-    # ToDo: TriBITS:73: Decide how to deal with this once we add pre-extra
-    # repos?
   ENDIF()
+  # ToDo: TriBITS:73: Replace above with function
+  # TRIBITS_SET_ALL_EXTRA_REPOSITORIES() to set
+  # `${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES` from
+  # `${PROJECT_NAME}_PRE_REPOSITORIES` and `${PROJECT_NAME}_POST_REPOSITORIES`
+  # when it is empty.
 
   SET(EXTRAREPO_IDX 0)
   FOREACH(EXTRA_REPO  ${${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES})
@@ -1224,6 +1227,8 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
     IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
       PRINT_VAR(${EXTRA_REPO}_SOURCE_DIR)
     ENDIF()
+    # ToDo: TriBITS:73: Get ${EXTRA_REPO}_SOURCE_DIR from
+    # ${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_DIR when it exists.
 
     SET(EXTRAREPO_PACKSTAT "")
     IF (${PROJECT_NAME}_ALL_EXTRA_REPOSITORIES_HASPKGS)
@@ -1236,6 +1241,8 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
       MESSAGE("")
       MESSAGE("Skipping reading packages and TPLs for extra repo ${EXTRA_REPO} because marked NOPACKAGES ... ")
       MESSAGE("")
+      # ToDo: TriBITS:73: Don't print the above message by default.  It is
+      # just clutter.
 
     ELSE()
 
@@ -1260,16 +1267,18 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
             "\n***"
             "\n*** WARNING!  Ignoring missing extra repo '${EXTRA_REPO}' packages list file '${EXTRAREPO_PACKAGES_FILE}' on request!"
             "\n***\n")
+            # ToDo: TriBITS:73: Shorten above message to just one line
         ELSE()
           MESSAGE( SEND_ERROR
             "ERROR: Skipping missing extra repo '${EXTRA_REPO}' packages list file '${EXTRAREPO_PACKAGES_FILE}'!")
+          # ToDo: TriBITS:73: Change to FATAL_ERROR to abort early
         ENDIF()
       ELSE()
-        SET(REPOSITORY_NAME ${EXTRA_REPO})
-        TRIBITS_TRACE_FILE_PROCESSING(REPOSITORY  INCLUDE "${EXTRAREPO_PACKAGES_FILE}")
+        SET(REPOSITORY_NAME  ${EXTRA_REPO})
+        TRIBITS_TRACE_FILE_PROCESSING(REPOSITORY  INCLUDE  "${EXTRAREPO_PACKAGES_FILE}")
         INCLUDE("${EXTRAREPO_PACKAGES_FILE}")
-        SET(APPEND_TO_PACKAGES_LIST TRUE)
-        TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO} ${EXTRA_REPO})  # Reads the variable ???
+        SET(APPEND_TO_PACKAGES_LIST  TRUE)
+        TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS(${EXTRA_REPO} ${EXTRA_REPO})
       ENDIF()
 
       # Read in the add-on TPLs from the extra repo
@@ -1287,15 +1296,16 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
             "\n***"
             "\n*** WARNING!  Ignoring missing extra repo '${EXTRA_REPO}' TPLs list file '${${EXTRA_REPO}_TPLS_FILE}' on request!"
             "\n***\n")
+          # ToDo: TriBITS:73: Shorten above warning to just one line
         ELSE()
           MESSAGE( SEND_ERROR
             "ERROR: Skipping missing extra repo '${EXTRA_REPO}' TPLs list file '${${EXTRA_REPO}_TPLS_FILE}'!")
         ENDIF()
       ELSE()
-        TRIBITS_TRACE_FILE_PROCESSING(REPOSITORY  INCLUDE "${${EXTRA_REPO}_TPLS_FILE}")
+        TRIBITS_TRACE_FILE_PROCESSING(REPOSITORY  INCLUDE  "${${EXTRA_REPO}_TPLS_FILE}")
         INCLUDE("${${EXTRA_REPO}_TPLS_FILE}")
-        SET(APPEND_TO_TPLS_LIST TRUE)
-        TRIBITS_PROCESS_TPLS_LISTS(${EXTRA_REPO} ${EXTRA_REPO})  # Reads the variable ???
+        SET(APPEND_TO_TPLS_LIST  TRUE)
+        TRIBITS_PROCESS_TPLS_LISTS(${EXTRA_REPO}  ${EXTRA_REPO})
       ENDIF()
 
     ENDIF()
@@ -1305,7 +1315,7 @@ MACRO(TRIBITS_READ_PACKAGES_PROCESS_DEPENDENCIES_WRITE_XML)
   ENDFOREACH()
 
   #
-  # D) Process listS of packages, TPLs, etc.
+  # D) Process lists of packages, TPLs, etc.
   #
 
   #
