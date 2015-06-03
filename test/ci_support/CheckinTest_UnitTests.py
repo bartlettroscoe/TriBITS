@@ -706,10 +706,10 @@ class test_TribitsGitRepos(unittest.TestCase):
       GitRepo('ExtraTeuchosRepo', 'packages/teuchos/extrastuff', 'GIT', False)
       ]
     consoleRegexMatches = \
-      "Adding extra Continuous repository preCopyrightTrilinos\n"+\
-      "Adding extra Continuous repository ExtraTeuchosRepo\n"
+      "Adding POST extra Continuous repository preCopyrightTrilinos\n"+\
+      "Adding POST extra Continuous repository ExtraTeuchosRepo\n"
     consoleRegexNotMatches = \
-      "Adding extra Nightly repository extraTrilinosRepo\n"
+      "Adding POST extra Nightly repository extraTrilinosRepo\n"
     test_TribitsGitRepos_run_case(self, testName, inOptions, True, \
       expectedTribitsExtraRepoNamesList, expectedGitRepos, \
       consoleRegexMatches, consoleRegexNotMatches)
@@ -729,9 +729,9 @@ class test_TribitsGitRepos(unittest.TestCase):
       GitRepo('ExtraTeuchosRepo', 'packages/teuchos/extrastuff', 'GIT', False)
       ]
     consoleRegexMatches = \
-      "Adding extra Continuous repository preCopyrightTrilinos\n"+\
-      "Adding extra Continuous repository ExtraTeuchosRepo\n"+\
-      "Adding extra Nightly repository extraTrilinosRepo\n"
+      "Adding POST extra Continuous repository preCopyrightTrilinos\n"+\
+      "Adding POST extra Continuous repository ExtraTeuchosRepo\n"+\
+      "Adding POST extra Nightly repository extraTrilinosRepo\n"
     consoleRegexNotMatches = None
     test_TribitsGitRepos_run_case(self, testName, inOptions, expectedPass, \
       expectedTribitsExtraRepoNamesList, expectedGitRepos, \
@@ -749,7 +749,7 @@ class test_TribitsGitRepos(unittest.TestCase):
     consoleRegexMatches = \
       "ERROR! Skipping missing extra repo .MissingRepo. since\n"
     consoleRegexNotMatches = \
-      "Adding extra Continuous repository MissingRepo\n"
+      "Adding POST extra Continuous repository MissingRepo\n"
     test_TribitsGitRepos_run_case(self, testName, inOptions, expectedPass, \
       expectedTribitsExtraRepoNamesList, expectedGitRepos, \
     consoleRegexMatches, consoleRegexNotMatches)
@@ -770,7 +770,7 @@ class test_TribitsGitRepos(unittest.TestCase):
     consoleRegexMatches = \
       "WARNING: Ignoring missing extra repo .MissingRepo. as requested since\n"
     consoleRegexNotMatches = \
-      "Adding extra Continuous repository MissingRepo"
+      "Adding POST extra Continuous repository MissingRepo"
     test_TribitsGitRepos_run_case(self, testName, inOptions, expectedPass, \
       expectedTribitsExtraRepoNamesList, expectedGitRepos, \
     consoleRegexMatches, consoleRegexNotMatches)
@@ -974,8 +974,8 @@ class test_TribitsGitRepos(unittest.TestCase):
       GitRepo('extraTrilinosRepo', 'extraTrilinosRepo', "GIT", True),
       ]
     consoleRegexMatches = \
-      "Adding extra Continuous repository preCopyrightTrilinos\n"+\
-      "Adding extra Nightly repository extraTrilinosRepo\n"
+      "Adding POST extra Continuous repository preCopyrightTrilinos\n"+\
+      "Adding POST extra Nightly repository extraTrilinosRepo\n"
     consoleRegexNotMatches = None
     exceptionRegexMatches = None
     test_TribitsGitRepos_run_case(self, testName, inOptions, expectedPass, \
