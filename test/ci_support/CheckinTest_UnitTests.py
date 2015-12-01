@@ -1005,12 +1005,12 @@ class test_TribitsGitRepos(unittest.TestCase):
 g_cmndinterceptsDumpDepsXMLFile = \
   "IT: .*cmake .+ -P .+/TribitsDumpDepsXmlScript.cmake; 0; 'dump XML file passed'\n" \
 
-def cmndinterceptsGetRepoStatsPass(modifiedFile=""):
+def cmndinterceptsGetRepoStatsPass(modifiedFile="", changedFile=""):
   return \
     "IT: git rev-parse --abbrev-ref HEAD; 0; 'currentbranch'\n" \
     "IT: git rev-parse --abbrev-ref --symbolic-full-name @{u}; 0; 'origin/currentbranch'\n" \
     "IT: git shortlog -s HEAD .origin/currentbranch; 0; '    4  John Doe'\n" \
-    "IT: git status --porcelain; 0; '"+modifiedFile+"'\n"
+    "IT: git status --porcelain; 0; '"+changedFile+"'\n"
 
 g_cmndinterceptsStatusPasses = \
   "IT: git status; 0; '(on master branch)'\n"
@@ -2914,14 +2914,14 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +cmndinterceptsGetRepoStatsPass() \
-      +g_cmndinterceptsStatusChangedButNotUpdatedPasses \
+      +cmndinterceptsGetRepoStatsPass(changedFile=" M somefile") \
+      +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
       False,
       \
-      "ERROR: There are changed unstaged uncommitted files => cannot continue!\n" \
+      "ERROR: There are changed uncommitted files => cannot continue!\n" \
       +"No changes were pulled!\n" \
       +"Skipping getting list of modified files because pull failed!\n" \
       +"Not running any build/test cases because the update (pull) failed!\n" \
@@ -3964,13 +3964,13 @@ class test_checkin_test(unittest.TestCase):
       \
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
-      +cmndinterceptsGetRepoStatsPass() \
-      +"IT: git status; 0; 'Changed but not updated'\n" \
+      +cmndinterceptsGetRepoStatsPass(changedFile="M  newfile") \
+      +g_cmndinterceptsStatusPasses \
       ,
       \
       False,
       \
-      "ERROR: There are changed unstaged uncommitted files => cannot continue!\n" \
+      "ERROR: There are changed uncommitted files => cannot continue!\n" \
       "Update failed!\n" \
       "Not running any build/test cases because the update (pull) failed!\n" \
       "A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
@@ -3987,13 +3987,13 @@ class test_checkin_test(unittest.TestCase):
       \
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
-      +cmndinterceptsGetRepoStatsPass() \
-      +"IT: git status; 0; 'Changes ready to be committed'\n" \
+      +cmndinterceptsGetRepoStatsPass(changedFile=" M somefile") \
+      +g_cmndinterceptsStatusPasses \
       ,
       \
       False,
       \
-      "ERROR: There are changed staged uncommitted files => cannot continue!\n" \
+      "ERROR: There are changed uncommitted files => cannot continue!\n" \
       "Update failed!\n" \
       "Not running any build/test cases because the update (pull) failed!\n" \
       "A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
@@ -4010,8 +4010,8 @@ class test_checkin_test(unittest.TestCase):
       \
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
-      +cmndinterceptsGetRepoStatsPass() \
-      +"IT: git status; 0; 'Newly created unknown files'\n" \
+      +cmndinterceptsGetRepoStatsPass(changedFile="?? newfile") \
+      +g_cmndinterceptsStatusPasses \
       ,
       \
       False,

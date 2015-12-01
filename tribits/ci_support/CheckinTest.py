@@ -2029,16 +2029,12 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
           "\n--------------------------------------------------------------\n"
 
         # See if the repo is clean
-  
-        if isSubstrInMultiLineString(gitStatusOutput, "Changed but not updated"):
-          print "\nERROR: There are changed unstaged uncommitted files => cannot continue!"
+
+        if gitRepo.gitRepoStats.numModifiedInt() > 0:
+          print "\nERROR: There are changed uncommitted files => cannot continue!"
           repoIsClean = False
   
-        if isSubstrInMultiLineString(gitStatusOutput, "Changes ready to be committed"):
-          print "\nERROR: There are changed staged uncommitted files => cannot continue!"
-          repoIsClean = False
-  
-        if isSubstrInMultiLineString(gitStatusOutput, "Newly created unknown files"):
+        if gitRepo.gitRepoStats.numUntrackedInt() > 0:
           print "\nERROR: There are newly created uncommitted files => Cannot continue!"
           repoIsClean = False
   
