@@ -67,6 +67,7 @@ from CheckinTestConstants import *
 from TribitsDependencies import getProjectDependenciesFromXmlFile
 from TribitsDependencies import getDefaultDepsXmlInFile
 from TribitsPackageFilePathUtils import *
+import gitdist
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -267,6 +268,21 @@ def getRepoSpaceBranchFromOptionStr(extraPullFrom):
   return repo + " " + branch
 
 
+class GitdistOptions:
+  def __init__(self, useGit):
+    self.useGit = useGit
+
+
+def getRepoStats(inOptions, gitRepo_inout):
+  gitRepoDir = getGitRepoDir(inOptions.srcDir, gitRepo_inout.repoDir)
+  gitdistOptions = GitdistOptions(inOptions.git)
+  pwd = os.getcwd()
+  try:
+    os.chdir(gitRepoDir)
+    gitRepo_inout.gitRepoStats = gitdist.getRepoStats(gitdistOptions, getCmndOutput)
+  finally:
+    os.chdir(pwd)
+
 def didSinglePullBringChanges(pullOutFileFullPath):
   pullOutFileStr = readStrFromFile(pullOutFileFullPath)
   #print "\npullOutFileStr:\n" + pullOutFileStr
@@ -343,6 +359,7 @@ class GitRepo:
     self.repoHasPackages = repoHasPackages
     self.repoPrePost = repoPrePost
     self.hasChanges = False
+    self.gitRepoStats = None
     if (self.repoName and self.repoHasPackages) and (self.repoName != self.repoDir):
       raise Exception("ERROR!  For extra repo '"+repoName+"', if repoHasPackages==True" \
         +" then repoDir must be same as repo name, not '"+repoDir+"'!")
@@ -1977,8 +1994,15 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
         buildTestCase.runBuildTestCase, inOptions, baseTestDir, buildTestCase.name)
 
     print "\n***"
-    print "*** 2) Commit changes before pulling updates to merge in (NO LONGER SUPPORTED)"
+    print "*** 2) Get repo status"
     print "***"
+
+    repoIdx = 0
+    for gitRepo in tribitsGitRepos.gitRepoList():
+      getRepoStats(inOptions, gitRepo)
+      print str(gitRepo.gitRepoStats)
+
+    # ToDo: Assert that repo status 
 
     print "\n***"
     print "*** 3) Update the %s sources ..." % inOptions.projectName

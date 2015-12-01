@@ -1008,6 +1008,13 @@ g_cmndinterceptsDumpDepsXMLFile = \
 g_cmndinterceptsCurrentBranch = \
   "IT: git branch; 0; '* currentbranch'\n"
 
+def cmndinterceptsGetRepoStatsPass(modifiedFile=""):
+  return \
+    "IT: git rev-parse --abbrev-ref HEAD; 0; 'master'\n" \
+    "IT: git rev-parse --abbrev-ref --symbolic-full-name @{u}; 0; 'origin/master'\n" \
+    "IT: git shortlog -s HEAD .origin/master; 0; '    4  John Doe'\n" \
+    "IT: git status --porcelain; 0; '"+modifiedFile+"'\n"
+
 g_cmndinterceptsStatusPasses = \
   "IT: git status; 0; '(on master branch)'\n"
 
@@ -1024,6 +1031,7 @@ g_cmndinterceptsPullOnlyNoUpdatesPasses = \
   "IT: git pull; 0; 'Already up-to-date.'\n"
 
 g_cmndinterceptsStatusPullPasses = \
+  cmndinterceptsGetRepoStatsPass()+ \
   g_cmndinterceptsStatusPasses+ \
   g_cmndinterceptsPullOnlyPasses
 
@@ -1112,6 +1120,8 @@ g_cmndinterceptsSendFinalEmail = \
 g_cmndinterceptsExtraRepo1ThroughStatusPasses = \
   g_cmndinterceptsDumpDepsXMLFile \
   +g_cmndinterceptsCurrentBranch \
+  +cmndinterceptsGetRepoStatsPass() \
+  +cmndinterceptsGetRepoStatsPass() \
   +g_cmndinterceptsStatusPasses \
   +g_cmndinterceptsStatusPasses
 
@@ -1416,8 +1426,12 @@ def checkin_test_configure_test(testObject, testName, optionsStr, filePassRegexS
   fileFailRegexStrList=[], modifiedFilesStr="", extraPassRegexStr="" \
   ):
 
-  if not modifiedFilesStr:
+  if modifiedFilesStr == "" :
     modifiedFilesStr = "M\tpackages/teuchos/CMakeLists.txt"
+    modifiedFilesPorcelainStr = " M packages/teuchos/CMakeLists.txt"
+  else:
+    modifiedFilesStr = "M\t"+modifiedFilesStr
+    modifiedFilesPorcelainStr = " M "+modifiedFilesStr
 
   checkin_test_run_case(
     \
@@ -1431,6 +1445,7 @@ def checkin_test_configure_test(testObject, testName, optionsStr, filePassRegexS
     \
     g_cmndinterceptsDumpDepsXMLFile \
     +g_cmndinterceptsCurrentBranch \
+    +cmndinterceptsGetRepoStatsPass(modifiedFilesPorcelainStr) \
     +"IT: git diff --name-status origin/currentbranch; 0; '"+modifiedFilesStr+"'\n" \
     +g_cmndinterceptsConfigPasses \
     ,
@@ -1707,6 +1722,7 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
@@ -1825,6 +1841,7 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +"FT: rm CMakeCache.txt\n" \
       +"FT: rm -rf CMakeFiles\n" \
@@ -2011,6 +2028,8 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsConfigPasses \
@@ -2044,6 +2063,8 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsConfigPasses \
@@ -2122,6 +2143,8 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
@@ -2478,6 +2501,8 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
@@ -2531,6 +2556,9 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsStatusPasses \
@@ -2578,6 +2606,9 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsStatusPasses \
@@ -2635,6 +2666,8 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
@@ -2688,6 +2721,10 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsStatusPasses \
@@ -2780,6 +2817,8 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
@@ -2846,6 +2885,8 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
@@ -2901,6 +2942,7 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsStatusChangedButNotUpdatedPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
@@ -3081,7 +3123,7 @@ class test_checkin_test(unittest.TestCase):
       "", # --enable-all-packages=auto
       "\-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON\n" \
       +"\-DTrilinos_ENABLE_TrilinosFramework:BOOL=ON\n",
-      modifiedFilesStr="M\tcmake/utils/AppendSet.cmake",
+      modifiedFilesStr="cmake/utils/AppendSet.cmake",
       )
 
 
@@ -3091,7 +3133,7 @@ class test_checkin_test(unittest.TestCase):
       "enable_all_packages_auto",
       "--enable-all-packages=auto",
       "\-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON\n",
-      modifiedFilesStr="M\tCMakeLists.txt", # Will not trigger TrilinosFramework!
+      modifiedFilesStr="CMakeLists.txt", # Will not trigger TrilinosFramework!
       extraPassRegexStr="Modifed file: .CMakeLists.txt.\n"\
       +"Enabling all Trilinos packages!\n",
       )
@@ -3103,7 +3145,7 @@ class test_checkin_test(unittest.TestCase):
       "enable_all_packages_on",
       "--enable-all-packages=on",
       "\-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON\n",
-      modifiedFilesStr = "M\tdummy.txt", # Will not trigger any enables!
+      modifiedFilesStr = "dummy.txt", # Will not trigger any enables!
       extraPassRegexStr=\
         "Enabling all packages on request since --enable-all-packages=on\n"\
         +"Skipping detection of changed packages since --enable-all-packages=on\n"\
@@ -3119,7 +3161,7 @@ class test_checkin_test(unittest.TestCase):
       "--enable-all-packages=off",
       "\-DTrilinos_ENABLE_TrilinosFramework:BOOL=ON\n",
       notRegexListStr="\-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON\n",
-      modifiedFilesStr="M\tcmake/utils/AppendSet.cmake",
+      modifiedFilesStr="cmake/utils/AppendSet.cmake",
       )
 
 
@@ -3210,6 +3252,7 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -3358,7 +3401,7 @@ class test_checkin_test(unittest.TestCase):
       +"-DTeuchos_ENABLE_SECONDARY_TESTED_CODE:BOOL=ON\n" \
       )
 
-    modifiedFilesStr = "M\tpackages/teuchos/CMakeLists.txt"
+    modifiedFilesStr = "packages/teuchos/CMakeLists.txt"
 
     checkin_test_run_case(
       \
@@ -3410,7 +3453,7 @@ class test_checkin_test(unittest.TestCase):
       +"-DTeuchos_ENABLE_SECONDARY_TESTED_CODE:BOOL=ON\n" \
       )
 
-    modifiedFilesStr = "M\tpackages/teuchos/CMakeLists.txt"
+    modifiedFilesStr = "packages/teuchos/CMakeLists.txt"
 
     checkin_test_run_case(
       \
@@ -3492,6 +3535,7 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +"IT: git diff --name-status origin/currentbranch; 0; 'M\tpackages/stokhos/CMakeLists.txt'\n" \
@@ -3752,6 +3796,7 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsFinalPushPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -3785,6 +3830,7 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +"IT: git diff --name-status origin/currentbranch; 0; 'git diff passed'\n" \
       +g_cmndinterceptsSendFinalEmail \
       ,
@@ -3817,6 +3863,7 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
@@ -3850,6 +3897,7 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsFinalPushPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -3957,11 +4005,12 @@ class test_checkin_test(unittest.TestCase):
       \
       self,
       \
-      "do_all_default_builds_mpi_debug_pull_fail",
+      "do_all_default_builds_mpi_debug_unstaged_changed_files_fail",
       \
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +"IT: git status; 0; 'Changed but not updated'\n" \
       ,
       \
@@ -3980,11 +4029,12 @@ class test_checkin_test(unittest.TestCase):
       \
       self,
       \
-      "do_all_default_builds_mpi_debug_pull_fail",
+      "do_all_default_builds_mpi_debug_staged_uncommitted_files_fail",
       \
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +"IT: git status; 0; 'Changes ready to be committed'\n" \
       ,
       \
@@ -4003,11 +4053,12 @@ class test_checkin_test(unittest.TestCase):
       \
       self,
       \
-      "do_all_default_builds_mpi_debug_pull_fail",
+      "do_all_default_builds_mpi_debug_unknown_files_fail",
       \
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +"IT: git status; 0; 'Newly created unknown files'\n" \
       ,
       \
@@ -4031,7 +4082,8 @@ class test_checkin_test(unittest.TestCase):
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
-      +"IT: git status; 0; '(on master branch)'\n" \
+      +cmndinterceptsGetRepoStatsPass() \
+      +g_cmndinterceptsStatusPasses \
       +"IT: git pull; 1; 'git pull failed'\n" \
       ,
       \
@@ -4079,6 +4131,7 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +g_cmndinterceptsSendFinalEmail \
@@ -4404,6 +4457,7 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
@@ -4525,6 +4579,8 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyFails \
@@ -4556,6 +4612,8 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
@@ -4589,6 +4647,8 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
@@ -4624,6 +4684,8 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +g_cmndinterceptsCurrentBranch \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
