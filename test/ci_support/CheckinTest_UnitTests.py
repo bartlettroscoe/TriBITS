@@ -1606,6 +1606,8 @@ class test_checkin_test(unittest.TestCase):
       True,
       "[|] ID [|] Repo Dir            [|] Branch        [|] Tracking Branch      [|] C [|] M [|] [?] [|]\n" \
       "[|]  0 [|] MockTrilinos [(]Base[)] [|] currentbranch [|] origin/currentbranch [|] 4 [|]   [|]   [|]\n" \
+      "enable-packages=.. or --enable-all-packages=.auto. => git diffs w.r.t. tracking branch .will. be needed to look for changed files!\n" \
+      "Need git diffs w.r.t. tracking branch so all repos must be on a branch and have a tracking branch!\n" \
       "'': Pulled changes from this repo!\n" \
       +"There where at least some changes pulled!\n" \
       +g_expectedRegexUpdateWithBuildCasePasses \
@@ -3095,7 +3097,9 @@ class test_checkin_test(unittest.TestCase):
       "\-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON\n",
       modifiedFilesStr = "dummy.txt", # Will not trigger any enables!
       extraPassRegexStr=\
-        "Enabling all packages on request since --enable-all-packages=on\n"\
+        "enable-all-packages=on => git diffs w.r.t. tracking branch .will not. be needed to look for changed files!\n" \
+        "No need for repos to be on a branch with a tracking branch!\n" \
+        +"Enabling all packages on request since --enable-all-packages=on\n"\
         +"Skipping detection of changed packages since --enable-all-packages=on\n"\
         +"cmakePkgOptions: ..-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON., .-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON., .-DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON..\n"\
         ,
@@ -3136,6 +3140,78 @@ class test_checkin_test(unittest.TestCase):
       +"0) MPI_DEBUG => No configure, build, or test for MPI_DEBUG was requested! => Not ready to push!\n" \
       +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       +"^NOT READY TO PUSH: Trilinos:\n"
+      )
+
+
+  def test_default_builds_mpi_debug_enable_all_packages_on_pull_only(self):
+    checkin_test_run_case(
+      self,
+      \
+      "default_builds_mpi_debug_enable_all_packages_on_pull_only",
+      \
+      "--default-builds=MPI_DEBUG --enable-all-packages=on --pull",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +g_cmndinterceptsPullPasses \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      True,
+      \
+      g_expectedRegexUpdatePasses \
+      +"enable-all-packages=on => git diffs w.r.t. tracking branch .will not. be needed to look for changed files!\n" \
+      +"Doing a pull so all repos must be on a branch and have a tracking branch!\n" \
+      +"Not performing any build cases because no --configure, --build or --test was specified!\n" \
+      +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
+      )
+
+
+  def test_default_builds_mpi_debug_enable_all_packages_off_enable_packages(self):
+    checkin_test_run_case(
+      self,
+      \
+      "default_builds_mpi_debug_enable_all_packages_off_enable_packages",
+      \
+      "--default-builds=MPI_DEBUG --enable-all-packages=off --enable-packages=Teuchos --allow-no-pull",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass() \
+      +g_cmndinterceptsDiffOnlyPasses \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      True,
+      \
+      "enable-packages!=.. and --enable-all-packages=.off. => git diffs w.r.t. tracking branch .will not. be needed to look for changed files!\n" \
+      +"No need for repos to be on a branch with a tracking branch!\n" \
+      +"Not performing any build cases because no --configure, --build or --test was specified!\n" \
+      +"NOT READY TO PUSH:\n" \
+      )
+    # TriBITS #15: ToDo: Above, have the repo in a detached-head state with no
+    # tracking branch (which will be ignored)
+    # TriBITS #15: ToDo: Above, remove the git diff since it will not be needed!
+
+
+  def test_default_builds_mpi_debug_enable_all_packages_on_push_only(self):
+    checkin_test_run_case(
+      self,
+      \
+      "default_builds_mpi_debug_enable_all_packages_on_push_only",
+      \
+      "--default-builds=MPI_DEBUG --enable-all-packages=on --push",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass() \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      False,
+      \
+      "enable-all-packages=on => git diffs w.r.t. tracking branch .will not. be needed to look for changed files!\n" \
+      +"Doing a push so all repos must be on a branch and have a tracking branch!\n" \
+      +"Skipping all updates on request!\n" \
+      +"No previous successful update is still current!\n" \
+      +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       )
 
 

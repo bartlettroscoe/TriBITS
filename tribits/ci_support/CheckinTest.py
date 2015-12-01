@@ -284,6 +284,16 @@ def getRepoStats(inOptions, gitRepo_inout):
     os.chdir(pwd)
 
 
+def assertRepoHasBranchAndTrackingBranch(inOptions, gitRepo):
+  repoName = gitRepo.repoName
+  gitRepoStats = gitRepo.gitRepoStats
+  if gitRepoStats.branch == "HEAD":
+    raise Exception("Error, the repo '"+repoName+"' is in a detached head state which" \
+      " is not allowed in this case!")
+  if gitRepoStats.trackingBranch == "":
+    raise Exception("Error, the repo '"+repoName+"' is not on a tracking branch which" \
+      " is not allowed in this case!")
+
 def splitTrackingBranch(trackingBranch):
   (repo, branch) = trackingBranch.split("/")
   return repo+" "+branch
@@ -2008,6 +2018,49 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
     # printing the table here with the actualy gitRepoStat data, we ensure
     # that it gets collected correctly and that the selection of repos is
     # exactly the same.
+
+    # Determine if we will need to perform git diffs of 
+    if inOptions.enableAllPackages == "on":
+      print "\n--enable-all-packages=on" \
+        " => git diffs w.r.t. tracking branch *will not* be needed to look for changed files!"
+      gitDiffsWrtTrackingBranchAreNeeded = False
+    elif (inOptions.enablePackages != "" and inOptions.enableAllPackages == "off"):
+      print "\n--enable-packages!='' and --enable-all-packages='off'" \
+        " => git diffs w.r.t. tracking branch *will not* be needed to look for changed files!"
+      gitDiffsWrtTrackingBranchAreNeeded = False
+    elif (inOptions.enablePackages == "" or inOptions.enableAllPackages == "auto"):
+      # If the user has not specified a set of packages to enable, or allows
+      # for logic that determines if all packages should be enabled (because
+      # base-level CMake files have changed), then we need to do git diffs to
+      # look for changed files.  This is the default set of arguments.
+      print "\n--enable-packages='' or --enable-all-packages='auto'" \
+        " => git diffs w.r.t. tracking branch *will* be needed to look for changed files!"
+      gitDiffsWrtTrackingBranchAreNeeded = True
+    else:
+      # We should never get here, but just in case, let's do the diffs.
+      print "git diffs w.r.t. tracking branch may be needed to look for changed files?"
+      gitDiffsWrtTrackingBranchAreNeeded = True
+
+    # Determine if all repos must be on a branch and have a tracking branch
+    if gitDiffsWrtTrackingBranchAreNeeded:
+      print "\nNeed git diffs w.r.t. tracking branch so all repos must be on a" \
+       " branch and have a tracking branch!"
+      reposMustHaveTrackingBranch = True
+    elif inOptions.doPull:
+      print "\nDoing a pull so all repos must be on a branch and have a tracking branch!"
+      reposMustHaveTrackingBranch = True
+    elif inOptions.doPush:
+      print "\nDoing a push so all repos must be on a branch and have a tracking branch!"
+      reposMustHaveTrackingBranch = True
+    else:
+      print "\nNo need for repos to be on a branch with a tracking branch!"
+      reposMustHaveTrackingBranch = False
+
+    # Assert that all of the repos are on a branch with a tracking branch
+    if reposMustHaveTrackingBranch:
+      repoIdx = 0
+      for gitRepo in tribitsGitRepos.gitRepoList():
+        assertRepoHasBranchAndTrackingBranch(inOptions, gitRepo)
 
     print "\n***"
     print "*** 3) Update the %s sources ..." % inOptions.projectName
