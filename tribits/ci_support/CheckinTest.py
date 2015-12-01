@@ -1997,7 +1997,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
     print "*** 3) Update the %s sources ..." % inOptions.projectName
     print "***"
 
-    repoIsClean = True
+    reposAreClean = True
     pullPassed = True
 
     doingAtLeastOnePull = inOptions.doPull
@@ -2019,26 +2019,25 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
 
         print "\n3.a."+str(repoIdx)+") Git Repo: '"+gitRepo.repoName+"'"
 
-        gitStatusOutput = getCmndOutput(inOptions.git+" status", True, throwOnError=False,
-          workingDir=getGitRepoDir(inOptions.srcDir, gitRepo.repoDir))
-  
-        print \
-          "\nOutput from 'git status':\n" + \
-          "\n--------------------------------------------------------------\n" + \
-          gitStatusOutput + \
-          "\n--------------------------------------------------------------\n"
-
         # See if the repo is clean
 
         if gitRepo.gitRepoStats.numModifiedInt() > 0:
-          print "\nERROR: There are changed uncommitted files => cannot continue!"
-          repoIsClean = False
+          repoNotCleanMsg = "\nERROR: There are changed uncommitted files => cannot continue!"
+          reposAreClean = False
   
         if gitRepo.gitRepoStats.numUntrackedInt() > 0:
-          print "\nERROR: There are newly created uncommitted files => Cannot continue!"
-          repoIsClean = False
+          repoNotCleanMsg = "\nERROR: There are newly created uncommitted files => Cannot continue!"
+          reposAreClean = False
   
-        if not repoIsClean:
+        if not reposAreClean:
+          print repoNotCleanMsg
+          gitStatusOutput = getCmndOutput(inOptions.git+" status", True, throwOnError=False,
+            workingDir=getGitRepoDir(inOptions.srcDir, gitRepo.repoDir))
+          print \
+            "\nOutput from 'git status':\n" + \
+            "\n--------------------------------------------------------------\n" + \
+            gitStatusOutput + \
+            "\n--------------------------------------------------------------\n"
           print \
              "\nExplanation: In order to do a meaningful test to allow a push, all files\n" \
              "in the local repo must be committed.  Otherwise, if there are changed but not\n" \
@@ -2177,14 +2176,14 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
         " was specified!\n"
       runBuildCases = False
     elif doingAtLeastOnePull:
-      if repoIsClean and not pulledSomeChanges and \
+      if reposAreClean and not pulledSomeChanges and \
         inOptions.abortGracefullyIfNoUpdates \
         :
         print "\nNot performing any build cases because pull did not bring any *new* commits" \
           " and --abort-gracefully-if-no-updates was set!\n"
         abortGracefullyDueToNoUpdates = True
         runBuildCases = False
-      elif repoIsClean and not hasChangesToPush and \
+      elif reposAreClean and not hasChangesToPush and \
         inOptions.abortGracefullyIfNoChangesToPush \
         :
         print "\nNot perfoming any build cases because there are no local changes to push" \

@@ -1012,12 +1012,6 @@ def cmndinterceptsGetRepoStatsPass(modifiedFile="", changedFile=""):
     "IT: git shortlog -s HEAD .origin/currentbranch; 0; '    4  John Doe'\n" \
     "IT: git status --porcelain; 0; '"+changedFile+"'\n"
 
-g_cmndinterceptsStatusPasses = \
-  "IT: git status; 0; '(on master branch)'\n"
-
-g_cmndinterceptsStatusChangedButNotUpdatedPasses = \
-  "IT: git status; 0; 'Changed but not updated'\n"
-
 g_cmndinterceptsPullOnlyPasses = \
   "IT: git pull; 0; 'pulled changes passes'\n"
 
@@ -1029,7 +1023,6 @@ g_cmndinterceptsPullOnlyNoUpdatesPasses = \
 
 g_cmndinterceptsStatusPullPasses = \
   cmndinterceptsGetRepoStatsPass()+ \
-  g_cmndinterceptsStatusPasses+ \
   g_cmndinterceptsPullOnlyPasses
 
 g_cmndinterceptsDiffOnlyPasses = \
@@ -1117,9 +1110,7 @@ g_cmndinterceptsSendFinalEmail = \
 g_cmndinterceptsExtraRepo1ThroughStatusPasses = \
   g_cmndinterceptsDumpDepsXMLFile \
   +cmndinterceptsGetRepoStatsPass() \
-  +cmndinterceptsGetRepoStatsPass() \
-  +g_cmndinterceptsStatusPasses \
-  +g_cmndinterceptsStatusPasses
+  +cmndinterceptsGetRepoStatsPass()
 
 g_cmndinterceptsExtraRepo1DoAllThroughTest = \
   g_cmndinterceptsExtraRepo1ThroughStatusPasses \
@@ -2126,8 +2117,6 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass() \
       +cmndinterceptsGetRepoStatsPass() \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +"IT: git pull somemachine someotherbranch; 0; 'git extra pull passed'\n"
@@ -2483,8 +2472,6 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass() \
       +cmndinterceptsGetRepoStatsPass() \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsDiffOnlyPasses \
@@ -2538,9 +2525,6 @@ class test_checkin_test(unittest.TestCase):
       +cmndinterceptsGetRepoStatsPass() \
       +cmndinterceptsGetRepoStatsPass() \
       +cmndinterceptsGetRepoStatsPass() \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
@@ -2587,9 +2571,6 @@ class test_checkin_test(unittest.TestCase):
       +cmndinterceptsGetRepoStatsPass() \
       +cmndinterceptsGetRepoStatsPass() \
       +cmndinterceptsGetRepoStatsPass() \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
@@ -2645,8 +2626,6 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass() \
       +cmndinterceptsGetRepoStatsPass() \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +"IT: git diff --name-status origin/currentbranch; 0; ''\n" \
@@ -2701,10 +2680,6 @@ class test_checkin_test(unittest.TestCase):
       +cmndinterceptsGetRepoStatsPass() \
       +cmndinterceptsGetRepoStatsPass() \
       +cmndinterceptsGetRepoStatsPass() \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
@@ -2794,8 +2769,6 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass() \
       +cmndinterceptsGetRepoStatsPass() \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsDiffOnlyPasses \
@@ -2861,8 +2834,6 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass() \
       +cmndinterceptsGetRepoStatsPass() \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsDiffOnlyPasses \
@@ -2915,13 +2886,14 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass(changedFile=" M somefile") \
-      +g_cmndinterceptsStatusPasses \
+      +"IT: git status; 0; 'Git status returned changed but not updated'\n" \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
       False,
       \
       "ERROR: There are changed uncommitted files => cannot continue!\n" \
+      +"Git status returned changed but not updated\n" \
       +"No changes were pulled!\n" \
       +"Skipping getting list of modified files because pull failed!\n" \
       +"Not running any build/test cases because the update (pull) failed!\n" \
@@ -3499,7 +3471,6 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass() \
-      +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +"IT: git diff --name-status origin/currentbranch; 0; 'M\tpackages/stokhos/CMakeLists.txt'\n" \
       +g_cmndinterceptsConfigBuildTestPasses \
@@ -3965,12 +3936,13 @@ class test_checkin_test(unittest.TestCase):
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass(changedFile="M  newfile") \
-      +g_cmndinterceptsStatusPasses \
+      +"IT: git status; 0; 'Git status returned changed and staged but not committed'\n" \
       ,
       \
       False,
       \
       "ERROR: There are changed uncommitted files => cannot continue!\n" \
+      "Git status returned changed and staged but not committed\n" \
       "Update failed!\n" \
       "Not running any build/test cases because the update (pull) failed!\n" \
       "A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
@@ -3987,13 +3959,14 @@ class test_checkin_test(unittest.TestCase):
       \
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
-      +cmndinterceptsGetRepoStatsPass(changedFile=" M somefile") \
-      +g_cmndinterceptsStatusPasses \
+      +cmndinterceptsGetRepoStatsPass(changedFile="MM somefile") \
+      +"IT: git status; 0; 'Git status returned both changed and staged but not committed'\n" \
       ,
       \
       False,
       \
       "ERROR: There are changed uncommitted files => cannot continue!\n" \
+      "Git status returned both changed and staged but not committed\n" \
       "Update failed!\n" \
       "Not running any build/test cases because the update (pull) failed!\n" \
       "A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
@@ -4011,7 +3984,7 @@ class test_checkin_test(unittest.TestCase):
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass(changedFile="?? newfile") \
-      +g_cmndinterceptsStatusPasses \
+      +"IT: git status; 0; 'New unknown files'\n" \
       ,
       \
       False,
@@ -4034,7 +4007,6 @@ class test_checkin_test(unittest.TestCase):
       "--do-all",
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass() \
-      +g_cmndinterceptsStatusPasses \
       +"IT: git pull; 1; 'git pull failed'\n" \
       ,
       \
@@ -4520,8 +4492,6 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass() \
       +cmndinterceptsGetRepoStatsPass() \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyFails \
       +g_cmndinterceptsSendFinalEmail \
       ,
@@ -4552,8 +4522,6 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass() \
       +cmndinterceptsGetRepoStatsPass() \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyFails \
       +g_cmndinterceptsSendFinalEmail \
@@ -4586,8 +4554,6 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass() \
       +cmndinterceptsGetRepoStatsPass() \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyFails \
@@ -4622,8 +4588,6 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass() \
       +cmndinterceptsGetRepoStatsPass() \
-      +g_cmndinterceptsStatusPasses \
-      +g_cmndinterceptsStatusPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
