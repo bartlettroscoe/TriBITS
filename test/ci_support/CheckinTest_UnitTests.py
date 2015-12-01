@@ -1604,7 +1604,8 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       True,
-      \
+      "[|] ID [|] Repo Dir            [|] Branch        [|] Tracking Branch      [|] C [|] M [|] [?] [|]\n" \
+      "[|]  0 [|] MockTrilinos [(]Base[)] [|] currentbranch [|] origin/currentbranch [|] 4 [|]   [|]   [|]\n" \
       "'': Pulled changes from this repo!\n" \
       +"There where at least some changes pulled!\n" \
       +g_expectedRegexUpdateWithBuildCasePasses \
@@ -2013,6 +2014,9 @@ class test_checkin_test(unittest.TestCase):
       \
       True,
       \
+      "[|] ID [|] Repo Dir             [|] Branch        [|] Tracking Branch      [|] C [|] M [|] [?] [|]\n" \
+      "[|]  0 [|] MockTrilinos [(]Base[)]  [|] currentbranch [|] origin/currentbranch [|] 4 [|]   [|]   [|]\n" \
+      "[|]  1 [|] preCopyrightTrilinos [|] currentbranch [|] origin/currentbranch [|] 4 [|]   [|]   [|]\n" \
       "-extra-repos=.preCopyrightTrilinos.\n" \
       +"Pulling in packages from POST extra repos: preCopyrightTrilinos ...\n" \
       +"projectDepsXmlFileOverride="+projectDepsXmlFileOverride+"\n" \

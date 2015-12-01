@@ -1847,6 +1847,15 @@ def getProjectName(sourceDirectory):
     'The file %s does not set the PROJECT_NAME variable. ' +
     'This is required of any Tribits project.')
 
+
+def getRepoStatTableDirName(inOptions, repoDir):
+  if repoDir == "":
+    repoStatTableDirName = gitdist.getBaseRepoTblName(
+      gitdist.getBaseDirNameFromPath(os.path.abspath(inOptions.srcDir)))
+  else:
+    repoStatTableDirName = repoDir
+  return repoStatTableDirName
+
   
 def checkinTest(tribitsDir, inOptions, configuration={}):
   """
@@ -1987,11 +1996,18 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
     print "*** 2) Get repo status"
     print "***\n"
 
+    repoIdx = 0
+    repoStatTable = gitdist.RepoStatTable()
     for gitRepo in tribitsGitRepos.gitRepoList():
       getRepoStats(inOptions, gitRepo)
-      print gitRepo.repoName+": "+ str(gitRepo.gitRepoStats)
-
-    # ToDo: Assert that repo status 
+      repoStatTableDirName = getRepoStatTableDirName(inOptions, gitRepo.repoDir)
+      repoStatTable.insertRepoStat(repoStatTableDirName, gitRepo.gitRepoStats, repoIdx)
+      repoIdx += 1
+    print gitdist.createAsciiTable(repoStatTable.getTableData())
+    # NOTE: Above, we could just call 'gitdist dist-repo-status' but by
+    # printing the table here with the actualy gitRepoStat data, we ensure
+    # that it gets collected correctly and that the selection of repos is
+    # exactly the same.
 
     print "\n***"
     print "*** 3) Update the %s sources ..." % inOptions.projectName
