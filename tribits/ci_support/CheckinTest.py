@@ -307,7 +307,7 @@ def executePull(gitRepo, inOptions, baseTestDir, outFile, pullFromRepo=None,
     cmnd += " " + repoSpaceBranch
   else:
     print "\nPulling in updates from '"+gitRepo.gitRepoStats.trackingBranch+"' ..."
-    # NOTE: If you do 'git pull origin <branch>', then the list of locally
+    # NOTE: If you do 'git pull <remote> <branch>', then the list of locally
     # modified files will be wrong.  I don't know why this is but if instead
     # you do a raw 'git pull', then the right list of files shows up.
   if doRebase:
@@ -2064,7 +2064,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
       # test/push process where multiple pulls may be needed before it works.
 
       #
-      print "\n3.b) Pull updates from the global 'origin' repo ..."
+      print "\n3.b) Pull updates from remote tracking branch ..."
       #
     
       if inOptions.doPull and pullPassed:
@@ -2085,7 +2085,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
             break
           repoIdx += 1
       else:
-        print "\nSkipping initial pull from 'origin'!\n"
+        print "\nSkipping initial pull from remote tracking branch!\n"
   
       #
       print "\n3.c) Pull updates from the extra repository '"+inOptions.extraPullFrom+"' ..."
