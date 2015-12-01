@@ -1010,9 +1010,9 @@ g_cmndinterceptsCurrentBranch = \
 
 def cmndinterceptsGetRepoStatsPass(modifiedFile=""):
   return \
-    "IT: git rev-parse --abbrev-ref HEAD; 0; 'master'\n" \
-    "IT: git rev-parse --abbrev-ref --symbolic-full-name @{u}; 0; 'origin/master'\n" \
-    "IT: git shortlog -s HEAD .origin/master; 0; '    4  John Doe'\n" \
+    "IT: git rev-parse --abbrev-ref HEAD; 0; 'currentbranch'\n" \
+    "IT: git rev-parse --abbrev-ref --symbolic-full-name @{u}; 0; 'origin/currentbranch'\n" \
+    "IT: git shortlog -s HEAD .origin/currentbranch; 0; '    4  John Doe'\n" \
     "IT: git status --porcelain; 0; '"+modifiedFile+"'\n"
 
 g_cmndinterceptsStatusPasses = \

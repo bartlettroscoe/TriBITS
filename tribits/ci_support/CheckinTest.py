@@ -283,6 +283,12 @@ def getRepoStats(inOptions, gitRepo_inout):
   finally:
     os.chdir(pwd)
 
+
+def splitTrackingBranch(trackingBranch):
+  (repo, branch) = trackingBranch.split("/")
+  return repo+" "+branch
+
+
 def didSinglePullBringChanges(pullOutFileFullPath):
   pullOutFileStr = readStrFromFile(pullOutFileFullPath)
   #print "\npullOutFileStr:\n" + pullOutFileStr
@@ -300,12 +306,12 @@ def executePull(gitRepo, inOptions, baseTestDir, outFile, pullFromRepo=None,
     print "\nPulling in updates from '"+repoSpaceBranch+"' ...\n"
     cmnd += " " + repoSpaceBranch
   else:
-    print "\nPulling in updates from 'origin' ..."
+    print "\nPulling in updates from '"+gitRepo.gitRepoStats.trackingBranch+"' ..."
     # NOTE: If you do 'git pull origin <branch>', then the list of locally
     # modified files will be wrong.  I don't know why this is but if instead
     # you do a raw 'git pull', then the right list of files shows up.
   if doRebase:
-    cmnd += " && "+inOptions.git+" rebase origin/"+inOptions.currentBranch
+    cmnd += " && "+inOptions.git+" rebase "+gitRepo.gitRepoStats.trackingBranch
   outFileFullPath = os.path.join(baseTestDir, outFile)
   (updateRtn, updateTimings) = echoRunSysCmnd( cmnd,
     workingDir=getGitRepoDir(inOptions.srcDir, gitRepo.repoDir),
@@ -724,7 +730,7 @@ def getCurrentBranchName(inOptions, baseTestDir):
 
 def getCurrentDiffOutput(gitRepo, inOptions, baseTestDir):
   echoRunSysCmnd(
-    inOptions.git+" diff --name-status origin/"+inOptions.currentBranch,
+    inOptions.git+" diff --name-status "+gitRepo.gitRepoStats.trackingBranch,
     workingDir=getGitRepoDir(inOptions.srcDir, gitRepo.repoDir),
     outFile=os.path.join(baseTestDir, getModifiedFilesOutputFileName(gitRepo.repoName)),
     timeCmnd=True
@@ -1760,7 +1766,8 @@ def getLocalCommitsSummariesStr(inOptions, gitRepo, appendRepoName):
 
   # Get the list of local commits other than this one
   rawLocalCommitsStr = getCmndOutput(
-    inOptions.git+" log --oneline "+inOptions.currentBranch+" ^origin/"+inOptions.currentBranch,
+    inOptions.git+" log --oneline "+gitRepo.gitRepoStats.branch \
+      +" ^"+gitRepo.gitRepoStats.trackingBranch,
     True,
     workingDir=getGitRepoDir(inOptions.srcDir, gitRepo.repoDir)
     )
@@ -1799,7 +1806,8 @@ def getLocalCommitsSHA1ListStr(inOptions, gitRepo):
 
   # Get the raw output from the last current commit log
   rawLocalCommitsStr = getCmndOutput(
-    inOptions.git+" log --pretty=format:'%h' "+inOptions.currentBranch+"^ ^origin/"+inOptions.currentBranch,
+    inOptions.git+" log --pretty=format:'%h' "\
+      +gitRepo.gitRepoStats.branch+"^ ^"+gitRepo.gitRepoStats.trackingBranch,
     True,
     workingDir=getGitRepoDir(inOptions.srcDir, gitRepo.repoDir)
     )
@@ -1995,12 +2003,11 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
 
     print "\n***"
     print "*** 2) Get repo status"
-    print "***"
+    print "***\n"
 
-    repoIdx = 0
     for gitRepo in tribitsGitRepos.gitRepoList():
       getRepoStats(inOptions, gitRepo)
-      print str(gitRepo.gitRepoStats)
+      print gitRepo.repoName+": "+ str(gitRepo.gitRepoStats)
 
     # ToDo: Assert that repo status 
 
@@ -2557,7 +2564,8 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
 
             if not debugSkipPush:
               pushRtn = echoRunSysCmnd(
-                inOptions.git+" push origin "+inOptions.currentBranch,
+                inOptions.git+" push "\
+                  +splitTrackingBranch(gitRepo.gitRepoStats.trackingBranch),
                 workingDir=getGitRepoDir(inOptions.srcDir, gitRepo.repoDir),
                 outFile=os.path.join(baseTestDir, getPushOutputFileName(gitRepo.repoName)),
                 throwExcept=False, timeCmnd=True )
