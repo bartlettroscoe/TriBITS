@@ -717,17 +717,6 @@ def readAndAppendCMakeOptions(
 reModifiedFiles = re.compile(r"^[MAD]\t(.+)$")
 
 
-def getCurrentBranchName(inOptions, baseTestDir):
-  branchesStr = getCmndOutput(inOptions.git+" branch", workingDir=inOptions.srcDir)
-  for branchName in branchesStr.splitlines():
-    #print "branchName =", branchName
-    if branchName[0] == '*':
-      currentBranch = branchName.split(' ')[1]
-      #print "currentBranch =", currentBranch
-      setattr(inOptions, "currentBranch", currentBranch)
-      break
-
-
 def getCurrentDiffOutput(gitRepo, inOptions, baseTestDir):
   echoRunSysCmnd(
     inOptions.git+" diff --name-status "+gitRepo.gitRepoStats.trackingBranch,
@@ -1966,13 +1955,6 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
         allValidPackageTypesList,  False, False, [])
   
   try:
-
-    print "\n***"
-    print "*** 0) Get the current branch name ..."
-    print "***"
-
-    getCurrentBranchName(inOptions, baseTestDir)
-    print "\nCurrent branch name = " + inOptions.currentBranch
 
     print "\n***"
     print "*** 1) Clean old output files ..."
