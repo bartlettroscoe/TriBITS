@@ -732,19 +732,21 @@ reModifiedFiles = re.compile(r"^[MAD]\t(.+)$")
 
 
 def getCurrentDiffOutput(gitRepo, inOptions, baseTestDir):
-  echoRunSysCmnd(
-    inOptions.git+" diff --name-status "+gitRepo.gitRepoStats.trackingBranch,
-    workingDir=getGitRepoDir(inOptions.srcDir, gitRepo.repoDir),
-    outFile=os.path.join(baseTestDir, getModifiedFilesOutputFileName(gitRepo.repoName)),
-    timeCmnd=True
-    )
+  if gitRepo.gitRepoStats.numCommitsInt() > 0:
+    echoRunSysCmnd(
+      inOptions.git+" diff --name-status "+gitRepo.gitRepoStats.trackingBranch,
+      workingDir=getGitRepoDir(inOptions.srcDir, gitRepo.repoDir),
+      outFile=os.path.join(baseTestDir, getModifiedFilesOutputFileName(gitRepo.repoName)),
+      timeCmnd=True
+      )
 
 
 def repoHasModifiedFiles(gitRepo, baseTestDir):
-  modifiedFilesStr = readStrFromFile(
-    baseTestDir+"/"+getModifiedFilesOutputFileName(gitRepo.repoName))
-  if modifiedFilesStr:
-    return True
+  if gitRepo.gitRepoStats.numCommitsInt() > 0:
+    modifiedFilesStr = readStrFromFile(
+      baseTestDir+"/"+getModifiedFilesOutputFileName(gitRepo.repoName))
+    if modifiedFilesStr:
+      return True
   return False
 
 

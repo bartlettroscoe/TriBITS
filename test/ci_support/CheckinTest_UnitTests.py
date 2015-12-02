@@ -1039,9 +1039,6 @@ g_cmndinterceptsStatusPullPasses = \
 g_cmndinterceptsDiffOnlyPasses = \
   "IT: git diff --name-status origin/currentbranch; 0; 'M\tpackages/teuchos/CMakeLists.txt'\n"
 
-g_cmndinterceptsDiffOnlyNoChangesPasses = \
-  "IT: git diff --name-status origin/currentbranch; 0; ''\n"
-
 g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos = \
   "IT: git diff --name-status origin/currentbranch; 0; 'M\tteko/CMakeLists.txt'\n"
 
@@ -1054,8 +1051,7 @@ g_cmndinterceptsPullPasses = \
 
 g_cmndinterceptsNoChangesPullPasses = \
   cmndinterceptsGetRepoStatsPass(numCommits="0") \
-  +g_cmndinterceptsPullOnlyPasses \
-  +g_cmndinterceptsDiffOnlyNoChangesPasses
+  +g_cmndinterceptsPullOnlyPasses
 
 g_cmndinterceptsConfigPasses = \
   "IT: \./do-configure; 0; 'do-configure passed'\n"
@@ -1135,29 +1131,31 @@ g_cmndinterceptsExtraRepo1DoAllThroughTest = \
   +g_cmndinterceptsSendBuildTestCaseEmail
 
 g_cmndinterceptsExtraRepo1TrilinosChangesDoAllThroughTest = \
-  g_cmndinterceptsExtraRepo1ThroughStatusPasses \
+  g_cmndinterceptsDumpDepsXMLFile \
+  +cmndinterceptsGetRepoStatsPass() \
+  +cmndinterceptsGetRepoStatsPass(numCommits="0") \
   +g_cmndinterceptsPullOnlyPasses \
   +g_cmndinterceptsPullOnlyPasses \
   +g_cmndinterceptsDiffOnlyPasses \
-  +g_cmndinterceptsDiffOnlyNoChangesPasses \
   +g_cmndinterceptsConfigBuildTestPasses \
   +g_cmndinterceptsSendBuildTestCaseEmail
 
 g_cmndinterceptsExtraRepo1ExtraRepoChangesDoAllThroughTest = \
-  g_cmndinterceptsExtraRepo1ThroughStatusPasses \
+  g_cmndinterceptsDumpDepsXMLFile \
+  +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+  +cmndinterceptsGetRepoStatsPass() \
   +g_cmndinterceptsPullOnlyPasses \
   +g_cmndinterceptsPullOnlyPasses \
-  +g_cmndinterceptsDiffOnlyNoChangesPasses \
   +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
   +g_cmndinterceptsConfigBuildTestPasses \
   +g_cmndinterceptsSendBuildTestCaseEmail
 
 g_cmndinterceptsExtraRepo1NoChangesDoAllThroughTest = \
-  g_cmndinterceptsExtraRepo1ThroughStatusPasses \
+  g_cmndinterceptsDumpDepsXMLFile \
+  +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+  +cmndinterceptsGetRepoStatsPass(numCommits="0") \
   +g_cmndinterceptsPullOnlyPasses \
   +g_cmndinterceptsPullOnlyPasses \
-  +g_cmndinterceptsDiffOnlyNoChangesPasses \
-  +g_cmndinterceptsDiffOnlyNoChangesPasses \
   +g_cmndinterceptsConfigBuildTestPasses \
   +g_cmndinterceptsSendBuildTestCaseEmail
 
@@ -1175,8 +1173,6 @@ g_cmndinterceptsExtraRepo1TrilinosChangesDoAllUpToPush = \
   +g_cmndinterceptsFinalPullRebasePasses \
   +g_cmndinterceptsFinalPullRebasePasses \
   +g_cmnginterceptsEgLogCmnds \
-  +g_cmndinterceptsAmendCommitPasses \
-  +g_cmnginterceptsEgLogCmnds \
   +g_cmndinterceptsAmendCommitPasses
 
 g_cmndinterceptsExtraRepo1ExtraRepoChangesDoAllUpToPush = \
@@ -1184,18 +1180,12 @@ g_cmndinterceptsExtraRepo1ExtraRepoChangesDoAllUpToPush = \
   +g_cmndinterceptsFinalPullRebasePasses \
   +g_cmndinterceptsFinalPullRebasePasses \
   +g_cmnginterceptsEgLogCmnds \
-  +g_cmndinterceptsAmendCommitPasses \
-  +g_cmnginterceptsEgLogCmnds \
   +g_cmndinterceptsAmendCommitPasses
 
 g_cmndinterceptsExtraRepo1NoChangesDoAllUpToPush = \
   g_cmndinterceptsExtraRepo1NoChangesDoAllThroughTest \
   +g_cmndinterceptsFinalPullRebasePasses \
   +g_cmndinterceptsFinalPullRebasePasses \
-  +g_cmnginterceptsEgLogCmnds \
-  +g_cmndinterceptsAmendCommitPasses \
-  +g_cmnginterceptsEgLogCmnds \
-  +g_cmndinterceptsAmendCommitPasses
 
 g_expectedRegexUpdatePasses = \
   "Update passed!\n" \
@@ -1919,9 +1909,8 @@ class test_checkin_test(unittest.TestCase):
       " --abort-gracefully-if-no-enables --do-all --push",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsStatusPullPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
-      +g_cmndinterceptsLogCommitsPasses \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +g_cmndinterceptsPullOnlyPasses \
       ,
       \
       True,
@@ -2204,7 +2193,6 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsExtraRepo1TrilinosChangesDoAllUpToPush \
       +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsLogCommitsPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
@@ -2236,7 +2224,6 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsExtraRepo1ExtraRepoChangesDoAllUpToPush \
       +g_cmndinterceptsPushOnlyPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
@@ -2270,7 +2257,6 @@ class test_checkin_test(unittest.TestCase):
       +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsLogCommitsPasses \
       ,
@@ -2311,7 +2297,6 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsLogCommitsPasses \
       ,
@@ -2352,7 +2337,6 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -2390,7 +2374,6 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -2428,7 +2411,6 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -2466,7 +2448,6 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
       +g_cmndinterceptsDiffOnlyPassesPreCopyrightTrilinos \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -2499,8 +2480,6 @@ class test_checkin_test(unittest.TestCase):
       g_cmndinterceptsExtraRepo1ThroughStatusNoChangesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
       +g_cmndinterceptsPullOnlyNoUpdatesPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
-      +g_cmndinterceptsDiffOnlyNoChangesPasses \
       ,
       \
       True,
@@ -4727,8 +4706,6 @@ class test_checkin_test(unittest.TestCase):
       " --extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --do-all --push", \
       \
       g_cmndinterceptsExtraRepo1NoChangesDoAllUpToPush \
-      +g_cmndinterceptsLogCommitsPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
