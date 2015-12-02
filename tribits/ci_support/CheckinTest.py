@@ -1928,18 +1928,17 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
     removeIfExists(getProjectDependenciesXmlGenerateOutputFileName(inOptions.projectName))
     removeIfExists(getProjectExtraReposPythonOutFile(inOptions.projectName))
 
-  # Set up list of repositories and process dependenices
+  print "\n***"
+  print "*** 0) Read project dependencies files and build dependencies graph ..."
+  print "***"
 
   tribitsGitRepos = TribitsGitRepos()
   tribitsGitRepos.initFromCommandlineArguments(inOptions)
   #print "\ntribitsGitRepos =", tribitsGitRepos
 
-  print "\n***"
-  print "*** 0) Read project dependencies files and build dependencies graph ..."
-  print "***"
-
   createAndGetProjectDependencies(inOptions, baseTestDir, tribitsGitRepos)
 
+  # Assert the names of packages passed in
   assertPackageNames("--enable-packages", inOptions.enablePackages)
   assertPackageNames("--disable-packages", inOptions.disablePackages)
 
