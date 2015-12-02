@@ -2576,19 +2576,6 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
 
       if not amendFinalCommitPassed: okayToPush = False
 
-      # Get the updated SHA1 after the commit has been (or has not been)
-      # amended but before the push!  NOTE: We grab the list of commits even
-      # if we don't ammend the last commit message
-      repoIdx = 0
-      for gitRepo in tribitsGitRepos.gitRepoList():
-        localCommitSummariesStr = \
-          getLocalCommitsSummariesStr(inOptions, gitRepo)
-        if allLocalCommitSummariesStr:
-          allLocalCommitSummariesStr += ("\n" + localCommitSummariesStr)
-        else:
-          allLocalCommitSummariesStr = localCommitSummariesStr
-        repoIdx += 1
-
       #
       print "\n7.c) Pushing the the local commits to the global repo ...\n"
       #
@@ -2754,7 +2741,19 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
       #
       print "\n9.b) Create and send out push (or readiness status) notification email ..."
       #
-    
+
+      # Get the updated SHA1 after the commit has been (or has not been)
+      # amended but before the push!
+      repoIdx = 0
+      for gitRepo in tribitsGitRepos.gitRepoList():
+        localCommitSummariesStr = \
+          getLocalCommitsSummariesStr(inOptions, gitRepo)
+        if allLocalCommitSummariesStr:
+          allLocalCommitSummariesStr += ("\n" + localCommitSummariesStr)
+        else:
+          allLocalCommitSummariesStr = localCommitSummariesStr
+        repoIdx += 1
+
       subjectLine += ": %s: %s" % (inOptions.projectName, getHostname())
     
       emailBodyStr = subjectLine + "\n\n"
