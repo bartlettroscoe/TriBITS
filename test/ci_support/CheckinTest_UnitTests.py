@@ -1070,7 +1070,6 @@ g_cmndinterceptsConfigBuildTestPasses = \
 
 g_cmnginterceptsEgLogCmnds = \
   "IT: git cat-file -p HEAD; 0; 'This is the last commit message'\n" \
-  "IT: git log --oneline currentbranch \^origin/currentbranch; 0; '12345 Only one commit'\n" \
   "IT: git log --pretty=format:'%h' currentbranch\^ \^origin/currentbranch; 0; '12345'\n"
 
 g_cmndinterceptsFinalPullRebasePasses = \

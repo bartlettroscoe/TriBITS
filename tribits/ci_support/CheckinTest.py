@@ -2531,7 +2531,6 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
 
               # Get info about current commit and local commits
               lastCommitMessageStr = getLastCommitMessageStr(inOptions, gitRepo)
-              localCommitSummariesStr = getLocalCommitsSummariesStr(inOptions, gitRepo)
               localCommitSHA1ListStr = getLocalCommitsSHA1ListStr(inOptions, gitRepo)
  
               # Get then final commit message
