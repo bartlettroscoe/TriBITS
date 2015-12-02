@@ -2230,14 +2230,14 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
     hasChangesToPush = False
 
     if pullPassed:
-
-      for gitRepo in tribitsGitRepos.gitRepoList():
-        getCurrentDiffOutputAndLogModified(inOptions, gitRepo, baseTestDir)
-        if gitRepo.hasChanges:
-          hasChangesToPush = True
-
+      if gitDiffsWrtTrackingBranchAreNeeded:
+        for gitRepo in tribitsGitRepos.gitRepoList():
+          getCurrentDiffOutputAndLogModified(inOptions, gitRepo, baseTestDir)
+          if gitRepo.hasChanges:
+            hasChangesToPush = True
+      else:
+        print "\nSkipping getting list of modified files because not needed!\n"
     else:
-
       print "\nSkipping getting list of modified files because pull failed!\n"
 
 

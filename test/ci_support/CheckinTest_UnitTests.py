@@ -1422,7 +1422,7 @@ def g_test_do_all_default_builds_mpi_debug_pass(testObject, testName):
 
 
 def checkin_test_configure_test(testObject, testName, optionsStr, filePassRegexStrList, \
-  fileFailRegexStrList=[], modifiedFilesStr="", extraPassRegexStr="" \
+  fileFailRegexStrList=[], modifiedFilesStr="", extraPassRegexStr="", doGitDiff=True \
   ):
 
   if modifiedFilesStr == "" :
@@ -1431,6 +1431,12 @@ def checkin_test_configure_test(testObject, testName, optionsStr, filePassRegexS
   else:
     modifiedFilesStr = "M\t"+modifiedFilesStr
     modifiedFilesPorcelainStr = " M "+modifiedFilesStr
+
+  if doGitDiff:
+    gitDiffCmnd= \
+      "IT: git diff --name-status origin/currentbranch; 0; '"+modifiedFilesStr+"'\n"
+  else:
+    gitDiffCmnd=""
 
   checkin_test_run_case(
     \
@@ -1444,7 +1450,7 @@ def checkin_test_configure_test(testObject, testName, optionsStr, filePassRegexS
     \
     g_cmndinterceptsDumpDepsXMLFile \
     +cmndinterceptsGetRepoStatsPass(modifiedFilesPorcelainStr) \
-    +"IT: git diff --name-status origin/currentbranch; 0; '"+modifiedFilesStr+"'\n" \
+    +gitDiffCmnd \
     +g_cmndinterceptsConfigPasses \
     ,
     \
@@ -1461,7 +1467,7 @@ def checkin_test_configure_test(testObject, testName, optionsStr, filePassRegexS
 
 
 def checkin_test_configure_enables_test(testObject, testName, optionsStr, regexListStr, \
-  notRegexListStr="", modifiedFilesStr="", extraPassRegexStr="" \
+  notRegexListStr="", modifiedFilesStr="", extraPassRegexStr="", doGitDiff=True \
   ):
   checkin_test_configure_test(
      testObject,
@@ -1471,6 +1477,7 @@ def checkin_test_configure_enables_test(testObject, testName, optionsStr, regexL
      [("MPI_DEBUG/do-configure", notRegexListStr)],
      modifiedFilesStr,
      extraPassRegexStr,
+     doGitDiff
      )
 
 
@@ -3187,6 +3194,7 @@ class test_checkin_test(unittest.TestCase):
         +"Skipping detection of changed packages since --enable-all-packages=on\n"\
         +"cmakePkgOptions: ..-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON., .-DTrilinos_ENABLE_ALL_PACKAGES:BOOL=ON., .-DTrilinos_ENABLE_ALL_FORWARD_DEP_PACKAGES:BOOL=ON..\n"\
         ,
+      doGitDiff=False \
       )
 
 
@@ -3237,7 +3245,7 @@ class test_checkin_test(unittest.TestCase):
       "--default-builds=MPI_DEBUG --enable-all-packages=on --pull",
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +g_cmndinterceptsPullPasses \
+      +g_cmndinterceptsStatusPullPasses \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
@@ -3376,7 +3384,6 @@ class test_checkin_test(unittest.TestCase):
       \
       g_cmndinterceptsDumpDepsXMLFile \
       +cmndinterceptsGetRepoStatsPass() \
-      +g_cmndinterceptsDiffOnlyPasses \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
@@ -3385,6 +3392,7 @@ class test_checkin_test(unittest.TestCase):
       \
       "enable-packages!=.. and --enable-all-packages=.off. => git diffs w.r.t. tracking branch .will not. be needed to look for changed files!\n" \
       +"No need for repos to be on a branch with a tracking branch!\n" \
+      +"Skipping getting list of modified files because not needed!\n" \
       +"Not performing any build cases because no --configure, --build or --test was specified!\n" \
       +"NOT READY TO PUSH:\n" \
       )
