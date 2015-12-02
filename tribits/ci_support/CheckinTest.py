@@ -1768,16 +1768,21 @@ def getLastCommitMessageStr(inOptions, gitRepo):
 def getLocalCommitsSummariesStr(inOptions, gitRepo, appendRepoName):
 
   # Get the list of local commits other than this one
-  rawLocalCommitsStr = getCmndOutput(
-    inOptions.git+" log --oneline "+gitRepo.gitRepoStats.branch \
-      +" ^"+gitRepo.gitRepoStats.trackingBranch,
-    True,
-    workingDir=getGitRepoDir(inOptions.srcDir, gitRepo.repoDir)
-    )
+  if gitRepo.gitRepoStats.numCommitsInt() > 0:
+    rawLocalCommitsStr = getCmndOutput(
+      inOptions.git+" log --oneline "+gitRepo.gitRepoStats.branch \
+        +" ^"+gitRepo.gitRepoStats.trackingBranch,
+      True,
+      workingDir=getGitRepoDir(inOptions.srcDir, gitRepo.repoDir)
+      )
+  else:
+    rawLocalCommitsStr = ""
 
   if gitRepo.repoName and appendRepoName:
+    repoName = gitRepo.repoName
     repoNameModifier = " ("+gitRepo.repoName+")"
   else:
+    repoName = ""
     repoNameModifier = ""
 
   print \
@@ -1795,12 +1800,9 @@ def getLocalCommitsSummariesStr(inOptions, gitRepo, appendRepoName):
     print "No local commits exit!"
 
   localCommitsStr = \
-    "Local commits for this build/test group"+repoNameModifier+":\n" \
-    "----------------------------------------\n"
+    "*** "+repoName+"\n"
   if localCommitsExist:
     localCommitsStr += rawLocalCommitsStr
-  else:
-    localCommitsStr += "No local commits exist!"
 
   return (localCommitsStr, localCommitsExist)
 
@@ -2521,26 +2523,25 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
 
           try:
 
-            lastCommitMessageStr = getLastCommitMessageStr(inOptions, gitRepo)
-            #print "\nlastCommitMessageStr:\n-------------\n"+lastCommitMessageStr+"-------------\n"
-            (localCommitSummariesStr, localCommitsExist) = \
-              getLocalCommitsSummariesStr(inOptions, gitRepo, False)
-            #print "\nlocalCommitsExist =", localCommitsExist, "\n"
-            localCommitSHA1ListStr = getLocalCommitsSHA1ListStr(inOptions, gitRepo)
-  
-            # Get then final commit message
-            finalCommitEmailBodyStr = lastCommitMessageStr
-            finalCommitEmailBodyStr += getAutomatedStatusSummaryHeaderStr()
-            finalCommitEmailBodyStr += shortCommitEmailBodyExtra.encode("utf8")
-            finalCommitEmailBodyStr += localCommitSHA1ListStr
-            if forcedCommitPush:
-              finalCommitEmailBodyStr += "WARNING: Forced the push!\n"
-            finalCommitEmailBodyFileName = getFinalCommitBodyFileName(gitRepo.repoName)
-            writeStrToFile(finalCommitEmailBodyFileName, finalCommitEmailBodyStr)
-  
-            # Amend the final commit message
             if gitRepo.gitRepoStats.numCommitsInt() > 0:
+
+              # Get info about current commit and local commits
+              lastCommitMessageStr = getLastCommitMessageStr(inOptions, gitRepo)
+              (localCommitSummariesStr, localCommitsExist) = \
+                getLocalCommitsSummariesStr(inOptions, gitRepo, False)
+              localCommitSHA1ListStr = getLocalCommitsSHA1ListStr(inOptions, gitRepo)
+ 
+              # Get then final commit message
+              finalCommitEmailBodyStr = lastCommitMessageStr
+              finalCommitEmailBodyStr += getAutomatedStatusSummaryHeaderStr()
+              finalCommitEmailBodyStr += shortCommitEmailBodyExtra.encode("utf8")
+              finalCommitEmailBodyStr += localCommitSHA1ListStr
+              if forcedCommitPush:
+                finalCommitEmailBodyStr += "WARNING: Forced the push!\n"
+              finalCommitEmailBodyFileName = getFinalCommitBodyFileName(gitRepo.repoName)
+              writeStrToFile(finalCommitEmailBodyFileName, finalCommitEmailBodyStr)
   
+              # Amend the final commit message
               commitAmendRtn = echoRunSysCmnd(
                 inOptions.git+" commit --amend" \
                 " -F "+os.path.join(baseTestDir, finalCommitEmailBodyFileName),

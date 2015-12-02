@@ -1277,6 +1277,11 @@ def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
 
   verbose = g_verbose
 
+  #if expectPass:
+  #  passRegexStrList += "REQUESTED ACTIONS: PASSED\n"
+  #else:
+  #  passRegexStrList += "REQUESTED ACTIONS: FAILED\n"
+
   passRegexList = passRegexStrList.split('\n')
 
   if verbose: print "\npassRegexList =", passRegexList
@@ -4511,10 +4516,6 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsConfigBuildTestPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
       +"IT: git pull && git rebase origin/currentbranch; 0; 'final git pull and rebase passed'\n" \
-      +"IT: git cat-file -p HEAD; 0; 'This is the last commit message'\n" \
-      +"IT: git log --oneline currentbranch \^origin/currentbranch; 0; ''\n" \
-      +"IT: git log --pretty=format:'%h' currentbranch\^ \^origin/currentbranch; 0; ''\n" \
-      +"IT: git log --oneline currentbranch \^origin/currentbranch; 0; '54321 Only one commit'\n" \
       +g_cmndinterceptsSendFinalEmail \
       ,
       \
