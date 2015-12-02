@@ -1751,6 +1751,41 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
+  def test_local_do_all_detached_head_pass(self):
+    checkin_test_run_case(
+      \
+      self,
+      \
+      "local_do_all_detached_head_pass",
+      \
+      "--make-options=-j3 --ctest-options=-j5 --default-builds=MPI_DEBUG" \
+      +" --enable-all-packages=off --enable-packages=Teuchos --no-enable-fwd-packages" \
+      +" --local-do-all" \
+      ,
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsNoTrackingBranchPass(branch="HEAD") \
+      +g_cmndinterceptsConfigBuildTestPasses \
+      +g_cmndinterceptsSendBuildTestCaseEmail \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      True,
+      \
+      "enable-packages!=.. and --enable-all-packages=.off. => git diffs w.r.t. tracking branch .will not. be needed to look for changed files!\n" \
+      +"No need for repos to be on a branch with a tracking branch!\n" \
+      +"Skipping all updates on request!\n" \
+      +g_expectedRegexConfigPasses \
+      +g_expectedRegexBuildPasses \
+      +g_expectedRegexTestPasses \
+      +"0) MPI_DEBUG => passed: passed=100,notpassed=0\n" \
+      +"1) SERIAL_RELEASE => Test case SERIAL_RELEASE was not run! => Does not affect push readiness!\n" \
+      +g_expectedCommonOptionsSummary \
+      +"A current successful pull does \*not\* exist => Not ready for final push!\n" \
+      +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
+      +"^NOT READY TO PUSH: Trilinos:\n" \
+      )
+
+
   def test_do_all_default_builds_mpi_debug_test_fail_force_push_pass(self):
     checkin_test_run_case(
       \
