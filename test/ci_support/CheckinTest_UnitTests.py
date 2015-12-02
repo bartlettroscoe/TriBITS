@@ -1272,15 +1272,17 @@ def create_checkin_test_case_dir(testName, verbose=False):
 # Main unit test driver
 def checkin_test_run_case(testObject, testName, optionsStr, cmndInterceptsStr, \
   expectPass, passRegexStrList, filePassRegexStrList=None, mustHaveCheckinTestOut=True, \
-  failRegexStrList=None, fileFailRegexStrList=None, envVars=[], inPathGit=True
+  failRegexStrList=None, fileFailRegexStrList=None, envVars=[], inPathGit=True, \
+  grepForFinalPassFailStr=True \
   ):
 
   verbose = g_verbose
 
-  #if expectPass:
-  #  passRegexStrList += "REQUESTED ACTIONS: PASSED\n"
-  #else:
-  #  passRegexStrList += "REQUESTED ACTIONS: FAILED\n"
+  if grepForFinalPassFailStr:
+    if expectPass:
+      passRegexStrList += "REQUESTED ACTIONS: PASSED\n"
+    else:
+      passRegexStrList += "REQUESTED ACTIONS: FAILED\n"
 
   passRegexList = passRegexStrList.split('\n')
 
@@ -1552,7 +1554,9 @@ class test_checkin_test(unittest.TestCase):
       "Detailed Documentation:\n" \
       ".*--show-defaults.*\n" \
       ,
-      mustHaveCheckinTestOut=False
+      mustHaveCheckinTestOut=False \
+      ,
+      grepForFinalPassFailStr=False \
       )
     # Help should not write the checkin-test.out file!
     self.assertEqual(
@@ -1575,7 +1579,9 @@ class test_checkin_test(unittest.TestCase):
       +"Loading project configuration from\n" \
       ,
       mustHaveCheckinTestOut=False,
-      envVars=["TRIBITS_CHECKIN_TEST_DEBUG_DUMP=ON"]
+      envVars=["TRIBITS_CHECKIN_TEST_DEBUG_DUMP=ON"] \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -1589,7 +1595,9 @@ class test_checkin_test(unittest.TestCase):
       True,
       "Script: checkin-test.py\n" \
       ,
-      mustHaveCheckinTestOut=False
+      mustHaveCheckinTestOut=False \
+      ,
+      grepForFinalPassFailStr=False \
       )
     # Help should not write the checkin-test.out file!
     self.assertEqual(
@@ -1704,7 +1712,9 @@ class test_checkin_test(unittest.TestCase):
       \
       "Error, the .git. command is not in your path. ./usr/bin/which: no git in .path1:path2:path3.." \
       ,
-      inPathGit=False
+      inPathGit=False \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -2768,8 +2778,12 @@ class test_checkin_test(unittest.TestCase):
       "MockTrilinos/packages/TriKota/Dakota\n" \
       "Error, the command ..*cmake .*TribitsGetExtraReposForCheckinTest.cmake\n" \
       ,
-      mustHaveCheckinTestOut=False
+      mustHaveCheckinTestOut=False \
+      ,
+      grepForFinalPassFailStr=False \
       )
+    # NOTE: Above, this fails because Dakota listed as a Nightly is missing.
+    # This aborts the script with the exception.
 
 
   def test_extra_repo_file_project_continuous_extra_repos_pull(self):
@@ -2834,7 +2848,9 @@ class test_checkin_test(unittest.TestCase):
       "ERROR! Skipping missing extra repo .MissingRepo. since\n" \
       "Error, the command ..*cmake .*TribitsGetExtraReposForCheckinTest.cmake\n" \
       ,
-      mustHaveCheckinTestOut=False
+      mustHaveCheckinTestOut=False \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -3530,6 +3546,8 @@ class test_checkin_test(unittest.TestCase):
       \
       "Error, the extra build configuration file SERIAL_DEBUG_BOOST_TRACING.config" \
       +" does not exit!\n" \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -3656,6 +3674,8 @@ class test_checkin_test(unittest.TestCase):
       \
       "WARNING: --ss-extra-builds is deprecated!  Use --st-extra-builds instead!\n" \
       +"ERROR: Can.t set deprecated --ss-extra-builds and --st-extra-builds together!\n" \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -4077,6 +4097,8 @@ class test_checkin_test(unittest.TestCase):
       \
       "Error, invalid package name TEuchos in --enable-packages=TEuchos." \
       "  The valid package names include: .*Teuchos, .*\n" \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -4097,6 +4119,8 @@ class test_checkin_test(unittest.TestCase):
       \
       "Error, invalid package name TEuchos in --disable-packages=TEuchos." \
       "  The valid package names include: .*Teuchos, .*\n" \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -4116,6 +4140,8 @@ class test_checkin_test(unittest.TestCase):
       False,
       \
       "Error, you can not use --do-all and --local-do-all together!\n" \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -4135,6 +4161,8 @@ class test_checkin_test(unittest.TestCase):
       False,
       \
       "Error, you can not use --do-all and --allow-no-pull together!\n" \
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
@@ -4684,6 +4712,8 @@ class test_checkin_test(unittest.TestCase):
       ,
       \
       envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
+      ,
+      grepForFinalPassFailStr=False \
       )
 
 
