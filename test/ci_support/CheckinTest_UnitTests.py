@@ -1005,11 +1005,22 @@ class test_TribitsGitRepos(unittest.TestCase):
 g_cmndinterceptsDumpDepsXMLFile = \
   "IT: .*cmake .+ -P .+/TribitsDumpDepsXmlScript.cmake; 0; 'dump XML file passed'\n" \
 
-def cmndinterceptsGetRepoStatsPass(modifiedFile="", changedFile=""):
+def cmndinterceptsGetRepoStatsPass(modifiedFile="", changedFile="", \
+  branch = "currentbranch", trackingBranch="origin/currentbranch", \
+  numCommits = "4" \
+  ):
   return \
-    "IT: git rev-parse --abbrev-ref HEAD; 0; 'currentbranch'\n" \
-    "IT: git rev-parse --abbrev-ref --symbolic-full-name @{u}; 0; 'origin/currentbranch'\n" \
-    "IT: git shortlog -s HEAD .origin/currentbranch; 0; '    4  John Doe'\n" \
+    "IT: git rev-parse --abbrev-ref HEAD; 0; '"+branch+"'\n" \
+    "IT: git rev-parse --abbrev-ref --symbolic-full-name @{u}; 0; '"+trackingBranch+"'\n" \
+    "IT: git shortlog -s HEAD .origin/currentbranch; 0; '    "+numCommits+"  John Doe'\n" \
+    "IT: git status --porcelain; 0; '"+changedFile+"'\n"
+
+def cmndinterceptsGetRepoStatsNoTrackingBranchPass(modifiedFile="", changedFile="", \
+  branch = "currentbranch"
+  ):
+  return \
+    "IT: git rev-parse --abbrev-ref HEAD; 0; '"+branch+"'\n" \
+    "IT: git rev-parse --abbrev-ref --symbolic-full-name @{u}; 0; ''\n" \
     "IT: git status --porcelain; 0; '"+changedFile+"'\n"
 
 g_cmndinterceptsPullOnlyPasses = \
@@ -3166,6 +3177,120 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
+  def test_detached_head_fail(self):
+    checkin_test_run_case(
+      self,
+      \
+      "detached_head_fail",
+      \
+      "--default-builds=MPI_DEBUG --send-email-to=",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsNoTrackingBranchPass(branch="HEAD") \
+      ,
+      \
+      False,
+      \
+      "Need git diffs w.r.t. tracking branch so all repos must be on a branch and have a tracking branch!\n" \
+      +"Error, the base repo is in a detached head state which is not allowed in this case!\n"
+      )
+
+
+  def test_missing_tracking_branch_fail(self):
+    checkin_test_run_case(
+      self,
+      \
+      "missing_tracking_branch_fail",
+      \
+      "--default-builds=MPI_DEBUG --send-email-to=",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsNoTrackingBranchPass() \
+      ,
+      \
+      False,
+      \
+      "Need git diffs w.r.t. tracking branch so all repos must be on a branch and have a tracking branch!\n" \
+      +"Error, the base repo is not on a tracking branch which is not allowed in this case!\n"
+      )
+
+
+  def test_extra_repo_detached_head_0_fail(self):
+    checkin_test_run_case(
+      self,
+      \
+      "extra_repo_detached_head_0_fail",
+      \
+      "--extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --send-email-to=",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsNoTrackingBranchPass(branch="HEAD") \
+      +cmndinterceptsGetRepoStatsPass() \
+      ,
+      \
+      False,
+      \
+      "Error, the base repo is in a detached head state which is not allowed in this case!\n"
+      )
+
+
+  def test_extra_repo_detached_head_1_fail(self):
+    checkin_test_run_case(
+      self,
+      \
+      "extra_repo_detached_head_0_fail",
+      \
+      "--extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --send-email-to=",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsNoTrackingBranchPass(branch="HEAD") \
+      ,
+      \
+      False,
+      \
+      "Error, the repo .preCopyrightTrilinos. is in a detached head state which is not allowed in this case!\n"
+      )
+
+
+  def test_extra_repo_missing_tracking_branch_0_fail(self):
+    checkin_test_run_case(
+      self,
+      \
+      "extra_repo_missing_tracking_branch_0_fail",
+      \
+      "--extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --send-email-to=",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsNoTrackingBranchPass() \
+      +cmndinterceptsGetRepoStatsPass() \
+      ,
+      \
+      False,
+      \
+      "Error, the base repo is not on a tracking branch which is not allowed in this case!\n"
+      )
+
+
+  def test_extra_repo_missing_tracking_branch_1_fail(self):
+    checkin_test_run_case(
+      self,
+      \
+      "extra_repo_missing_tracking_branch_0_fail",
+      \
+      "--extra-repos=preCopyrightTrilinos --default-builds=MPI_DEBUG --send-email-to=",
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsNoTrackingBranchPass() \
+      ,
+      \
+      False,
+      \
+      "Error, the repo .preCopyrightTrilinos. is not on a tracking branch which is not allowed in this case!\n"
+      )
+
+
   def test_default_builds_mpi_debug_enable_all_packages_off_enable_packages(self):
     checkin_test_run_case(
       self,
@@ -3187,9 +3312,10 @@ class test_checkin_test(unittest.TestCase):
       +"Not performing any build cases because no --configure, --build or --test was specified!\n" \
       +"NOT READY TO PUSH:\n" \
       )
-    # TriBITS #15: ToDo: Above, have the repo in a detached-head state with no
-    # tracking branch (which will be ignored)
     # TriBITS #15: ToDo: Above, remove the git diff since it will not be needed!
+    # TriBITS #15: ToDo: Above, after the 'git diff' is removed, test with the
+    # repo in a detached-head state with no tracking branch (which will be
+    # ignored).
 
 
   def test_default_builds_mpi_debug_enable_all_packages_on_push_only(self):

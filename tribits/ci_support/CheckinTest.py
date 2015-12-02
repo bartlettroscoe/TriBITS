@@ -286,12 +286,16 @@ def getRepoStats(inOptions, gitRepo_inout):
 
 def assertRepoHasBranchAndTrackingBranch(inOptions, gitRepo):
   repoName = gitRepo.repoName
+  if repoName == "":
+    repoNameEntry = "base repo"
+  else:
+    repoNameEntry = "repo '"+repoName+"'"
   gitRepoStats = gitRepo.gitRepoStats
   if gitRepoStats.branch == "HEAD":
-    raise Exception("Error, the repo '"+repoName+"' is in a detached head state which" \
+    raise Exception("Error, the "+repoNameEntry+" is in a detached head state which" \
       " is not allowed in this case!")
   if gitRepoStats.trackingBranch == "":
-    raise Exception("Error, the repo '"+repoName+"' is not on a tracking branch which" \
+    raise Exception("Error, the "+repoNameEntry+" is not on a tracking branch which" \
       " is not allowed in this case!")
 
 def splitTrackingBranch(trackingBranch):
