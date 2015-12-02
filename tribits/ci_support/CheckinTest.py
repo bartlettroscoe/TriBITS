@@ -1823,7 +1823,7 @@ def getLocalCommitsSHA1ListStr(inOptions, gitRepo):
 
 
 def getLocalCommitsExist(inOptions, gitRepo):
-  if getLocalCommitsSummariesStr(inOptions, gitRepo, False)[1]:
+  if gitRepo.gitRepoStats.numCommitsInt() > 0:
     return True
   return False
 
@@ -2539,7 +2539,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
             writeStrToFile(finalCommitEmailBodyFileName, finalCommitEmailBodyStr)
   
             # Amend the final commit message
-            if localCommitsExist:
+            if gitRepo.gitRepoStats.numCommitsInt() > 0:
   
               commitAmendRtn = echoRunSysCmnd(
                 inOptions.git+" commit --amend" \

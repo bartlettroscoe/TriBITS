@@ -1053,7 +1053,8 @@ g_cmndinterceptsPullPasses = \
   +g_cmndinterceptsDiffOnlyPasses
 
 g_cmndinterceptsNoChangesPullPasses = \
-  g_cmndinterceptsStatusPullPasses \
+  cmndinterceptsGetRepoStatsPass(numCommits="0") \
+  +g_cmndinterceptsPullOnlyPasses \
   +g_cmndinterceptsDiffOnlyNoChangesPasses
 
 g_cmndinterceptsConfigPasses = \
