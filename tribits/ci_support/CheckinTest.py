@@ -1932,6 +1932,10 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
   tribitsGitRepos.initFromCommandlineArguments(inOptions)
   #print "\ntribitsGitRepos =", tribitsGitRepos
 
+  print "\n***"
+  print "*** 0) Read project dependencies files and build dependencies graph ..."
+  print "***"
+
   createAndGetProjectDependencies(inOptions, baseTestDir, tribitsGitRepos)
 
   assertPackageNames("--enable-packages", inOptions.enablePackages)
