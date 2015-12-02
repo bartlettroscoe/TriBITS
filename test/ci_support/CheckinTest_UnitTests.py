@@ -1188,12 +1188,12 @@ g_cmndinterceptsExtraRepo1NoChangesDoAllUpToPush = \
   +g_cmndinterceptsFinalPullRebasePasses \
 
 g_expectedRegexUpdatePasses = \
-  "Update passed!\n" \
+  "Pull passed!\n" \
 
 g_expectedRegexUpdateWithBuildCasePasses = \
-  "Update passed!\n" \
-  "The update passed!\n" \
-  "Update: Passed\n"
+  "Pull passed!\n" \
+  "The pull passed!\n" \
+  "Pull: Passed\n"
 
 g_expectedRegexConfigPasses = \
   "Full package enable list:.*Teuchos.*\n" \
@@ -1773,7 +1773,7 @@ class test_checkin_test(unittest.TestCase):
       \
       "enable-packages!=.. and --enable-all-packages=.off. => git diffs w.r.t. tracking branch .will not. be needed to look for changed files!\n" \
       +"No need for repos to be on a branch with a tracking branch!\n" \
-      +"Skipping all updates on request!\n" \
+      +"Skipping all pulls on request!\n" \
       +g_expectedRegexConfigPasses \
       +g_expectedRegexBuildPasses \
       +g_expectedRegexTestPasses \
@@ -2161,10 +2161,10 @@ class test_checkin_test(unittest.TestCase):
       +"'': Pulled changes from this repo!\n" \
       +".preCopyrightTrilinos.: Pulled changes from this repo!\n" \
       +"pullInitial.preCopyrightTrilinos.out\n" \
-      +"Update passed!\n"\
+      +"Pull passed!\n"\
       +"All of the tests ran passed!\n" \
       +"pullFinal.preCopyrightTrilinos.out\n" \
-      +"Final update passed!\n" \
+      +"Final pull passed!\n" \
       +"commitFinalBody.preCopyrightTrilinos.out\n" \
       +"commitFinal.preCopyrightTrilinos.out\n" \
       +"push.preCopyrightTrilinos.out\n" \
@@ -2382,7 +2382,7 @@ class test_checkin_test(unittest.TestCase):
       "Pulled changes from this repo!\n" \
       +"Did not pull any changes from this repo!\n" \
       +"There where at least some changes pulled!\n" \
-      +"Update passed!\n" \
+      +"Pull passed!\n" \
       +"NOT READY TO PUSH\n" \
       ,
       \
@@ -2419,7 +2419,7 @@ class test_checkin_test(unittest.TestCase):
       "Pulled changes from this repo!\n" \
       +"Did not pull any changes from this repo!\n" \
       +"There where at least some changes pulled!\n" \
-      +"Update passed!\n" \
+      +"Pull passed!\n" \
       +"NOT READY TO PUSH\n" \
       ,
       \
@@ -2456,7 +2456,7 @@ class test_checkin_test(unittest.TestCase):
       "Pulled changes from this repo!\n" \
       +"Did not pull any changes from this repo!\n" \
       +"There where at least some changes pulled!\n" \
-      +"Update passed!\n" \
+      +"Pull passed!\n" \
       +"NOT READY TO PUSH\n" \
       ,
       \
@@ -2493,7 +2493,7 @@ class test_checkin_test(unittest.TestCase):
       "Pulled changes from this repo!\n" \
       +"Did not pull any changes from this repo!\n" \
       +"There where at least some changes pulled!\n" \
-      +"Update passed!\n" \
+      +"Pull passed!\n" \
       +"NOT READY TO PUSH\n" \
       ,
       \
@@ -3007,7 +3007,7 @@ class test_checkin_test(unittest.TestCase):
       +"Git status returned changed but not updated\n" \
       +"No changes were pulled!\n" \
       +"Skipping getting list of modified files because pull failed!\n" \
-      +"Not running any build/test cases because the update (pull) failed!\n" \
+      +"Not running any build/test cases because the pull failed!\n" \
       +"  => A PUSH IS .NOT. READY TO BE PERFORMED!\n" \
       +"INITIAL PULL FAILED\n" \
       +"To find out more about this failure, grep the .checkin-test.out. log\n" \
@@ -3434,8 +3434,8 @@ class test_checkin_test(unittest.TestCase):
       \
       "enable-all-packages=on => git diffs w.r.t. tracking branch .will not. be needed to look for changed files!\n" \
       +"Doing a push so all repos must be on a branch and have a tracking branch!\n" \
-      +"Skipping all updates on request!\n" \
-      +"No previous successful update is still current!\n" \
+      +"Skipping all pulls on request!\n" \
+      +"No previous successful pull is still current!\n" \
       +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       )
 
@@ -3505,7 +3505,7 @@ class test_checkin_test(unittest.TestCase):
       \
       False,
       \
-      "Skipping all updates on request!\n" \
+      "Skipping all pulls on request!\n" \
       +"Not performing any build cases because no --configure, --build or --test was specified!\n" \
       +"A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       +"^INITIAL PULL FAILED: Trilinos:\n"
@@ -4275,8 +4275,8 @@ class test_checkin_test(unittest.TestCase):
       \
       "ERROR: There are changed uncommitted files => cannot continue!\n" \
       "Git status returned changed and staged but not committed\n" \
-      "Update failed!\n" \
-      "Not running any build/test cases because the update (pull) failed!\n" \
+      "Pull failed!\n" \
+      "Not running any build/test cases because the pull failed!\n" \
       "A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       "INITIAL PULL FAILED: Trilinos:\n"
       )
@@ -4300,8 +4300,8 @@ class test_checkin_test(unittest.TestCase):
       \
       "ERROR: There are changed uncommitted files => cannot continue!\n" \
       "Git status returned both changed and staged but not committed\n" \
-      "Update failed!\n" \
-      "Not running any build/test cases because the update (pull) failed!\n" \
+      "Pull failed!\n" \
+      "Not running any build/test cases because the pull failed!\n" \
       "A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       "INITIAL PULL FAILED: Trilinos:\n"
       )
@@ -4324,8 +4324,8 @@ class test_checkin_test(unittest.TestCase):
       False,
       \
       "ERROR: There are newly created uncommitted files => Cannot continue!\n" \
-      "Update failed!\n" \
-      "Not running any build/test cases because the update (pull) failed!\n" \
+      "Pull failed!\n" \
+      "Not running any build/test cases because the pull failed!\n" \
       "A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       "INITIAL PULL FAILED: Trilinos:\n"
       )
@@ -4349,7 +4349,6 @@ class test_checkin_test(unittest.TestCase):
       False,
       \
       "Pull failed!\n" \
-      "Update failed!\n" \
       "Skipping getting list of modified files because pull failed!\n" \
       "A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       "INITIAL PULL FAILED: Trilinos:\n"
@@ -4541,7 +4540,7 @@ class test_checkin_test(unittest.TestCase):
       +g_expectedCommonOptionsSummary \
       +"A PUSH IS READY TO BE PERFORMED!\n" \
       +"'': Pull failed!\n" \
-      +"Final update failed!\n" \
+      +"Final pull failed!\n" \
       +"Skippng appending test results due to prior errors!\n" \
       +"Not performing push due to prior errors!\n" \
       +"FINAL PULL FAILED: Trilinos:\n" \
@@ -4579,7 +4578,7 @@ class test_checkin_test(unittest.TestCase):
       +g_expectedRegexTestPasses \
       +g_expectedCommonOptionsSummary \
       +"A PUSH IS READY TO BE PERFORMED!\n" \
-      +"Final update passed!\n" \
+      +"Final pull passed!\n" \
       +"Attempting to amend the final commmit message ...\n" \
       +"Appending test results to last commit failed!\n" \
       +"Not performing push due to prior errors!\n" \
@@ -4619,7 +4618,7 @@ class test_checkin_test(unittest.TestCase):
       +g_expectedRegexTestPasses \
       +g_expectedCommonOptionsSummary \
       +"A PUSH IS READY TO BE PERFORMED!\n" \
-      +"Final update passed!\n" \
+      +"Final pull passed!\n" \
       +"Appending test results to last commit passed!\n" \
       +"Push failed!\n" \
       +"PUSH FAILED: Trilinos:\n" \
@@ -4689,7 +4688,7 @@ class test_checkin_test(unittest.TestCase):
       +g_expectedRegexBuildPasses \
       +"No tests failed!\n"\
       +"CTest was invoked but no tests were run!\n"\
-      +"At least one of the actions (update, configure, built, test) failed or was not performed correctly!\n" \
+      +"At least one of the actions (pull, configure, built, test) failed or was not performed correctly!\n" \
        +"0) MPI_DEBUG => FAILED: no tests run\n" \
       +"=> A PUSH IS \*NOT\* READY TO BE PERFORMED!\n" \
       +"^FAILED CONFIGURE/BUILD/TEST: Trilinos:\n" \
@@ -5013,7 +5012,7 @@ class test_checkin_test(unittest.TestCase):
       "pullFinal.out\n" \
       "pullFinal.preCopyrightTrilinos.out\n" \
       ".preCopyrightTrilinos.: Pull failed!\n" \
-      "Final update failed!\n" \
+      "Final pull failed!\n" \
       "FINAL PULL FAILED: Trilinos:\n" \
       "REQUESTED ACTIONS: FAILED\n" \
       ,

@@ -327,12 +327,12 @@ def executePull(gitRepo, inOptions, baseTestDir, outFile, pullFromRepo=None,
   if doRebase:
     cmnd += " && "+inOptions.git+" rebase "+gitRepo.gitRepoStats.trackingBranch
   outFileFullPath = os.path.join(baseTestDir, outFile)
-  (updateRtn, updateTimings) = echoRunSysCmnd( cmnd,
+  (pullRtn, pullTimings) = echoRunSysCmnd( cmnd,
     workingDir=getGitRepoDir(inOptions.srcDir, gitRepo.repoDir),
     outFile=outFileFullPath,
     timeCmnd=True, returnTimeCmnd=True, throwExcept=False
     )
-  if updateRtn == 0:
+  if pullRtn == 0:
     pullGotChanges = didSinglePullBringChanges(outFileFullPath)
     if pullGotChanges:
       print "\n  ==> '"+gitRepo.repoName+"': Pulled changes from this repo!"
@@ -341,25 +341,25 @@ def executePull(gitRepo, inOptions, baseTestDir, outFile, pullFromRepo=None,
   else:
     print "\n  ==> '"+gitRepo.repoName+"': Pull failed!"
     pullGotChanges = False
-  return (updateRtn, updateTimings, pullGotChanges)
+  return (pullRtn, pullTimings, pullGotChanges)
 
 
 class Timings:
   def __init__(self):
-    self.update = -1.0
+    self.pull = -1.0
     self.configure = -1.0
     self.build = -1.0
     self.test = -1.0
   def deepCopy(self):
     copyTimings = Timings()
-    copyTimings.update = self.update
+    copyTimings.pull = self.pull
     copyTimings.configure = self.configure
     copyTimings.build = self.build
     copyTimings.test = self.test
     return copyTimings
   def totalTime(self):
     tt = 0.0
-    if self.update > 0: tt += self.update
+    if self.pull > 0: tt += self.pull
     if self.configure > 0: tt += self.configure
     if self.build > 0: tt += self.build
     if self.test > 0: tt += self.test
@@ -869,29 +869,29 @@ def analyzeResultsSendEmail(inOptions, buildTestCase,
 
   success = False
 
-  # Determine if the update passed
+  # Determine if the pull passed
 
-  updatePassed = None
-  updateOutputExists = False
+  pullPassed = None
+  pullOutputExists = False
 
   if inOptions.doPull:
 
     if os.path.exists("../"+getInitialPullOutputFileName("")):
-      updateOutputExists = True
+      pullOutputExists = True
 
     if os.path.exists("../"+getInitialPullSuccessFileName()):
-      print "\nThe update passed!\n"
-      updatePassed = True
-    elif updateOutputExists:
-      print "\nThe update FAILED!\n"
-      updatePassed = False
+      print "\nThe pull passed!\n"
+      pullPassed = True
+    elif pullOutputExists:
+      print "\nThe pull FAILED!\n"
+      pullPassed = False
     else:
-      print "\nThe update was never attempted!\n"
-      updatePassed = False
+      print "\nThe pull was never attempted!\n"
+      pullPassed = False
 
   else:
 
-    print "\nThe update step was not performed!\n"
+    print "\nThe pull step was not performed!\n"
 
   # Determine if the configured passed
 
@@ -1046,12 +1046,12 @@ def analyzeResultsSendEmail(inOptions, buildTestCase,
       selectedFinalStatus = True
 
   if inOptions.doPull and not selectedFinalStatus:
-    if updatePassed:
-      buildCaseStatus += "update-only passed"
+    if pullPassed:
+      buildCaseStatus += "pull-only passed"
       overallPassed = True
       selectedFinalStatus = True
-    elif updateOutputExists:
-      buildCaseStatus += "update FAILED"
+    elif pullOutputExists:
+      buildCaseStatus += "pull FAILED"
       overallPassed = False
       selectedFinalStatus = True
 
@@ -1086,7 +1086,7 @@ def analyzeResultsSendEmail(inOptions, buildTestCase,
   if inOptions.ctestOptions:
     emailBody += "CTest Options: " + inOptions.ctestOptions + "\n"
   emailBody += "\n"
-  emailBody += getStageStatus("Update", inOptions.doPull, updatePassed, timings.update)
+  emailBody += getStageStatus("Pull", inOptions.doPull, pullPassed, timings.pull)
   emailBody += getStageStatus("Configure", inOptions.doConfigure, configurePassed, timings.configure)
   emailBody += getStageStatus("Build", inOptions.doBuild, buildPassed, timings.build)
   emailBody += getStageStatus("Test", inOptions.doTest, testsPassed, timings.test)
@@ -2074,7 +2074,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
         assertRepoHasBranchAndTrackingBranch(inOptions, gitRepo)
 
     print "\n***"
-    print "*** 3) Update the %s sources ..." % inOptions.projectName
+    print "*** 3) Pull updated commits for %s ..." % inOptions.projectName
     print "***"
 
     reposAreClean = True
@@ -2086,7 +2086,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
 
     if not doingAtLeastOnePull:
 
-      print "\nSkipping all updates on request!\n"
+      print "\nSkipping all pulls on request!\n"
 
     if doingAtLeastOnePull and pullPassed:
 
@@ -2147,14 +2147,14 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
         for gitRepo in tribitsGitRepos.gitRepoList():
           print "\n3.b."+str(repoIdx)+") Git Repo: "+gitRepo.repoName
           echoChDir(baseTestDir)
-          (updateRtn, updateTimings, pullGotChanges) = executePull(
+          (pullRtn, pullTimings, pullGotChanges) = executePull(
             gitRepo,
             inOptions, baseTestDir,
             getInitialPullOutputFileName(gitRepo.repoName))
           if pullGotChanges:
             pulledSomeChanges = True
-          timings.update += updateTimings
-          if updateRtn != 0:
+          timings.pull += pullTimings
+          if pullRtn != 0:
             print "\nPull failed!\n"
             pullPassed = False
             break
@@ -2166,22 +2166,22 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
       print "\n3.c) Pull updates from the extra repository '"+inOptions.extraPullFrom+"' ..."
       #
 
-      timings.update = 0
+      timings.pull = 0
       
       if inOptions.extraPullFrom and pullPassed:
         repoIdx = 0
         for gitRepo in tribitsGitRepos.gitRepoList():
           print "\n3.c."+str(repoIdx)+") Git Repo: "+gitRepo.repoName
           echoChDir(baseTestDir)
-          (updateRtn, updateTimings, pullGotChanges) = executePull(
+          (pullRtn, pullTimings, pullGotChanges) = executePull(
             gitRepo,
             inOptions, baseTestDir,
             getInitialExtraPullOutputFileName(gitRepo.repoName),
             inOptions.extraPullFrom )
           if pullGotChanges:
             pulledSomeChanges = True
-          timings.update += updateTimings
-          if updateRtn != 0:
+          timings.pull += pullTimings
+          if pullRtn != 0:
             print "\nPull failed!\n"
             pullPassed = False
             break
@@ -2196,7 +2196,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
       print "No changes were pulled!"
  
     #
-    print "\nDetermine overall update pass/fail ...\n"
+    print "\nDetermine overall pull pass/fail ...\n"
     #
 
     echoChDir(baseTestDir)
@@ -2206,18 +2206,18 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
 
     if inOptions.doPull:
       if pullPassed:
-        print "\nUpdate passed!\n"
+        print "\nPull passed!\n"
         echoRunSysCmnd("touch "+getInitialPullSuccessFileName())
       else:
-        print "\nUpdate failed!\n"
+        print "\nPull failed!\n"
     elif currentSuccessfullPullExists:
-      print "\nA previous update was performed and was successful!"
+      print "\nA previous pull was performed and was successful!"
       pullPassed = True
     elif inOptions.allowNoPull:
-      print "\nNot performing update since --skip-update was passed in\n"
+      print "\nNot performing pull since --allow-no-pull was passed in\n"
       pullPassed = True
     else:
-      print "\nNo previous successful update is still current!"
+      print "\nNo previous successful pull is still current!"
       pullPassed = False
 
     # Update for current successful pull
@@ -2271,10 +2271,10 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
         abortGracefullyDueToNoChangesToPush = True
         runBuildCases = False
       elif pullPassed:
-        print "\nThe updated passsed, running the build/test cases ...\n"
+        print "\nThe pull passsed, running the build/test cases ...\n"
         runBuildCases = True
       else:
-        print "\nNot running any build/test cases because the update (pull) failed!\n"
+        print "\nNot running any build/test cases because the pull failed!\n"
         runBuildCases = False
     else:
       if inOptions.allowNoPull:
@@ -2282,10 +2282,10 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
           " because --allow-no-pull was specified ...\n"
         runBuildCases = True
       elif os.path.exists(getInitialPullSuccessFileName()):
-        print "\nA previous update (pull) was successful, running build/test cases ...!\n"
+        print "\nA previous pull was successful, running build/test cases ...!\n"
         runBuildCases = True
       else:
-        print "\nNot running any build/test cases because no update was attempted!\n" \
+        print "\nNot running any build/test cases because no pull was attempted!\n" \
           "\nHint: Use --allow-no-pull to allow build/test cases to run without" \
           " having to do a pull first!"
         runBuildCases = False
@@ -2384,7 +2384,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
         okayToCommit = False
 
       if not okayToCommit:
-        print "\nAt least one of the actions (update, configure, built, test)" \
+        print "\nAt least one of the actions (pull, configure, built, test)" \
           " failed or was not performed correctly!\n"
      
       # Determine if we should do a forced push
@@ -2486,21 +2486,21 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
   
           print "\n7.a."+str(repoIdx)+") Git Repo: '"+gitRepo.repoName+"'"
   
-          (update2Rtn, update2Time, pullGotChanges) = \
+          (pull2Rtn, pull2Time, pullGotChanges) = \
             executePull(gitRepo, inOptions, baseTestDir,
               getFinalPullOutputFileName(gitRepo.repoName), None,
               doFinalRebase )
   
-          if update2Rtn != 0:
+          if pull2Rtn != 0:
             pullFinalPassed = False
             break
 
           repoIdx += 1
 
         if pullFinalPassed:
-          print "\nFinal update passed!\n"
+          print "\nFinal pull passed!\n"
         else:
-          print "\nFinal update failed!\n"
+          print "\nFinal pull failed!\n"
 
         if not pullFinalPassed: okayToPush = False
 
@@ -2838,7 +2838,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
         "\n***\n" \
         "*** WARNING: No actions were performed!\n" \
         "***\n" \
-        "*** Hint: Specify --do-all to perform full integration update/build/test\n" \
+        "*** Hint: Specify --do-all to perform full integration pull/build/test\n" \
         "*** or --push to push the commits for a previously run test!\n" \
         "***\n\n"
   
