@@ -1765,7 +1765,7 @@ def getLastCommitMessageStr(inOptions, gitRepo):
   return getLastCommitMessageStrFromRawCommitLogStr(rawLogOutput)[0]
 
 
-def getLocalCommitsSummariesStr(inOptions, gitRepo, appendRepoName):
+def getLocalCommitsSummariesStr(inOptions, gitRepo):
 
   # Get the list of local commits other than this one
   if gitRepo.gitRepoStats.numCommitsInt() > 0:
@@ -1778,7 +1778,7 @@ def getLocalCommitsSummariesStr(inOptions, gitRepo, appendRepoName):
   else:
     rawLocalCommitsStr = ""
 
-  if gitRepo.repoName and appendRepoName:
+  if gitRepo.repoName:
     repoName = gitRepo.repoName
     repoNameModifier = " ("+gitRepo.repoName+")"
   else:
@@ -1800,11 +1800,11 @@ def getLocalCommitsSummariesStr(inOptions, gitRepo, appendRepoName):
     print "No local commits exit!"
 
   localCommitsStr = \
-    "*** "+repoName+"\n"
+    "*** Commits for repo "+repoName+":"
   if localCommitsExist:
-    localCommitsStr += rawLocalCommitsStr
+    localCommitsStr += ("\n"+rawLocalCommitsStr)
 
-  return (localCommitsStr, localCommitsExist)
+  return localCommitsStr
 
 
 def getLocalCommitsSHA1ListStr(inOptions, gitRepo):
@@ -2527,8 +2527,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
 
               # Get info about current commit and local commits
               lastCommitMessageStr = getLastCommitMessageStr(inOptions, gitRepo)
-              (localCommitSummariesStr, localCommitsExist) = \
-                getLocalCommitsSummariesStr(inOptions, gitRepo, False)
+              localCommitSummariesStr = getLocalCommitsSummariesStr(inOptions, gitRepo)
               localCommitSHA1ListStr = getLocalCommitsSHA1ListStr(inOptions, gitRepo)
  
               # Get then final commit message
@@ -2580,9 +2579,9 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
       repoIdx = 0
       for gitRepo in tribitsGitRepos.gitRepoList():
         localCommitSummariesStr = \
-          getLocalCommitsSummariesStr(inOptions, gitRepo, True)[0]
+          getLocalCommitsSummariesStr(inOptions, gitRepo)
         if allLocalCommitSummariesStr:
-          allLocalCommitSummariesStr += ("\n\n" + localCommitSummariesStr)
+          allLocalCommitSummariesStr += ("\n" + localCommitSummariesStr)
         else:
           allLocalCommitSummariesStr = localCommitSummariesStr
         repoIdx += 1
