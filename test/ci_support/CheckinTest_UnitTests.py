@@ -2235,7 +2235,7 @@ class test_checkin_test(unittest.TestCase):
       \
       "==> ..: Has modified files!\n" \
       +"==> .preCopyrightTrilinos.: Does .not. have any modified files!\n" \
-      +"Skipping push to .preCopyrightTrilinos. because there are no changes!\n" \
+      +"Skipping push to .preCopyrightTrilinos. because there are no commits!\n" \
       +"Push passed!\n" \
       +"DID PUSH: Trilinos:\n" \
       +"REQUESTED ACTIONS: PASSED\n" \
@@ -2267,7 +2267,7 @@ class test_checkin_test(unittest.TestCase):
       \
       "==> ..: Does .not. have any modified files!\n" \
       +"==> .preCopyrightTrilinos.: Has modified files!\n" \
-      +"Skipping push to .. because there are no changes!\n" \
+      +"Skipping push to .. because there are no commits!\n" \
       +"Push passed!\n" \
       +"DID PUSH: Trilinos:\n" \
       +"REQUESTED ACTIONS: PASSED\n" \
@@ -2661,19 +2661,15 @@ class test_checkin_test(unittest.TestCase):
       " --default-builds=MPI_DEBUG --pull --configure", \
       \
       g_cmndinterceptsDumpDepsXMLFile \
-      +cmndinterceptsGetRepoStatsPass() \
-      +cmndinterceptsGetRepoStatsPass() \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
       +cmndinterceptsGetRepoStatsPass() \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
       +g_cmndinterceptsPullOnlyPasses \
-      +"IT: git diff --name-status origin/currentbranch; 0; ''\n" \
-      +"IT: git diff --name-status origin/currentbranch; 0; ''\n" \
       +"IT: git diff --name-status origin/currentbranch; 0; 'M\tExtraTeuchosStuff.hpp'\n" \
       +g_cmndinterceptsConfigPasses \
       +g_cmndinterceptsSendBuildTestCaseEmail \
-      +g_cmndinterceptsLogCommitsPasses \
-      +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
       ,
@@ -2701,7 +2697,7 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
-  def test_extra_repo_file_3_continuous_do_all_push(self):
+  def test_extra_repo_file_3_continuous_commits_but_no_diff_do_all_push(self):
 
     projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.gold.xml"
 
@@ -2734,7 +2730,8 @@ class test_checkin_test(unittest.TestCase):
       +g_cmndinterceptsAmendCommitPasses \
       +g_cmnginterceptsEgLogCmnds \
       +g_cmndinterceptsAmendCommitPasses \
-      +"IT: git push; 0; 'push passes'\n" \
+      +g_cmndinterceptsPushOnlyPasses \
+      +g_cmndinterceptsPushOnlyPasses \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsLogCommitsPasses \
       +g_cmndinterceptsSendFinalEmail \
@@ -2747,13 +2744,14 @@ class test_checkin_test(unittest.TestCase):
       +"Modified file: .packages/teuchos/extrastuff/ExtraTeuchosStuff.hpp.\n" \
       +"=> Enabling .Teuchos.!\n" \
       +"Full package enable list: .Teuchos.\n" \
-      +"Skipping push to .. because there are no changes!\n" \
       +"push.ExtraTeuchosRepo.out\n" \
       ,
       \
       envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
       )
-
+    # NOTE: Above, the base repo has local commits but no modified files.
+    # This is a rare situation but it does happen in real practice from time
+    # to time.  Therefore, this is a valuable test case.
 
   def test_extra_repo_file_4_continuous_pull_configure(self):
 
@@ -4658,7 +4656,7 @@ class test_checkin_test(unittest.TestCase):
       +"No local commits exit!\n" \
       +"Skipping amending last commit because there are no local commits!\n" \
       +"Attempting to do the push ...\n" \
-      +"Skipping push to .. because there are no changes!\n" \
+      +"Skipping push to .. because there are no commits!\n" \
       +"Push failed because the push was never attempted!\n" \
       +"^PUSH FAILED: Trilinos:\n" \
       )
@@ -4745,8 +4743,8 @@ class test_checkin_test(unittest.TestCase):
       \
       False,
       \
-      "Skipping push to .. because there are no changes!\n" \
-      "Skipping push to .preCopyrightTrilinos. because there are no changes!\n" \
+      "Skipping push to .. because there are no commits!\n" \
+      "Skipping push to .preCopyrightTrilinos. because there are no commits!\n" \
       +"Push failed because the push was never attempted!\n" \
       +"PUSH FAILED: Trilinos:\n" \
       +"REQUESTED ACTIONS: FAILED\n" \

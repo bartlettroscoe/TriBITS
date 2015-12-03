@@ -2017,14 +2017,20 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
     print "*** 2) Get repo status"
     print "***\n"
 
-    repoIdx = 0
+    hasChangesToPush = False
     repoStatTable = gitdist.RepoStatTable()
+
+    repoIdx = 0
     for gitRepo in tribitsGitRepos.gitRepoList():
       getRepoStats(inOptions, gitRepo)
+      if gitRepo.gitRepoStats.numCommitsInt() > 0:
+        hasChangesToPush = True
       repoStatTableDirName = getRepoStatTableDirName(inOptions, gitRepo.repoDir)
       repoStatTable.insertRepoStat(repoStatTableDirName, gitRepo.gitRepoStats, repoIdx)
       repoIdx += 1
+
     print gitdist.createAsciiTable(repoStatTable.getTableData())
+
     # NOTE: Above, we could just call 'gitdist dist-repo-status' but by
     # printing the table here with the actualy gitRepoStat data, we ensure
     # that it gets collected correctly and that the selection of repos is
@@ -2228,14 +2234,10 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
     print "*** 4) Get the list of all the modified files ..."
     print "***"
 
-    hasChangesToPush = False
-
     if pullPassed:
       if gitDiffsWrtTrackingBranchAreNeeded:
         for gitRepo in tribitsGitRepos.gitRepoList():
           getCurrentDiffOutputAndLogModified(inOptions, gitRepo, baseTestDir)
-          if gitRepo.hasChanges:
-            hasChangesToPush = True
       else:
         print "\nSkipping getting list of modified files because not needed!\n"
     else:
@@ -2601,7 +2603,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
   
           print "\n7.c."+str(repoIdx)+") Git Repo: '"+gitRepo.repoName+"'"
 
-          if gitRepo.hasChanges:
+          if gitRepo.gitRepoStats.numCommitsInt() > 0:
 
             if not debugSkipPush:
               pushRtn = echoRunSysCmnd(
@@ -2621,7 +2623,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
 
           else:
 
-            print "\nSkipping push to '"+gitRepo.repoName+"' because there are no changes!"
+            print "\nSkipping push to '"+gitRepo.repoName+"' because there are no commits!"
   
           repoIdx += 1
 
