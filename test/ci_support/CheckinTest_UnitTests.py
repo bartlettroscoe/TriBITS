@@ -3408,10 +3408,6 @@ class test_checkin_test(unittest.TestCase):
       +"Not performing any build cases because no --configure, --build or --test was specified!\n" \
       +"NOT READY TO PUSH:\n" \
       )
-    # TriBITS #15: ToDo: Above, remove the git diff since it will not be needed!
-    # TriBITS #15: ToDo: Above, after the 'git diff' is removed, test with the
-    # repo in a detached-head state with no tracking branch (which will be
-    # ignored).
 
 
   def test_default_builds_mpi_debug_enable_all_packages_on_push_only(self):
