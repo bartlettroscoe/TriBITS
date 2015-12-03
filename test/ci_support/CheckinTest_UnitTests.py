@@ -1542,8 +1542,8 @@ class test_checkin_test(unittest.TestCase):
       "", # No shell commands!
       True,
       "checkin-test.py \[OPTIONS\]\n" \
-      "Quickstart\:\n" \
-      "Detailed Documentation:\n" \
+      "QUICKSTART\n" \
+      "DETAILED DOCUMENTATION\n" \
       ".*--show-defaults.*\n" \
       ,
       mustHaveCheckinTestOut=False \
