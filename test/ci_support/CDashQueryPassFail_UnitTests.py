@@ -65,12 +65,66 @@ summmaryCDashIndexBuilds_expected = \
 
 class test_CDashQueryPassFail(unittest.TestCase):
 
-  def test_getCDashInfo(self):
+  def test_getCDashIndexBuildsSummary(self):
     summaryCDashIndexBuilds = getCDashIndexBuildsSummary(fullCDashIndexBuilds)
     #pp.pprint(summaryCDashIndexBuilds)
     self.assertEqual(len(summaryCDashIndexBuilds), len(summmaryCDashIndexBuilds_expected))
     for i in range(0, len(summaryCDashIndexBuilds)):
       self.assertEqual(summaryCDashIndexBuilds[i], summmaryCDashIndexBuilds_expected[i])
+
+  def test_cdashIndexBuildPasses_pass(self):
+    build = {'buildname':"???",
+             'update': {'errors':0},
+             'configure':{'error': 0},
+             'compilation':{'error':0},
+             'test': {'fail':0, 'notrun':0},
+             }
+    self.assertEqual(cdashIndexBuildPasses(build), True)
+
+  def test_cdashIndexBuildPasses_update_fail(self):
+    build = {'buildname':"???",
+             'update': {'errors':1},
+             'configure':{'error': 0},
+             'compilation':{'error':0},
+             'test': {'fail':0, 'notrun':0},
+             }
+    self.assertEqual(cdashIndexBuildPasses(build), False)
+
+  def test_cdashIndexBuildPasses_configure_fail(self):
+    build = {'buildname':"???",
+             'update': {'errors':0},
+             'configure':{'error': 1},
+             'compilation':{'error':0},
+             'test': {'fail':0, 'notrun':0},
+             }
+    self.assertEqual(cdashIndexBuildPasses(build), False)
+
+  def test_cdashIndexBuildPasses_compilation_fail(self):
+    build = {'buildname':"???",
+             'update': {'errors':0},
+             'configure':{'error': 0},
+             'compilation':{'error':1},
+             'test': {'fail':0, 'notrun':0},
+             }
+    self.assertEqual(cdashIndexBuildPasses(build), False)
+
+  def test_cdashIndexBuildPasses_test_fail_fail(self):
+    build = {'buildname':"???",
+             'update': {'errors':0},
+             'configure':{'error': 0},
+             'compilation':{'error':0},
+             'test': {'fail':1, 'notrun':0},
+             }
+    self.assertEqual(cdashIndexBuildPasses(build), False)
+
+  def test_cdashIndexBuildPasses_test_notrun_fail(self):
+    build = {'buildname':"???",
+             'update': {'errors':0},
+             'configure':{'error': 0},
+             'compilation':{'error':0},
+             'test': {'fail':0, 'notrun':1},
+             }
+    self.assertEqual(cdashIndexBuildPasses(build), False)
 
 
 if __name__ == '__main__':

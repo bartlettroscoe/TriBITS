@@ -119,6 +119,18 @@ def getCDashIndexBuildsSummary(fullCDashIndexBuilds):
   return summaryCDashIndexBuilds
   
 
+# Return if a CDash Index build passes
+def cdashIndexBuildPasses(cdashIndexBuild):
+  if cdashIndexBuild['update']['errors'] > 0:
+    return False
+  if cdashIndexBuild['configure']['error'] > 0:
+    return False
+  if cdashIndexBuild['compilation']['error'] > 0:
+    return False
+  if (cdashIndexBuild['test']['fail'] + cdashIndexBuild['test']['notrun'])  > 0:
+    return False
+  return True
+
 
 
 
