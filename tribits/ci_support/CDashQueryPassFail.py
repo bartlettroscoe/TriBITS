@@ -218,7 +218,7 @@ def queryCDashAndDeterminePassFail(cdashUrl, projectName, date, filterFields,
   # Get the query data
   cdashQueryUrl = getCDashIndexQueryUrl(cdashUrl, projectName, date, filterFields)
   if printCDashUrl:
-    print "Getting data from: "+cdashQueryUrl 
+    print "Getting data from:\n\n  "+cdashQueryUrl 
   fullCDashIndexBuilds = extractCDashApiQueryData_in(cdashQueryUrl)
   summaryCDashIndexBuilds = getCDashIndexBuildsSummary(fullCDashIndexBuilds)
   # Determine pass/fail
