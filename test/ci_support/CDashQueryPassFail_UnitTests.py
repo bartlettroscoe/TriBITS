@@ -78,6 +78,15 @@ singleBuildPasses = {
 
 class test_CDashQueryPassFail(unittest.TestCase):
 
+  def test_getCDashIndexQueryUrl(self):
+    cdashIndexQueryUrl = getCDashIndexQueryUrl(
+      "https://casl-dev.ornl.gov/testing", "VERA", "2015-12-21",
+      "filtercount=1&showfilters=1&filtercombine=and&field1=groupname&compare1=61&value1=Nightly" \
+    )
+    cdashIndexQueryUrl_expected = \
+    "https://casl-dev.ornl.gov/testing/api/v1/index.php?project=VERA&date=2015-12-21&filtercount=1&showfilters=1&filtercombine=and&field1=groupname&compare1=61&value1=Nightly"
+    self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
+
   def test_getCDashIndexBuildsSummary(self):
     summaryCDashIndexBuilds = getCDashIndexBuildsSummary(fullCDashIndexBuilds)
     #pp.pprint(summaryCDashIndexBuilds)

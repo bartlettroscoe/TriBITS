@@ -44,6 +44,13 @@ from FindGeneralScriptSupport import *
 
 pp = pprint.PrettyPrinter()
 
+
+# Construct the full query URL given the pieces
+def getCDashIndexQueryUrl(cdashUrl, projectName, date, filterFields):
+  return cdashUrl+"/api/v1/index.php?project="+projectName+"&date="+date \
+    + "&"+filterFields
+
+
 # Given a CDash query URL, return the full Python CDash data-structure
 def extractCDashApiQueryData(cdashApiQueryUrl):
   response = urllib2.urlopen(cdashApiQueryUrl)
@@ -56,7 +63,7 @@ def extractCDashApiQueryData(cdashApiQueryUrl):
 #
 # This function takes in the data-structre directly returned from:
 #
-#   <cdash-url>/api/vi/index.ph?project=<project>&date=<YYYY-MM-DD>&<filter-fields>
+#   <cdash-url>/api/v1/index.php?project=<project>&date=<YYYY-MM-DD>&<filter-fields>
 #
 # The input full CDash API collapsed builds data-structure that has the
 # following structure and fields of interest:
