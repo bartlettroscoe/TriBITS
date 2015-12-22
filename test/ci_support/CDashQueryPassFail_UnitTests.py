@@ -41,7 +41,7 @@ import os
 import sys
 
 from FindCISupportDir import *
-from ExtractCDashInfo import *
+from CDashQueryPassFail import *
 
 import unittest
 
@@ -53,7 +53,7 @@ mockProjectBaseDir=os.path.abspath(tribitsBaseDir+"/examples/MockTrilinos")
 
 #############################################################################
 #
-# Test ExtractCDashInfo.py
+# Test CDashQueryPassFail.py
 #
 #############################################################################
 
@@ -63,7 +63,7 @@ fullCDashIndexBuilds = \
 summmaryCDashIndexBuilds_expected = \
   eval(open('cdash_index_query_data.summary.txt', 'r').read())
 
-class test_ExtractCDashInfo(unittest.TestCase):
+class test_CDashQueryPassFail(unittest.TestCase):
 
   def test_getCDashInfo(self):
     summaryCDashIndexBuilds = getCDashIndexBuildsSummary(fullCDashIndexBuilds)
