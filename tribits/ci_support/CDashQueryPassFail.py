@@ -39,10 +39,20 @@
 
 import urllib2
 import json
+import datetime
 import pprint
+
 from FindGeneralScriptSupport import *
 
 pp = pprint.PrettyPrinter()
+
+
+# Validate a date format
+def validateYYYYMMDD(dateText):
+  try:
+    return datetime.datetime.strptime(dateText, '%Y-%m-%d')
+  except ValueError:
+    raise ValueError("Incorrect data format for '"+dateText+"', should be YYYY-MM-DD")
 
 
 # Construct the full query URL given the pieces
@@ -199,6 +209,25 @@ def cdashIndexBuildsPassAndExpectedExist(summaryCDashIndexBuilds,
   return (cdashIndexBuildsPassAndExpectedExist_pass, errMsg)
 
 
+# Determine if CDash index.php query builds all pass and has all expected
+# builds.
+def queryCDashAndDeterminePassFail(cdashUrl, projectName, date, filterFields,
+  expectedBuildNames, printCDashUrl=True,
+  extractCDashApiQueryData_in=extractCDashApiQueryData \
+  ):
+  # Get the query data
+  cdashQueryUrl = getCDashIndexQueryUrl(cdashUrl, projectName, date, filterFields)
+  if printCDashUrl:
+    print "Getting data from: "+cdashQueryUrl 
+  fullCDashIndexBuilds = extractCDashApiQueryData_in(cdashQueryUrl)
+  summaryCDashIndexBuilds = getCDashIndexBuildsSummary(fullCDashIndexBuilds)
+  # Determine pass/fail
+  (cdashIndexBuildsPassAndExpectedExist_pass, errMsg) = \
+    cdashIndexBuildsPassAndExpectedExist(summaryCDashIndexBuilds, expectedBuildNames)
+  if not cdashIndexBuildsPassAndExpectedExist_pass:
+    return (False, errMsg)
+  return (True, "")
+    
 
 
 

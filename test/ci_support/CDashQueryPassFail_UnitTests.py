@@ -55,12 +55,17 @@ mockProjectBaseDir=os.path.abspath(tribitsBaseDir+"/examples/MockTrilinos")
 # Data for tests
 #
 
-fullCDashIndexBuilds = \
+# This file was taken from an actual CDash query and then modified a little to
+# make for better testing.
+g_fullCDashIndexBuilds = \
   eval(open('cdash_index_query_data.txt', 'r').read())
 
-summmaryCDashIndexBuilds_expected = \
+# This file was manually created from the above file to match what the reduced
+# builds should be.
+g_summmaryCDashIndexBuilds_expected = \
   eval(open('cdash_index_query_data.summary.txt', 'r').read())
 
+# This summary build has just the minimal required fields
 singleBuildPasses = {
   'buildname':"buildName",
   'update': {'errors':0},
@@ -68,6 +73,13 @@ singleBuildPasses = {
   'compilation':{'error':0},
   'test': {'fail':0, 'notrun':0},
   }
+
+# Dummy queryCDashAndDeterminePassFail() for unit testing
+
+g_extractCDashApiQueryData_builds = None
+
+def dummyExtractCDashApiQueryData(cdashQueryUrl_expected):
+  return g_extractCDashApiQueryData_builds
 
 
 #############################################################################
@@ -77,6 +89,36 @@ singleBuildPasses = {
 #############################################################################
 
 class test_CDashQueryPassFail(unittest.TestCase):
+
+  def test_validateYYYYMMDD_pass1(self):
+    yyyyymmdd = validateYYYYMMDD("2015-12-21")
+    self.assertEqual(str(yyyyymmdd), "2015-12-21 00:00:00")
+
+  def test_validateYYYYMMDD_pass2(self):
+    yyyyymmdd = validateYYYYMMDD("2015-12-01")
+    self.assertEqual(str(yyyyymmdd), "2015-12-01 00:00:00")
+
+  def test_validateYYYYMMDD_pass3(self):
+    yyyyymmdd = validateYYYYMMDD("2015-12-1")
+    self.assertEqual(str(yyyyymmdd), "2015-12-01 00:00:00")
+
+  def test_validateYYYYMMDD_pass4(self):
+    yyyyymmdd = validateYYYYMMDD("2015-01-1")
+    self.assertEqual(str(yyyyymmdd), "2015-01-01 00:00:00")
+
+  def test_validateYYYYMMDD_pass4(self):
+    yyyyymmdd = validateYYYYMMDD("2015-1-9")
+    self.assertEqual(str(yyyyymmdd), "2015-01-09 00:00:00")
+
+  def test_validateYYYYMMDD_fail_empty(self):
+    self.assertRaises(ValueError, validateYYYYMMDD,  "")
+
+  def test_validateYYYYMMDD_fail1(self):
+    self.assertRaises(ValueError, validateYYYYMMDD,  "201512-21")
+
+  def test_validateYYYYMMDD_fail1(self):
+    #yyyyymmdd = validateYYYYMMDD("201512-21")
+    self.assertRaises(ValueError, validateYYYYMMDD,  "201512-21")
 
   def test_getCDashIndexQueryUrl(self):
     cdashIndexQueryUrl = getCDashIndexQueryUrl(
@@ -88,11 +130,11 @@ class test_CDashQueryPassFail(unittest.TestCase):
     self.assertEqual(cdashIndexQueryUrl, cdashIndexQueryUrl_expected)
 
   def test_getCDashIndexBuildsSummary(self):
-    summaryCDashIndexBuilds = getCDashIndexBuildsSummary(fullCDashIndexBuilds)
+    summaryCDashIndexBuilds = getCDashIndexBuildsSummary(g_fullCDashIndexBuilds)
     #pp.pprint(summaryCDashIndexBuilds)
-    self.assertEqual(len(summaryCDashIndexBuilds), len(summmaryCDashIndexBuilds_expected))
+    self.assertEqual(len(summaryCDashIndexBuilds), len(g_summmaryCDashIndexBuilds_expected))
     for i in range(0, len(summaryCDashIndexBuilds)):
-      self.assertEqual(summaryCDashIndexBuilds[i], summmaryCDashIndexBuilds_expected[i])
+      self.assertEqual(summaryCDashIndexBuilds[i], g_summmaryCDashIndexBuilds_expected[i])
 
   def test_cdashIndexBuildPasses_pass(self):
     build = copy.deepcopy(singleBuildPasses)
@@ -276,6 +318,102 @@ class test_CDashQueryPassFail(unittest.TestCase):
     self.assertEqual(errMsg,
       "Error, the expected build 'build2' does not exist in the list of builds ['build1']")
     self.assertEqual(cdashIndexBuildsPassAndExpectedExist_passed, False)
+
+  def test_queryCDashAndDeterminePassFail_1_pass(self):
+    build1 = copy.deepcopy(singleBuildPasses)
+    build1['buildname'] = "build1"
+    fullCDashIndexBuilds = {
+      'buildgroups':[
+        {'builds':[build1]}
+        ]
+      }
+    global g_extractCDashApiQueryData_builds
+    g_extractCDashApiQueryData_builds = fullCDashIndexBuilds 
+    expectedBuildNames = ["build1"]
+    (allPassed, errMsg) = queryCDashAndDeterminePassFail(
+      "https://casl-dev.ornl.gov/testing", "VERA", "2015-12-21", "dummy-filter-fields",
+      expectedBuildNames, False, dummyExtractCDashApiQueryData)
+    self.assertEqual(errMsg, "")
+    self.assertEqual(allPassed, True)
+
+  def test_queryCDashAndDeterminePassFail_2_pass(self):
+    build1 = copy.deepcopy(singleBuildPasses)
+    build1['buildname'] = "build1"
+    build2 = copy.deepcopy(singleBuildPasses)
+    build2['buildname'] = "build2"
+    fullCDashIndexBuilds = {
+      'buildgroups':[
+        {'builds':[build1]},
+        {'builds':[build2]}
+        ]
+      }
+    global g_extractCDashApiQueryData_builds
+    g_extractCDashApiQueryData_builds = fullCDashIndexBuilds 
+    expectedBuildNames = ["build1", "build2"]
+    (allPassed, errMsg) = queryCDashAndDeterminePassFail(
+      "https://casl-dev.ornl.gov/testing", "VERA", "2015-12-21", "dummy-filter-fields",
+      expectedBuildNames, False, dummyExtractCDashApiQueryData)
+    self.assertEqual(errMsg, "")
+    self.assertEqual(allPassed, True)
+
+  def test_queryCDashAndDeterminePassFail_1_missing_expected(self):
+    build1 = copy.deepcopy(singleBuildPasses)
+    build1['buildname'] = "build1"
+    fullCDashIndexBuilds = {
+      'buildgroups':[
+        {'builds':[build1]}
+        ]
+      }
+    global g_extractCDashApiQueryData_builds
+    g_extractCDashApiQueryData_builds = fullCDashIndexBuilds 
+    expectedBuildNames = ["missing"]
+    (allPassed, errMsg) = queryCDashAndDeterminePassFail(
+      "https://casl-dev.ornl.gov/testing", "VERA", "2015-12-21", "dummy-filter-fields",
+      expectedBuildNames, False, dummyExtractCDashApiQueryData)
+    self.assertEqual(errMsg,
+      "Error, the expected build 'missing' does not exist in the list of builds ['build1']")
+    self.assertEqual(allPassed, False)
+
+  def test_queryCDashAndDeterminePassFail_1_fail(self):
+    build1 = copy.deepcopy(singleBuildPasses)
+    build1['buildname'] = "build1"
+    build1['test']['fail'] = 3
+    fullCDashIndexBuilds = {
+      'buildgroups':[
+        {'builds':[build1]}
+        ]
+      }
+    global g_extractCDashApiQueryData_builds
+    g_extractCDashApiQueryData_builds = fullCDashIndexBuilds 
+    expectedBuildNames = ["build1"]
+    (allPassed, errMsg) = queryCDashAndDeterminePassFail(
+      "https://casl-dev.ornl.gov/testing", "VERA", "2015-12-21", "dummy-filter-fields",
+      expectedBuildNames, False, dummyExtractCDashApiQueryData)
+    self.assertEqual(errMsg,
+      "Error, the build {u'buildname': 'build1', u'test': {'fail': 3, 'notrun': 0}, u'compilation': {'error': 0}, u'update': {'errors': 0}, u'configure': {'error': 0}} failed!" )
+    self.assertEqual(allPassed, False)
+
+  def test_queryCDashAndDeterminePassFail_2_fail(self):
+    build1 = copy.deepcopy(singleBuildPasses)
+    build1['buildname'] = "build1"
+    build2 = copy.deepcopy(singleBuildPasses)
+    build2['buildname'] = "build2"
+    build2['test']['notrun'] = 2
+    fullCDashIndexBuilds = {
+      'buildgroups':[
+        {'builds':[build1]},
+        {'builds':[build2]}
+        ]
+      }
+    global g_extractCDashApiQueryData_builds
+    g_extractCDashApiQueryData_builds = fullCDashIndexBuilds 
+    expectedBuildNames = ["build1", "build2"]
+    (allPassed, errMsg) = queryCDashAndDeterminePassFail(
+      "https://casl-dev.ornl.gov/testing", "VERA", "2015-12-21", "dummy-filter-fields",
+      expectedBuildNames, False, dummyExtractCDashApiQueryData)
+    self.assertEqual(errMsg,
+      "Error, the build {u'buildname': 'build2', u'test': {'fail': 0, 'notrun': 2}, u'compilation': {'error': 0}, u'update': {'errors': 0}, u'configure': {'error': 0}} failed!")
+    self.assertEqual(allPassed, False)
 
 
 if __name__ == '__main__':
