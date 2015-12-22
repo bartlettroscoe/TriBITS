@@ -58,12 +58,12 @@ mockProjectBaseDir=os.path.abspath(tribitsBaseDir+"/examples/MockTrilinos")
 # This file was taken from an actual CDash query and then modified a little to
 # make for better testing.
 g_fullCDashIndexBuilds = \
-  eval(open('cdash_index_query_data.txt', 'r').read())
+  eval(open(g_testBaseDir+'/cdash_index_query_data.txt', 'r').read())
 
 # This file was manually created from the above file to match what the reduced
 # builds should be.
 g_summmaryCDashIndexBuilds_expected = \
-  eval(open('cdash_index_query_data.summary.txt', 'r').read())
+  eval(open(g_testBaseDir+'/cdash_index_query_data.summary.txt', 'r').read())
 
 # This summary build has just the minimal required fields
 singleBuildPasses = {
