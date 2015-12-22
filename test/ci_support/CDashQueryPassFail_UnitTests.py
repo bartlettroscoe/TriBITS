@@ -39,16 +39,35 @@
 
 import os
 import sys
+import copy
+import unittest
 
 from FindCISupportDir import *
 from CDashQueryPassFail import *
 
-import unittest
 
 g_testBaseDir = getScriptBaseDir()
 
 tribitsBaseDir=os.path.abspath(g_testBaseDir+"/../../tribits")
 mockProjectBaseDir=os.path.abspath(tribitsBaseDir+"/examples/MockTrilinos")
+
+#
+# Data for tests
+#
+
+fullCDashIndexBuilds = \
+  eval(open('cdash_index_query_data.txt', 'r').read())
+
+summmaryCDashIndexBuilds_expected = \
+  eval(open('cdash_index_query_data.summary.txt', 'r').read())
+
+singleBuildPasses = {
+  'buildname':"buildName",
+  'update': {'errors':0},
+  'configure':{'error': 0},
+  'compilation':{'error':0},
+  'test': {'fail':0, 'notrun':0},
+  }
 
 
 #############################################################################
@@ -56,12 +75,6 @@ mockProjectBaseDir=os.path.abspath(tribitsBaseDir+"/examples/MockTrilinos")
 # Test CDashQueryPassFail.py
 #
 #############################################################################
-
-
-fullCDashIndexBuilds = \
-  eval(open('cdash_index_query_data.txt', 'r').read())
-summmaryCDashIndexBuilds_expected = \
-  eval(open('cdash_index_query_data.summary.txt', 'r').read())
 
 class test_CDashQueryPassFail(unittest.TestCase):
 
@@ -73,58 +86,74 @@ class test_CDashQueryPassFail(unittest.TestCase):
       self.assertEqual(summaryCDashIndexBuilds[i], summmaryCDashIndexBuilds_expected[i])
 
   def test_cdashIndexBuildPasses_pass(self):
-    build = {'buildname':"???",
-             'update': {'errors':0},
-             'configure':{'error': 0},
-             'compilation':{'error':0},
-             'test': {'fail':0, 'notrun':0},
-             }
+    build = copy.deepcopy(singleBuildPasses)
     self.assertEqual(cdashIndexBuildPasses(build), True)
 
   def test_cdashIndexBuildPasses_update_fail(self):
-    build = {'buildname':"???",
-             'update': {'errors':1},
-             'configure':{'error': 0},
-             'compilation':{'error':0},
-             'test': {'fail':0, 'notrun':0},
-             }
+    build = copy.deepcopy(singleBuildPasses)
+    build['update']['errors'] = 1
     self.assertEqual(cdashIndexBuildPasses(build), False)
 
   def test_cdashIndexBuildPasses_configure_fail(self):
-    build = {'buildname':"???",
-             'update': {'errors':0},
-             'configure':{'error': 1},
-             'compilation':{'error':0},
-             'test': {'fail':0, 'notrun':0},
-             }
+    build = copy.deepcopy(singleBuildPasses)
+    build['configure']['error'] = 1
     self.assertEqual(cdashIndexBuildPasses(build), False)
 
   def test_cdashIndexBuildPasses_compilation_fail(self):
-    build = {'buildname':"???",
-             'update': {'errors':0},
-             'configure':{'error': 0},
-             'compilation':{'error':1},
-             'test': {'fail':0, 'notrun':0},
-             }
+    build = copy.deepcopy(singleBuildPasses)
+    build['compilation']['error'] = 1
     self.assertEqual(cdashIndexBuildPasses(build), False)
 
   def test_cdashIndexBuildPasses_test_fail_fail(self):
-    build = {'buildname':"???",
-             'update': {'errors':0},
-             'configure':{'error': 0},
-             'compilation':{'error':0},
-             'test': {'fail':1, 'notrun':0},
-             }
+    build = copy.deepcopy(singleBuildPasses)
+    build['test']['fail'] = 1
     self.assertEqual(cdashIndexBuildPasses(build), False)
 
   def test_cdashIndexBuildPasses_test_notrun_fail(self):
-    build = {'buildname':"???",
-             'update': {'errors':0},
-             'configure':{'error': 0},
-             'compilation':{'error':0},
-             'test': {'fail':0, 'notrun':1},
-             }
+    build = copy.deepcopy(singleBuildPasses)
+    build['test']['notrun'] = 1
     self.assertEqual(cdashIndexBuildPasses(build), False)
+
+  def test_cdashIndexBuildsPass_1_pass(self):
+    builds = [copy.deepcopy(singleBuildPasses)]
+    (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
+    self.assertEqual(buildPasses, True)
+    self.assertEqual(buildFailedMsg, "")
+
+  def test_cdashIndexBuildsPass_1_fail(self):
+    build = copy.deepcopy(singleBuildPasses)
+    build['compilation']['error'] = 1
+    builds = [build]
+    (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
+    self.assertEqual(buildPasses, False)
+    self.assertEqual(buildFailedMsg, "Error, the build "+str(build)+" failed!")
+
+  def test_cdashIndexBuildsPass_2_pass(self):
+    build = copy.deepcopy(singleBuildPasses)
+    builds = [build, build]
+    (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
+    self.assertEqual(buildPasses, True)
+    self.assertEqual(buildFailedMsg, "")
+
+  def test_cdashIndexBuildsPass_2_fail_1(self):
+    build = copy.deepcopy(singleBuildPasses)
+    buildFailed = copy.deepcopy(singleBuildPasses)
+    buildFailed['buildname'] = "failedBuild"
+    buildFailed['compilation']['error'] = 1
+    builds = [buildFailed, build]
+    (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
+    self.assertEqual(buildPasses, False)
+    self.assertEqual(buildFailedMsg, "Error, the build "+str(buildFailed)+" failed!")
+
+  def test_cdashIndexBuildsPass_2_fail_2(self):
+    build = copy.deepcopy(singleBuildPasses)
+    buildFailed = copy.deepcopy(singleBuildPasses)
+    buildFailed['buildname'] = "failedBuild"
+    buildFailed['compilation']['error'] = 1
+    builds = [build, buildFailed]
+    (buildPasses, buildFailedMsg) = cdashIndexBuildsPass(builds)
+    self.assertEqual(buildPasses, False)
+    self.assertEqual(buildFailedMsg, "Error, the build "+str(buildFailed)+" failed!")
 
 
 if __name__ == '__main__':

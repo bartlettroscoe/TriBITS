@@ -130,7 +130,18 @@ def cdashIndexBuildPasses(cdashIndexBuild):
   if (cdashIndexBuild['test']['fail'] + cdashIndexBuild['test']['notrun'])  > 0:
     return False
   return True
+  
 
+# Return if a list of CDash builds pass or fail and return error string.
+def cdashIndexBuildsPass(cdashIndexBuilds):
+  buildPasses = True
+  buildFailedMsg = ""
+  for build in cdashIndexBuilds:
+    if not cdashIndexBuildPasses(build):
+      buildPasses = False
+      buildFailedMsg = "Error, the build "+str(build)+" failed!"
+      break
+  return (buildPasses, buildFailedMsg)
 
 
 
