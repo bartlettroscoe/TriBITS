@@ -234,6 +234,40 @@ class test_CDashQueryPassFail(unittest.TestCase):
       "Error, the expected build 'build2' does not exist in the list of builds ['build1']")
     self.assertEqual(allExpectedBuildsExist, False)
 
+  def test_cdashIndexBuildsPassAndExpectedExist_1_pass(self):
+    build1 = copy.deepcopy(singleBuildPasses)
+    build1['buildname'] = "build1"
+    builds = [ build1 ]
+    expectedBuildNames = ["build1"]
+    (cdashIndexBuildsPassAndExpectedExist_passed, errMsg) = \
+      cdashIndexBuildsPassAndExpectedExist(builds, expectedBuildNames)
+    self.assertEqual(errMsg,
+      "")
+    self.assertEqual(cdashIndexBuildsPassAndExpectedExist_passed, True)
+
+  def test_cdashIndexBuildsPassAndExpectedExist_1_build_fail(self):
+    build1 = copy.deepcopy(singleBuildPasses)
+    build1['buildname'] = "build1"
+    build1['configure']['error'] = 5
+    builds = [ build1 ]
+    expectedBuildNames = ["build1"]
+    (cdashIndexBuildsPassAndExpectedExist_passed, errMsg) = \
+      cdashIndexBuildsPassAndExpectedExist(builds, expectedBuildNames)
+    self.assertEqual(errMsg,
+      "Error, the build {'buildname': 'build1', 'test': {'fail': 0, 'notrun': 0}, 'compilation': {'error': 0}, 'update': {'errors': 0}, 'configure': {'error': 5}} failed!")
+    self.assertEqual(cdashIndexBuildsPassAndExpectedExist_passed, False)
+
+  def test_cdashIndexBuildsPassAndExpectedExist_1_missing_expected_build(self):
+    build1 = copy.deepcopy(singleBuildPasses)
+    build1['buildname'] = "build1"
+    builds = [ build1 ]
+    expectedBuildNames = ["build2"]
+    (cdashIndexBuildsPassAndExpectedExist_passed, errMsg) = \
+      cdashIndexBuildsPassAndExpectedExist(builds, expectedBuildNames)
+    self.assertEqual(errMsg,
+      "Error, the expected build 'build2' does not exist in the list of builds ['build1']")
+    self.assertEqual(cdashIndexBuildsPassAndExpectedExist_passed, False)
+
 
 if __name__ == '__main__':
 

@@ -50,8 +50,9 @@ def extractCDashApiQueryData(cdashApiQueryUrl):
   return json.load(response)
 
 
-# Given the full Python CDash API collapses builds data-structure, return an
-# reduced data-structure to be used for pass/fail examination.
+# Given the full Python CDash API builds data-structure returned from the
+# CDash index.php page and query, return an reduced data-structure to be used
+# for pass/fail examination.
 #
 # This function takes in the data-structre directly returned from:
 #
@@ -135,14 +136,14 @@ def cdashIndexBuildPasses(cdashIndexBuild):
 # Return if a list of CDash builds pass or fail and return error string if
 # they fail.
 def cdashIndexBuildsPass(summaryCDashIndexBuilds):
-  buildPasses = True
+  buildsPass = True
   buildFailedMsg = ""
   for build in summaryCDashIndexBuilds:
     if not cdashIndexBuildPasses(build):
-      buildPasses = False
+      buildsPass = False
       buildFailedMsg = "Error, the build "+str(build)+" failed!"
       break
-  return (buildPasses, buildFailedMsg)
+  return (buildsPass, buildFailedMsg)
 
 
 # Extract the set of build names from a list of build names
@@ -165,6 +166,31 @@ def doAllExpectedBuildsExist(buildNames, expectedBuildNames):
         +" does not exist in the list of builds "+str(buildNames) 
       break
   return (allExpectedBuildsExist, errMsg)    
+
+
+# Return if a list of summary CDash index.php builds pass and has all of the
+# expected builds.
+def cdashIndexBuildsPassAndExpectedExist(summaryCDashIndexBuilds, 
+  expectedBuildNames \
+  ):
+  cdashIndexBuildsPassAndExpectedExist_pass = True
+  errMsg = ""
+  # Check that all of the builds pass!
+  if cdashIndexBuildsPassAndExpectedExist_pass:
+    (buildsPass, buildFailedMsg) = cdashIndexBuildsPass(summaryCDashIndexBuilds)
+    if not buildsPass:
+      cdashIndexBuildsPassAndExpectedExist_pass = False
+      errMsg = buildFailedMsg
+  # Check that all of the expected builds are listed
+  if cdashIndexBuildsPassAndExpectedExist_pass:
+    buildNames = getCDashIndexBuildNames(summaryCDashIndexBuilds)
+    (allExpectedBuildsExist, errMsg) = \
+      doAllExpectedBuildsExist(buildNames, expectedBuildNames)
+    if not allExpectedBuildsExist:
+      cdashIndexBuildsPassAndExpectedExist_pass = False
+      errMsg = errMsg
+  return (cdashIndexBuildsPassAndExpectedExist_pass, errMsg)
+
 
 
 
