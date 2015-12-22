@@ -67,6 +67,22 @@ def extractCDashApiQueryData(cdashApiQueryUrl):
   return json.load(response)
 
 
+# Collect CDash index.php build summary fields
+def collectCDashIndexBuildSummaryFields(fullCDashIndexBuild):
+  summaryBuild = {
+    u'buildname' : fullCDashIndexBuild.get('buildname', 'missing_build_name'),
+    u'update' : \
+      fullCDashIndexBuild.get('update', {'errors':9999,'this_field_was_missing':1}),
+    u'configure' : \
+      fullCDashIndexBuild.get('configure', {'error':9999,'this_field_was_missing':1}),
+    u'compilation' : \
+      fullCDashIndexBuild.get('compilation', {'error':9999,'this_field_was_missing':1}),
+    u'test' : \
+     fullCDashIndexBuild.get('test', {'fail':9999, 'notrun':9999,'this_field_was_missing':1} ),
+    }
+  return summaryBuild
+
+
 # Given the full Python CDash API builds data-structure returned from the
 # CDash index.php page and query, return an reduced data-structure to be used
 # for pass/fail examination.
@@ -126,13 +142,7 @@ def getCDashIndexBuildsSummary(fullCDashIndexBuilds):
   summaryCDashIndexBuilds = []
   for buildgroup in fullCDashIndexBuilds["buildgroups"]:
     for build in buildgroup["builds"]:
-      summaryBuild = {
-        u'buildname' : build["buildname"],
-        u'update' : build['update'],
-        u'configure' : build['configure'],
-        u'compilation' : build['compilation'],
-        u'test' : build['test'],
-        }
+      summaryBuild = collectCDashIndexBuildSummaryFields(build)
       summaryCDashIndexBuilds.append(summaryBuild)
   return summaryCDashIndexBuilds
   

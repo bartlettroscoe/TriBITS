@@ -136,6 +136,42 @@ class test_CDashQueryPassFail(unittest.TestCase):
     for i in range(0, len(summaryCDashIndexBuilds)):
       self.assertEqual(summaryCDashIndexBuilds[i], g_summmaryCDashIndexBuilds_expected[i])
 
+  def test_collectCDashIndexBuildSummaryFields_full(self):
+    summaryCDashIndexBuild = collectCDashIndexBuildSummaryFields(singleBuildPasses)
+    self.assertEqual(summaryCDashIndexBuild, singleBuildPasses)
+
+  def test_collectCDashIndexBuildSummaryFields_missing_update(self):
+    fullCDashIndexBuild_in = copy.deepcopy(singleBuildPasses)
+    del fullCDashIndexBuild_in['update']
+    summaryCDashIndexBuild = collectCDashIndexBuildSummaryFields(fullCDashIndexBuild_in)
+    summaryCDashIndexBuild_expected = copy.deepcopy(singleBuildPasses)
+    summaryCDashIndexBuild_expected['update'] = {'errors':9999, 'this_field_was_missing':1} 
+    self.assertEqual(summaryCDashIndexBuild, summaryCDashIndexBuild_expected)
+
+  def test_collectCDashIndexBuildSummaryFields_missing_configure(self):
+    fullCDashIndexBuild_in = copy.deepcopy(singleBuildPasses)
+    del fullCDashIndexBuild_in['configure']
+    summaryCDashIndexBuild = collectCDashIndexBuildSummaryFields(fullCDashIndexBuild_in)
+    summaryCDashIndexBuild_expected = copy.deepcopy(singleBuildPasses)
+    summaryCDashIndexBuild_expected['configure'] = {'error':9999, 'this_field_was_missing':1} 
+    self.assertEqual(summaryCDashIndexBuild, summaryCDashIndexBuild_expected)
+
+  def test_collectCDashIndexBuildSummaryFields_missing_compilation(self):
+    fullCDashIndexBuild_in = copy.deepcopy(singleBuildPasses)
+    del fullCDashIndexBuild_in['compilation']
+    summaryCDashIndexBuild = collectCDashIndexBuildSummaryFields(fullCDashIndexBuild_in)
+    summaryCDashIndexBuild_expected = copy.deepcopy(singleBuildPasses)
+    summaryCDashIndexBuild_expected['compilation'] = {'error':9999, 'this_field_was_missing':1} 
+    self.assertEqual(summaryCDashIndexBuild, summaryCDashIndexBuild_expected)
+
+  def test_collectCDashIndexBuildSummaryFields_missing_test(self):
+    fullCDashIndexBuild_in = copy.deepcopy(singleBuildPasses)
+    del fullCDashIndexBuild_in['test']
+    summaryCDashIndexBuild = collectCDashIndexBuildSummaryFields(fullCDashIndexBuild_in)
+    summaryCDashIndexBuild_expected = copy.deepcopy(singleBuildPasses)
+    summaryCDashIndexBuild_expected['test'] = {'fail':9999, 'notrun':9999,'this_field_was_missing':1} 
+    self.assertEqual(summaryCDashIndexBuild, summaryCDashIndexBuild_expected)
+
   def test_cdashIndexBuildPasses_pass(self):
     build = copy.deepcopy(singleBuildPasses)
     self.assertEqual(cdashIndexBuildPasses(build), True)
