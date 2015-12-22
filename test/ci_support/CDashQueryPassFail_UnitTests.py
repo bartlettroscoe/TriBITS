@@ -155,6 +155,85 @@ class test_CDashQueryPassFail(unittest.TestCase):
     self.assertEqual(buildPasses, False)
     self.assertEqual(buildFailedMsg, "Error, the build "+str(buildFailed)+" failed!")
 
+  def test_getCDashIndexBuildNames(self):
+    build1 = copy.deepcopy(singleBuildPasses)
+    build1['buildname'] = "build1"
+    build2 = copy.deepcopy(singleBuildPasses)
+    build2['buildname'] = "build2"
+    build3 = copy.deepcopy(singleBuildPasses)
+    build3['buildname'] = "build3"
+    builds = [build1, build2, build3]
+    buildNames_expected = [ "build1", "build2", "build3" ]
+    self.assertEqual(getCDashIndexBuildNames(builds), buildNames_expected)
+
+  def test_doAllExpectedBuildsExist_1_pass(self):
+    buildNames = ["build1"]
+    expectedBuildNames = ["build1"]
+    (allExpectedBuildsExist, errMsg) = \
+      doAllExpectedBuildsExist(buildNames, expectedBuildNames)
+    self.assertEqual(errMsg, "")
+    self.assertEqual(allExpectedBuildsExist, True)
+
+  def test_doAllExpectedBuildsExist_1_fail(self):
+    buildNames = ["build1"]
+    expectedBuildNames = ["build2"]
+    (allExpectedBuildsExist, errMsg) = \
+      doAllExpectedBuildsExist(buildNames, expectedBuildNames)
+    self.assertEqual(errMsg,
+      "Error, the expected build 'build2' does not exist in the list of builds ['build1']")
+    self.assertEqual(allExpectedBuildsExist, False)
+
+  def test_doAllExpectedBuildsExist_2_2_a_pass(self):
+    buildNames = ["build1", "build2"]
+    expectedBuildNames = ["build1", "build2"]
+    (allExpectedBuildsExist, errMsg) = \
+      doAllExpectedBuildsExist(buildNames, expectedBuildNames)
+    self.assertEqual(errMsg, "")
+    self.assertEqual(allExpectedBuildsExist, True)
+
+  def test_doAllExpectedBuildsExist_2_2_b_fail(self):
+    buildNames = ["build2", "build1"]
+    expectedBuildNames = ["build1", "build2"]
+    (allExpectedBuildsExist, errMsg) = \
+      doAllExpectedBuildsExist(buildNames, expectedBuildNames)
+    self.assertEqual(errMsg, "")
+    self.assertEqual(allExpectedBuildsExist, True)
+
+  def test_doAllExpectedBuildsExist_2_1_pass(self):
+    buildNames = ["build1", "build2"]
+    expectedBuildNames = ["build1"]
+    (allExpectedBuildsExist, errMsg) = \
+      doAllExpectedBuildsExist(buildNames, expectedBuildNames)
+    self.assertEqual(errMsg, "")
+    self.assertEqual(allExpectedBuildsExist, True)
+
+  def test_doAllExpectedBuildsExist_2_1_fail(self):
+    buildNames = ["build1", "build2"]
+    expectedBuildNames = ["build3"]
+    (allExpectedBuildsExist, errMsg) = \
+      doAllExpectedBuildsExist(buildNames, expectedBuildNames)
+    self.assertEqual(errMsg,
+      "Error, the expected build 'build3' does not exist in the list of builds ['build1', 'build2']")
+    self.assertEqual(allExpectedBuildsExist, False)
+
+  def test_doAllExpectedBuildsExist_1_2_a_fail(self):
+    buildNames = ["build1"]
+    expectedBuildNames = ["build1", "build2"]
+    (allExpectedBuildsExist, errMsg) = \
+      doAllExpectedBuildsExist(buildNames, expectedBuildNames)
+    self.assertEqual(errMsg,
+      "Error, the expected build 'build2' does not exist in the list of builds ['build1']")
+    self.assertEqual(allExpectedBuildsExist, False)
+
+  def test_doAllExpectedBuildsExist_1_2_b_fail(self):
+    buildNames = ["build1"]
+    expectedBuildNames = ["build2", "build1"]
+    (allExpectedBuildsExist, errMsg) = \
+      doAllExpectedBuildsExist(buildNames, expectedBuildNames)
+    self.assertEqual(errMsg,
+      "Error, the expected build 'build2' does not exist in the list of builds ['build1']")
+    self.assertEqual(allExpectedBuildsExist, False)
+
 
 if __name__ == '__main__':
 

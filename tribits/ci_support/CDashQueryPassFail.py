@@ -132,16 +132,40 @@ def cdashIndexBuildPasses(cdashIndexBuild):
   return True
   
 
-# Return if a list of CDash builds pass or fail and return error string.
-def cdashIndexBuildsPass(cdashIndexBuilds):
+# Return if a list of CDash builds pass or fail and return error string if
+# they fail.
+def cdashIndexBuildsPass(summaryCDashIndexBuilds):
   buildPasses = True
   buildFailedMsg = ""
-  for build in cdashIndexBuilds:
+  for build in summaryCDashIndexBuilds:
     if not cdashIndexBuildPasses(build):
       buildPasses = False
       buildFailedMsg = "Error, the build "+str(build)+" failed!"
       break
   return (buildPasses, buildFailedMsg)
+
+
+# Extract the set of build names from a list of build names
+def getCDashIndexBuildNames(summaryCDashIndexBuilds):
+  buildNames = []
+  for build in summaryCDashIndexBuilds:
+    buildNames.append(build['buildname'])
+  return buildNames
+
+
+# Return if all of the expected builds exist and an error message if they
+# don't.
+def doAllExpectedBuildsExist(buildNames, expectedBuildNames):
+  allExpectedBuildsExist = True
+  errMsg = ""
+  for expectedBuildName in expectedBuildNames:
+    if findInSequence(buildNames, expectedBuildName) == -1:
+      allExpectedBuildsExist = False
+      errMsg = "Error, the expected build '"+expectedBuildName+"'" \
+        +" does not exist in the list of builds "+str(buildNames) 
+      break
+  return (allExpectedBuildsExist, errMsg)    
+
 
 
 
