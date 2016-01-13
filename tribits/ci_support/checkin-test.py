@@ -1189,7 +1189,9 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
     sys.exit(2)
 
   if options.extraPullFrom:
-    getRepoSpaceBranchFromOptionStr(options.extraPullFrom) # Will validate form
+    for extraPullFromArg in options.extraPullFrom.split(","):
+       # Will validate form of argument
+      getLocalRepoRemoteRepoAndBranchFromExtraPullArg(options.extraPullFrom)
 
 
   #

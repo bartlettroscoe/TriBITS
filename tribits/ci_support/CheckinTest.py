@@ -258,16 +258,6 @@ def assertExtraBuildConfigFiles(extraBuilds):
         +extraBuildConfigFile+" does not exit!")
 
 
-def getRepoSpaceBranchFromOptionStr(extraPullFrom):
-  pullFromRepoList = extraPullFrom.split(':')
-  if len(pullFromRepoList) < 2:
-    raise Exception("Error, the --extra-pull-from='"+pullFromRepo+"' is not a valid" \
-      " <repo>:<branch> specification!")
-  repo = ':'.join(pullFromRepoList[0:-1])
-  branch = pullFromRepoList[-1]
-  return repo + " " + branch
-
-
 class GitdistOptions:
   def __init__(self, useGit):
     self.useGit = useGit
@@ -342,8 +332,9 @@ def executePull(gitRepo, inOptions, baseTestDir, outFile, pullFromRepo=None,
   :
   cmnd = inOptions.git+" pull"
   if pullFromRepo:
-    repoSpaceBranch = getRepoSpaceBranchFromOptionStr(pullFromRepo)
-    print "\nPulling in updates from '"+repoSpaceBranch+"' ...\n"
+    repoSpaceBranch = pullFromRepo.remoteRepo+" "+pullFromRepo.remoteBranch
+    print "\nPulling in updates to local repo '"+gitRepo.repoName+"'" \
+      " from '"+repoSpaceBranch+"' ...\n"
     cmnd += " " + repoSpaceBranch
   else:
     print "\nPulling in updates from '"+gitRepo.gitRepoStats.trackingBranch+"' ..."
@@ -628,8 +619,8 @@ class RemoteRepoAndBranch:
 
 class RepoExtraRemotePulls:
 
-  def __init__(self, localRepoDir, remoteRepoAndBranchList):
-    self.localRepoDir = localRepoDir
+  def __init__(self, gitRepo, remoteRepoAndBranchList):
+    self.gitRepo = gitRepo
     self.remoteRepoAndBranchList = remoteRepoAndBranchList
 
 
@@ -649,7 +640,7 @@ def getLocalRepoRemoteRepoAndBranchFromExtraPullArg(extraPullArg):
   else:
     raise ValueError(
       "Error, the --extra-pull-from arg '"+extraPullArg+"' is not of the form" \
-      + " <localrepo>:<remoterepo>:<remotebranch>!")
+      + " <localreponame>:<remoterepo>:<remotebranch>!")
   return (localRepo, remoteRepo, remoteBranch)
 
 
@@ -657,7 +648,8 @@ def parseExtraPullFromArgs(gitRepoList, extraPullFromArgs):
   # Initialize an empty set of extra pulls
   repoExtraRemotePullsList = []
   for gitRepo in gitRepoList:
-    repoExtraRemotePullsList.append(RepoExtraRemotePulls(gitRepo.repoDir, []))
+    repoExtraRemotePullsList.append(
+      RepoExtraRemotePulls(gitRepo, []))
   # Parse the arguments and fill in the remote repos and branches
   if extraPullFromArgs:
     for extraPullFromArg in extraPullFromArgs.split(","):
@@ -669,7 +661,7 @@ def parseExtraPullFromArgs(gitRepoList, extraPullFromArgs):
             RemoteRepoAndBranch(remoteRepo, remoteBranch) )
       else:
         for repoExtraRemotePulls in repoExtraRemotePullsList:
-          if repoExtraRemotePulls.localRepoDir == localRepo:
+          if repoExtraRemotePulls.gitRepo.repoName == localRepo:
             repoExtraRemotePulls.remoteRepoAndBranchList.append(
               RemoteRepoAndBranch(remoteRepo, remoteBranch) )
   return repoExtraRemotePullsList
@@ -2258,28 +2250,37 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
         print "\nSkipping initial pull from remote tracking branch!\n"
   
       #
-      print "\n3.c) Pull updates from the extra repository '"+inOptions.extraPullFrom+"' ..."
+      print "\n3.c) Pull extra updates for --extra-pull-from='"+inOptions.extraPullFrom+"' ..."
       #
 
       timings.pull = 0
       
       if inOptions.extraPullFrom and pullPassed:
+        repoExtraRemotePullsList = \
+          parseExtraPullFromArgs(tribitsGitRepos.gitRepoList(), inOptions.extraPullFrom)
         repoIdx = 0
-        for gitRepo in tribitsGitRepos.gitRepoList():
+        for repoExtraRemotePulls in repoExtraRemotePullsList:
+          gitRepo = repoExtraRemotePulls.gitRepo
+          remoteRepoAndBranchList = repoExtraRemotePulls.remoteRepoAndBranchList
+          if not remoteRepoAndBranchList:
+            continue
           print "\n3.c."+str(repoIdx)+") Git Repo: "+gitRepo.repoName
           echoChDir(baseTestDir)
-          (pullRtn, pullTimings, pullGotChanges) = executePull(
-            gitRepo,
-            inOptions, baseTestDir,
-            getInitialExtraPullOutputFileName(gitRepo.repoName),
-            inOptions.extraPullFrom )
-          if pullGotChanges:
-            pulledSomeChanges = True
-            pulledSomeExtraChanges = True
-          timings.pull += pullTimings
+          for remoteRepoAndBranch in remoteRepoAndBranchList:
+            (pullRtn, pullTimings, pullGotChanges) = executePull(
+              gitRepo,
+              inOptions, baseTestDir,
+              getInitialExtraPullOutputFileName(gitRepo.repoName),
+              remoteRepoAndBranch )
+            if pullGotChanges:
+              pulledSomeChanges = True
+              pulledSomeExtraChanges = True
+            timings.pull += pullTimings
+            if pullRtn != 0:
+              print "\nPull failed!\n"
+              pullPassed = False
+              break
           if pullRtn != 0:
-            print "\nPull failed!\n"
-            pullPassed = False
             break
           repoIdx += 1
       else:
