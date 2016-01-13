@@ -1015,6 +1015,189 @@ class test_TribitsGitRepos(unittest.TestCase):
       consoleRegexMatches, consoleRegexNotMatches, exceptionRegexMatches)
 
 
+#############################################################################
+#
+# Test RemoteRepoAndBranch
+#
+#############################################################################
+
+
+def remoteRepoAndBranchIsSame(rrab1, rrab2):
+  isSame = True
+  errMsg = ""
+  if rrab1.remoteRepo != rrab2.remoteRepo:
+    isSame = False
+    errMsg = "Error, rrab1.remoteRepo='"+rrab1.remoteRepo+"'" \
+      +" != rrab2.remoteRepo='"+rrab2.remoteRepo+"'"
+  if rrab1.remoteBranch != rrab2.remoteBranch:
+    isSame = False
+    errMsg = "Error, rrab1.remoteBranch='"+rrab1.remoteBranch+"'" \
+      +" != rrab2.remoteBranch='"+rrab2.remoteBranch+"'"
+  return (isSame, errMsg)
+
+
+class test_RemoteRepoAndBranch(unittest.TestCase):
+
+  def test_construct(self):
+    remoteRepoAndBranch = RemoteRepoAndBranch("remote-repo", "remote-branch")
+    self.assertEqual(remoteRepoAndBranch.remoteRepo, "remote-repo")
+    self.assertEqual(remoteRepoAndBranch.remoteBranch, "remote-branch")
+
+  def test_assertRemoteRepoAndBranchEqual_same(self):
+    (isSame, errMsg) = remoteRepoAndBranchIsSame(
+      RemoteRepoAndBranch("remote-repo", "remote-branch"),
+      RemoteRepoAndBranch("remote-repo", "remote-branch") )
+    self.assertEqual(isSame, True)
+    self.assertEqual(errMsg, "")
+
+  def test_assertRemoteRepoAndBranchEqual_diff_repo(self):
+    (isSame, errMsg) = remoteRepoAndBranchIsSame(
+      RemoteRepoAndBranch("remote-repo0", "remote-branch"),
+      RemoteRepoAndBranch("remote-repo1", "remote-branch") )
+    self.assertEqual(isSame, False)
+    self.assertEqual(errMsg,
+      "Error, rrab1.remoteRepo='remote-repo0' != rrab2.remoteRepo='remote-repo1'")
+
+  def test_assertRemoteRepoAndBranchEqual_diff_branch(self):
+    (isSame, errMsg) = remoteRepoAndBranchIsSame(
+      RemoteRepoAndBranch("remote-repo", "remote-branch0"),
+      RemoteRepoAndBranch("remote-repo", "remote-branch1") )
+    self.assertEqual(isSame, False)
+    self.assertEqual(errMsg,
+      "Error, rrab1.remoteBranch='remote-branch0' != rrab2.remoteBranch='remote-branch1'")
+
+
+#############################################################################
+#
+# Test RepoExtraRemotePulls
+#
+#############################################################################
+
+
+def assertRemoteRepoAndBranchSame(testObj, rrab1, rrab2):
+  (isSame, errMsg) = remoteRepoAndBranchIsSame(rrab1, rrab2)
+  testObj.assertEqual(isSame, True, errMsg)
+
+
+class test_RepoExtraRemotePulls(unittest.TestCase):
+
+  def test_1(self):
+    repoRemotePulls = RepoExtraRemotePulls(
+      "local/repo/dir",
+      (RemoteRepoAndBranch("remote0","branch0"),
+       RemoteRepoAndBranch("remote1","branch1"))
+      )
+    self.assertEqual(repoRemotePulls.localRepoDir, "local/repo/dir")
+    self.assertEqual(len(repoRemotePulls.remoteRepoAndBranchList), 2)
+    assertRemoteRepoAndBranchSame(self,
+      repoRemotePulls.remoteRepoAndBranchList[0],
+      RemoteRepoAndBranch("remote0", "branch0") )
+    assertRemoteRepoAndBranchSame(self,
+      repoRemotePulls.remoteRepoAndBranchList[1],
+      RemoteRepoAndBranch("remote1", "branch1") )
+
+
+#############################################################################
+#
+# Test getLocalRepoRemoteRepoAndBranchFromExtraPullArg
+#
+#############################################################################
+
+
+class test_getLocalRepoRemoteRepoAndBranchFromExtraPullArg(unittest.TestCase):
+
+  def test_remoterepo_remotebranch(self):
+    self.assertEqual(
+      getLocalRepoRemoteRepoAndBranchFromExtraPullArg("remoterepo:remotebranch"),
+      ("", "remoterepo", "remotebranch") )
+
+  def test_remoterepo_remotebranch(self):
+    self.assertEqual(
+      getLocalRepoRemoteRepoAndBranchFromExtraPullArg("remoterepo:remotebranch"),
+      ("", "remoterepo", "remotebranch") )
+
+  def test_localrepo_remoterepo_remotebranch(self):
+    self.assertEqual(
+      getLocalRepoRemoteRepoAndBranchFromExtraPullArg("localrepo:remoterepo:remotebranch"),
+      ("localrepo", "remoterepo", "remotebranch") )
+
+  def test_nocolon(self):
+    self.assertRaises( ValueError,
+        getLocalRepoRemoteRepoAndBranchFromExtraPullArg, "something")
+
+  def test_four_colons(self):
+    self.assertRaises( ValueError,
+        getLocalRepoRemoteRepoAndBranchFromExtraPullArg, "a:b:c:d")
+
+
+#############################################################################
+#
+# Test parseExtraPullFromArgs
+#
+#############################################################################
+
+
+class test_parseExtraPullFromArgs(unittest.TestCase):
+
+  def setUp(self):
+    self.gitRepoList = [
+      GitRepo("repo0", "repo0_dir", "GIT", False),
+      GitRepo("repo1", "repo1_dir", "GIT", False)
+      ]
+
+  def test_extra_pull_from_0_empty(self):
+    repoExtraRemotePullsList = parseExtraPullFromArgs(self.gitRepoList, "")
+    self.assertEqual(len(repoExtraRemotePullsList), 2)
+    self.assertEqual(repoExtraRemotePullsList[0].localRepoDir, "repo0_dir")
+    self.assertEqual(repoExtraRemotePullsList[0].remoteRepoAndBranchList, [])
+    self.assertEqual(repoExtraRemotePullsList[1].localRepoDir, "repo1_dir")
+    self.assertEqual(repoExtraRemotePullsList[1].remoteRepoAndBranchList, [])
+
+  def test_extra_pull_from_1_std(self):
+    repoExtraRemotePullsList = parseExtraPullFromArgs(self.gitRepoList,
+      "remoterepo:remotebranch")
+    self.assertEqual(len(repoExtraRemotePullsList), 2)
+    self.assertEqual(repoExtraRemotePullsList[0].localRepoDir, "repo0_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[0].remoteRepoAndBranchList), 1)
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[0].remoteRepoAndBranchList[0],
+      RemoteRepoAndBranch("remoterepo", "remotebranch") )
+    self.assertEqual(repoExtraRemotePullsList[1].localRepoDir, "repo1_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[1].remoteRepoAndBranchList), 1)
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[1].remoteRepoAndBranchList[0],
+      RemoteRepoAndBranch("remoterepo", "remotebranch") )
+
+  def test_extra_pull_from_1_localrepo0(self):
+    repoExtraRemotePullsList = parseExtraPullFromArgs(self.gitRepoList,
+      "repo0_dir:remoterepo:remotebranch")
+    self.assertEqual(len(repoExtraRemotePullsList), 2)
+    self.assertEqual(repoExtraRemotePullsList[0].localRepoDir, "repo0_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[0].remoteRepoAndBranchList), 1)
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[0].remoteRepoAndBranchList[0],
+      RemoteRepoAndBranch("remoterepo", "remotebranch") )
+    self.assertEqual(repoExtraRemotePullsList[1].localRepoDir, "repo1_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[1].remoteRepoAndBranchList), 0)
+
+  def test_extra_pull_from_1_localrepo0_std(self):
+    repoExtraRemotePullsList = parseExtraPullFromArgs(self.gitRepoList,
+      "remoterepo1:remotebranch1,repo0_dir:remoterepo2:remotebranch2")
+    self.assertEqual(len(repoExtraRemotePullsList), 2)
+    self.assertEqual(repoExtraRemotePullsList[0].localRepoDir, "repo0_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[0].remoteRepoAndBranchList), 2)
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[0].remoteRepoAndBranchList[0],
+      RemoteRepoAndBranch("remoterepo1", "remotebranch1") )
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[0].remoteRepoAndBranchList[1],
+      RemoteRepoAndBranch("remoterepo2", "remotebranch2") )
+    self.assertEqual(repoExtraRemotePullsList[1].localRepoDir, "repo1_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[1].remoteRepoAndBranchList), 1)
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[1].remoteRepoAndBranchList[0],
+      RemoteRepoAndBranch("remoterepo1", "remotebranch1") )
+
 
 #############################################################################
 #

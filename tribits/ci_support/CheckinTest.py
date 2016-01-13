@@ -323,6 +323,7 @@ def assertRepoHasBranchAndTrackingBranch(inOptions, gitRepo):
     raise Exception("Error, the "+repoNameEntry+" is not on a tracking branch which" \
       " is not allowed in this case!")
 
+
 def pushToTrackingBranchArgs(gitRepo):
   (repo, trackingbranch) = gitRepo.gitRepoStats.trackingBranch.split("/")
   return repo+" "+gitRepo.gitRepoStats.branch+":"+trackingbranch
@@ -611,6 +612,67 @@ def createAndGetProjectDependencies(inOptions, baseTestDir, tribitsGitRepos):
 
   global projectDependenciesCache
   projectDependenciesCache = getProjectDependenciesFromXmlFile(projectDepsXmlFile)
+
+
+class RemoteRepoAndBranch:
+
+  def __init__(self, remoteRepo, remoteBranch):
+    self.remoteRepo = remoteRepo
+    self.remoteBranch = remoteBranch
+
+  def __str__(self):
+    return "RemoteRepoAndBranch{repoRepo='"+str(self.remoteRepo)+"'" \
+      +", remoteBranch='"+str(self.remoteBranch)+"'" \
+      +"}"
+
+
+class RepoExtraRemotePulls:
+
+  def __init__(self, localRepoDir, remoteRepoAndBranchList):
+    self.localRepoDir = localRepoDir
+    self.remoteRepoAndBranchList = remoteRepoAndBranchList
+
+
+def getLocalRepoRemoteRepoAndBranchFromExtraPullArg(extraPullArg):
+  extraPullArgArray = extraPullArg.split(':')
+  localRepo = ""
+  remoteRepo = ""
+  remoteBranch = ""
+  extraPullArgArray_len = len(extraPullArgArray)
+  if extraPullArgArray_len == 3:
+    localRepo = extraPullArgArray[0]
+    remoteRepo = extraPullArgArray[1]
+    remoteBranch = extraPullArgArray[2]
+  elif extraPullArgArray_len == 2:
+    remoteRepo = extraPullArgArray[0]
+    remoteBranch = extraPullArgArray[1]
+  else:
+    raise ValueError(
+      "Error, the --extra-pull-from arg '"+extraPullArg+"' is not of the form" \
+      + " <localrepo>:<remoterepo>:<remotebranch>!")
+  return (localRepo, remoteRepo, remoteBranch)
+
+
+def parseExtraPullFromArgs(gitRepoList, extraPullFromArgs):
+  # Initialize an empty set of extra pulls
+  repoExtraRemotePullsList = []
+  for gitRepo in gitRepoList:
+    repoExtraRemotePullsList.append(RepoExtraRemotePulls(gitRepo.repoDir, []))
+  # Parse the arguments and fill in the remote repos and branches
+  if extraPullFromArgs:
+    for extraPullFromArg in extraPullFromArgs.split(","):
+      (localRepo, remoteRepo, remoteBranch) = \
+        getLocalRepoRemoteRepoAndBranchFromExtraPullArg(extraPullFromArg)
+      if localRepo == "":
+        for repoExtraRemotePulls in repoExtraRemotePullsList:
+          repoExtraRemotePulls.remoteRepoAndBranchList.append(
+            RemoteRepoAndBranch(remoteRepo, remoteBranch) )
+      else:
+        for repoExtraRemotePulls in repoExtraRemotePullsList:
+          if repoExtraRemotePulls.localRepoDir == localRepo:
+            repoExtraRemotePulls.remoteRepoAndBranchList.append(
+              RemoteRepoAndBranch(remoteRepo, remoteBranch) )
+  return repoExtraRemotePullsList
 
 
 class BuildTestCase:
