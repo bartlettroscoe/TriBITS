@@ -629,6 +629,7 @@ def getLocalRepoRemoteRepoAndBranchFromExtraPullArg(extraPullArg):
   localRepo = ""
   remoteRepo = ""
   remoteBranch = ""
+  matchesAllRepos = False
   extraPullArgArray_len = len(extraPullArgArray)
   if extraPullArgArray_len == 3:
     localRepo = extraPullArgArray[0]
@@ -637,11 +638,28 @@ def getLocalRepoRemoteRepoAndBranchFromExtraPullArg(extraPullArg):
   elif extraPullArgArray_len == 2:
     remoteRepo = extraPullArgArray[0]
     remoteBranch = extraPullArgArray[1]
+    matchesAllRepos = True
   else:
     raise ValueError(
       "Error, the --extra-pull-from arg '"+extraPullArg+"' is not of the form" \
       + " <localreponame>:<remoterepo>:<remotebranch>!")
-  return (localRepo, remoteRepo, remoteBranch)
+  if remoteRepo == "":
+    raise ValueError(
+      "Error, the --extra-pull-from arg '"+extraPullArg+"' has an empty <remoterepo>" \
+      + " field in <localreponame>:<remoterepo>:<remotebranch>!")
+  elif remoteBranch == "":
+    raise ValueError(
+      "Error, the --extra-pull-from arg '"+extraPullArg+"' has an empty <remotebranch>" \
+      + " field in <localreponame>:<remoterepo>:<remotebranch>!")
+  return (localRepo, remoteRepo, remoteBranch, matchesAllRepos)
+
+
+def matchExtraRepoLocalRepoMatchLocalRepo(repoName, extraRepoLocalRepoName):
+  if repoName == extraRepoLocalRepoName:
+    return True
+  elif repoName == "" and extraRepoLocalRepoName == "BASE_REPO":
+    return True
+  return False
 
 
 def parseExtraPullFromArgs(gitRepoList, extraPullFromArgs):
@@ -653,9 +671,9 @@ def parseExtraPullFromArgs(gitRepoList, extraPullFromArgs):
   # Parse the arguments and fill in the remote repos and branches
   if extraPullFromArgs:
     for extraPullFromArg in extraPullFromArgs.split(","):
-      (localRepo, remoteRepo, remoteBranch) = \
+      (localRepo, remoteRepo, remoteBranch, matchesAllRepos) = \
         getLocalRepoRemoteRepoAndBranchFromExtraPullArg(extraPullFromArg)
-      if localRepo == "":
+      if matchesAllRepos:
         for repoExtraRemotePulls in repoExtraRemotePullsList:
           repoExtraRemotePulls.remoteRepoAndBranchList.append(
             RemoteRepoAndBranch(remoteRepo, remoteBranch) )

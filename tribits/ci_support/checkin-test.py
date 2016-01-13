@@ -1191,7 +1191,7 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
   if options.extraPullFrom:
     for extraPullFromArg in options.extraPullFrom.split(","):
        # Will validate form of argument
-      getLocalRepoRemoteRepoAndBranchFromExtraPullArg(options.extraPullFrom)
+      getLocalRepoRemoteRepoAndBranchFromExtraPullArg(extraPullFromArg)
 
 
   #

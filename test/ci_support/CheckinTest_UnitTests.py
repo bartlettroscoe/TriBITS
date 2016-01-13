@@ -1111,17 +1111,19 @@ class test_getLocalRepoRemoteRepoAndBranchFromExtraPullArg(unittest.TestCase):
   def test_remoterepo_remotebranch(self):
     self.assertEqual(
       getLocalRepoRemoteRepoAndBranchFromExtraPullArg("remoterepo:remotebranch"),
-      ("", "remoterepo", "remotebranch") )
-
-  def test_remoterepo_remotebranch(self):
-    self.assertEqual(
-      getLocalRepoRemoteRepoAndBranchFromExtraPullArg("remoterepo:remotebranch"),
-      ("", "remoterepo", "remotebranch") )
+      ("", "remoterepo", "remotebranch", True) )
 
   def test_localrepo_remoterepo_remotebranch(self):
     self.assertEqual(
       getLocalRepoRemoteRepoAndBranchFromExtraPullArg("localrepo:remoterepo:remotebranch"),
-      ("localrepo", "remoterepo", "remotebranch") )
+      ("localrepo", "remoterepo", "remotebranch", False) )
+
+  def test_empty_remoterepo_remotebranch(self):
+    self.assertEqual(
+      getLocalRepoRemoteRepoAndBranchFromExtraPullArg(":remoterepo:remotebranch"),
+      ("", "remoterepo", "remotebranch", False) )
+    # This is for the use case where the local repo is empty which matches the
+    # base repo.
 
   def test_nocolon(self):
     self.assertRaises( ValueError,
@@ -1130,6 +1132,14 @@ class test_getLocalRepoRemoteRepoAndBranchFromExtraPullArg(unittest.TestCase):
   def test_four_colons(self):
     self.assertRaises( ValueError,
         getLocalRepoRemoteRepoAndBranchFromExtraPullArg, "a:b:c:d")
+
+  def test_empty_remoterepo(self):
+    self.assertRaises( ValueError,
+        getLocalRepoRemoteRepoAndBranchFromExtraPullArg, "localrepo::remotebranch")
+
+  def test_empty_remotebranch(self):
+    self.assertRaises( ValueError,
+        getLocalRepoRemoteRepoAndBranchFromExtraPullArg, "localrepo:remoterepo:")
 
 
 #############################################################################
@@ -1143,68 +1153,165 @@ class test_parseExtraPullFromArgs(unittest.TestCase):
 
   def setUp(self):
     self.gitRepoList = [
+      GitRepo("", "", "GIT", False),
       GitRepo("repo0", "repo0_dir", "GIT", False),
       GitRepo("repo1", "repo1_dir", "GIT", False)
       ]
 
   def test_extra_pull_from_0_empty(self):
     repoExtraRemotePullsList = parseExtraPullFromArgs(self.gitRepoList, "")
-    self.assertEqual(len(repoExtraRemotePullsList), 2)
-    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoName, "repo0")
-    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoDir, "repo0_dir")
+    self.assertEqual(len(repoExtraRemotePullsList), 3)
+    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoName, "")
+    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoDir, "")
     self.assertEqual(repoExtraRemotePullsList[0].remoteRepoAndBranchList, [])
-    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoName, "repo1")
-    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoDir, "repo1_dir")
+    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoName, "repo0")
+    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoDir, "repo0_dir")
     self.assertEqual(repoExtraRemotePullsList[1].remoteRepoAndBranchList, [])
+    self.assertEqual(repoExtraRemotePullsList[2].gitRepo.repoName, "repo1")
+    self.assertEqual(repoExtraRemotePullsList[2].gitRepo.repoDir, "repo1_dir")
+    self.assertEqual(repoExtraRemotePullsList[2].remoteRepoAndBranchList, [])
 
-  def test_extra_pull_from_1_std(self):
+  def test_extra_pull_from_1_allrepos(self):
     repoExtraRemotePullsList = parseExtraPullFromArgs(self.gitRepoList,
       "remoterepo:remotebranch")
-    self.assertEqual(len(repoExtraRemotePullsList), 2)
-    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoName, "repo0")
-    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoDir, "repo0_dir")
+    self.assertEqual(len(repoExtraRemotePullsList), 3)
+    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoName, "")
+    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoDir, "")
     self.assertEqual(len(repoExtraRemotePullsList[0].remoteRepoAndBranchList), 1)
     assertRemoteRepoAndBranchSame(self,
       repoExtraRemotePullsList[0].remoteRepoAndBranchList[0],
       RemoteRepoAndBranch("remoterepo", "remotebranch") )
-    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoName, "repo1")
-    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoDir, "repo1_dir")
+    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoName, "repo0")
+    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoDir, "repo0_dir")
     self.assertEqual(len(repoExtraRemotePullsList[1].remoteRepoAndBranchList), 1)
     assertRemoteRepoAndBranchSame(self,
       repoExtraRemotePullsList[1].remoteRepoAndBranchList[0],
       RemoteRepoAndBranch("remoterepo", "remotebranch") )
+    self.assertEqual(repoExtraRemotePullsList[2].gitRepo.repoName, "repo1")
+    self.assertEqual(repoExtraRemotePullsList[2].gitRepo.repoDir, "repo1_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[2].remoteRepoAndBranchList), 1)
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[2].remoteRepoAndBranchList[0],
+      RemoteRepoAndBranch("remoterepo", "remotebranch") )
+    # Above shows that "remoterepo:remotebranch" matches all repos to maintain
+    # backward compatibility.
 
-  def test_extra_pull_from_1_localrepo0(self):
+  def test_extra_pull_from_1_empty_localrepo(self):
+    repoExtraRemotePullsList = parseExtraPullFromArgs(self.gitRepoList,
+      ":remoterepo:remotebranch")
+    self.assertEqual(len(repoExtraRemotePullsList), 3)
+    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoName, "")
+    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoDir, "")
+    self.assertEqual(len(repoExtraRemotePullsList[0].remoteRepoAndBranchList), 1)
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[0].remoteRepoAndBranchList[0],
+      RemoteRepoAndBranch("remoterepo", "remotebranch") )
+    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoName, "repo0")
+    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoDir, "repo0_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[1].remoteRepoAndBranchList), 0)
+    self.assertEqual(repoExtraRemotePullsList[2].gitRepo.repoName, "repo1")
+    self.assertEqual(repoExtraRemotePullsList[2].gitRepo.repoDir, "repo1_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[2].remoteRepoAndBranchList), 0)
+    # Above shows that ":remoterepo:remotebranch" matches just the base repo.
+
+  def test_extra_pull_from_2_localrepo0(self):
     repoExtraRemotePullsList = parseExtraPullFromArgs(self.gitRepoList,
       "repo0:remoterepo:remotebranch")
-    self.assertEqual(len(repoExtraRemotePullsList), 2)
-    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoName, "repo0")
-    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoDir, "repo0_dir")
-    self.assertEqual(len(repoExtraRemotePullsList[0].remoteRepoAndBranchList), 1)
-    assertRemoteRepoAndBranchSame(self,
-      repoExtraRemotePullsList[0].remoteRepoAndBranchList[0],
-      RemoteRepoAndBranch("remoterepo", "remotebranch") )
-    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoName, "repo1")
-    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoDir, "repo1_dir")
-    self.assertEqual(len(repoExtraRemotePullsList[1].remoteRepoAndBranchList), 0)
-
-  def test_extra_pull_from_1_localrepo0_std(self):
-    repoExtraRemotePullsList = parseExtraPullFromArgs(self.gitRepoList,
-      "remoterepo1:remotebranch1,repo0:remoterepo2:remotebranch2")
-    self.assertEqual(len(repoExtraRemotePullsList), 2)
-    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoDir, "repo0_dir")
-    self.assertEqual(len(repoExtraRemotePullsList[0].remoteRepoAndBranchList), 2)
-    assertRemoteRepoAndBranchSame(self,
-      repoExtraRemotePullsList[0].remoteRepoAndBranchList[0],
-      RemoteRepoAndBranch("remoterepo1", "remotebranch1") )
-    assertRemoteRepoAndBranchSame(self,
-      repoExtraRemotePullsList[0].remoteRepoAndBranchList[1],
-      RemoteRepoAndBranch("remoterepo2", "remotebranch2") )
-    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoDir, "repo1_dir")
+    self.assertEqual(len(repoExtraRemotePullsList), 3)
+    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoName, "")
+    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoDir, "")
+    self.assertEqual(len(repoExtraRemotePullsList[0].remoteRepoAndBranchList), 0)
+    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoName, "repo0")
+    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoDir, "repo0_dir")
     self.assertEqual(len(repoExtraRemotePullsList[1].remoteRepoAndBranchList), 1)
     assertRemoteRepoAndBranchSame(self,
       repoExtraRemotePullsList[1].remoteRepoAndBranchList[0],
+      RemoteRepoAndBranch("remoterepo", "remotebranch") )
+    self.assertEqual(repoExtraRemotePullsList[2].gitRepo.repoName, "repo1")
+    self.assertEqual(repoExtraRemotePullsList[2].gitRepo.repoDir, "repo1_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[2].remoteRepoAndBranchList), 0)
+
+  def test_extra_pull_from_3_localrepo0_allrepos(self):
+    repoExtraRemotePullsList = parseExtraPullFromArgs(self.gitRepoList,
+      "remoterepo1:remotebranch1,repo0:remoterepo2:remotebranch2")
+    self.assertEqual(len(repoExtraRemotePullsList), 3)
+    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoName, "")
+    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoDir, "")
+    self.assertEqual(len(repoExtraRemotePullsList[0].remoteRepoAndBranchList), 1)
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[0].remoteRepoAndBranchList[0],
       RemoteRepoAndBranch("remoterepo1", "remotebranch1") )
+    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoDir, "repo0_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[1].remoteRepoAndBranchList), 2)
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[1].remoteRepoAndBranchList[0],
+      RemoteRepoAndBranch("remoterepo1", "remotebranch1") )
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[1].remoteRepoAndBranchList[1],
+      RemoteRepoAndBranch("remoterepo2", "remotebranch2") )
+    self.assertEqual(repoExtraRemotePullsList[2].gitRepo.repoDir, "repo1_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[2].remoteRepoAndBranchList), 1)
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[2].remoteRepoAndBranchList[0],
+      RemoteRepoAndBranch("remoterepo1", "remotebranch1") )
+
+  def test_extra_pull_from_4_baserepo_localrepo1(self):
+    repoExtraRemotePullsList = parseExtraPullFromArgs(self.gitRepoList,
+      ":remoterepo1:remotebranch1,repo1:remoterepo2:remotebranch2")
+    self.assertEqual(len(repoExtraRemotePullsList), 3)
+    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoName, "")
+    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoDir, "")
+    self.assertEqual(len(repoExtraRemotePullsList[0].remoteRepoAndBranchList), 1)
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[0].remoteRepoAndBranchList[0],
+      RemoteRepoAndBranch("remoterepo1", "remotebranch1") )
+    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoDir, "repo0_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[1].remoteRepoAndBranchList), 0)
+    self.assertEqual(repoExtraRemotePullsList[2].gitRepo.repoDir, "repo1_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[2].remoteRepoAndBranchList), 1)
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[2].remoteRepoAndBranchList[0],
+      RemoteRepoAndBranch("remoterepo2", "remotebranch2") )
+
+  def test_extra_pull_from_5_localrepo1_baserepo(self):
+    repoExtraRemotePullsList = parseExtraPullFromArgs(self.gitRepoList,
+      "repo1:remoterepo2:remotebranch2,:remoterepo1:remotebranch1")
+    self.assertEqual(len(repoExtraRemotePullsList), 3)
+    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoName, "")
+    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoDir, "")
+    self.assertEqual(len(repoExtraRemotePullsList[0].remoteRepoAndBranchList), 1)
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[0].remoteRepoAndBranchList[0],
+      RemoteRepoAndBranch("remoterepo1", "remotebranch1") )
+    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoDir, "repo0_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[1].remoteRepoAndBranchList), 0)
+    self.assertEqual(repoExtraRemotePullsList[2].gitRepo.repoDir, "repo1_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[2].remoteRepoAndBranchList), 1)
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[2].remoteRepoAndBranchList[0],
+      RemoteRepoAndBranch("remoterepo2", "remotebranch2") )
+    # Above test shows that the order that the pull are listed is not
+    # significant between repos, only for the same repo.
+
+  def test_extra_pull_from_6_localrepo0_2extrapulls(self):
+    repoExtraRemotePullsList = parseExtraPullFromArgs(self.gitRepoList,
+      "repo0:remoterepo1:remotebranch1,repo0:remoterepo0:remotebranch0")
+    self.assertEqual(len(repoExtraRemotePullsList), 3)
+    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoName, "")
+    self.assertEqual(repoExtraRemotePullsList[0].gitRepo.repoDir, "")
+    self.assertEqual(len(repoExtraRemotePullsList[0].remoteRepoAndBranchList), 0)
+    self.assertEqual(repoExtraRemotePullsList[1].gitRepo.repoDir, "repo0_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[1].remoteRepoAndBranchList), 2)
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[1].remoteRepoAndBranchList[0],
+      RemoteRepoAndBranch("remoterepo1", "remotebranch1") )
+    assertRemoteRepoAndBranchSame(self,
+      repoExtraRemotePullsList[1].remoteRepoAndBranchList[1],
+      RemoteRepoAndBranch("remoterepo0", "remotebranch0") )
+    self.assertEqual(repoExtraRemotePullsList[2].gitRepo.repoDir, "repo1_dir")
+    self.assertEqual(len(repoExtraRemotePullsList[2].remoteRepoAndBranchList), 0)
+    # Above test shows that the order that the pulls are listed is
+    # significant for the same repo.
 
 
 #############################################################################
@@ -2394,7 +2501,7 @@ class test_checkin_test(unittest.TestCase):
       )
 
 
-  def test_extra_repo_pull_extra_pull_pass(self):
+  def test_extra_repo_pull_extra_pull_allrepos_pass(self):
     projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
     checkin_test_run_case(
       \
@@ -2431,7 +2538,169 @@ class test_checkin_test(unittest.TestCase):
       envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
       )
     # NOTE: In the above scenario, there are no local changes until the
-    # --extra-pull-from pull pulls in commits.
+    # --extra-pull-from pulls in commits.
+
+
+  def test_extra_repo_pull_extra_pull_baserepo_pass(self):
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    checkin_test_run_case(
+      \
+      self,
+      \
+      "extra_repo_pull_extra_pull_pass",
+      \
+      "--extra-repos=preCopyrightTrilinos --pull --extra-pull-from=:somemachine:someotherbranch", \
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +g_cmndinterceptsPullOnlyPasses \
+      +g_cmndinterceptsPullOnlyPasses \
+      +"IT: git pull somemachine someotherbranch; 0; 'git extra pull passed'\n"
+      +cmndinterceptsGetRepoStatsPass(numCommits="1") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +g_cmndinterceptsDiffOnlyPasses \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      True,
+      \
+      "pullInitial.out\n" \
+      "pullInitial.preCopyrightTrilinos.out\n" \
+      "pullInitialExtra.out\n" \
+      ,
+      \
+      envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
+      )
+    # NOTE: In the above scenario, there are no local changes until the
+    # --extra-pull-from pulls in commits to the base repo only!.
+
+
+  def test_extra_repo_pull_extra_pull_repo0_pass(self):
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    checkin_test_run_case(
+      \
+      self,
+      \
+      "extra_repo_pull_extra_pull_pass",
+      \
+      "--extra-repos=preCopyrightTrilinos --pull --extra-pull-from=preCopyrightTrilinos:somemachine:someotherbranch", \
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +g_cmndinterceptsPullOnlyPasses \
+      +g_cmndinterceptsPullOnlyPasses \
+      +"IT: git pull somemachine someotherbranch; 0; 'git extra pull passed'\n"
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="1") \
+      +g_cmndinterceptsDiffOnlyPasses \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      True,
+      \
+      "pullInitial.out\n" \
+      "pullInitial.preCopyrightTrilinos.out\n" \
+      "3.c.0. Git Repo: preCopyrightTrilinos\n" \
+      "pullInitialExtra.preCopyrightTrilinos.out\n" \
+      ,
+      \
+      envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
+      )
+    # NOTE: In the above scenario, there are no local changes until the
+    # --extra-pull-from pulls in commits to the extra repo only!.
+
+
+  def test_extra_repo_pull_extra_pull_allrepos_repo0_pass(self):
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    checkin_test_run_case(
+      \
+      self,
+      \
+      "extra_repo_pull_extra_pull_pass",
+      \
+      "--extra-repos=preCopyrightTrilinos --pull " \
+        +" --extra-pull-from=remote0:remotebranch0,preCopyrightTrilinos:remote1:remotebranch1", \
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +g_cmndinterceptsPullOnlyPasses \
+      +g_cmndinterceptsPullOnlyPasses \
+      +"IT: git pull remote0 remotebranch0; 0; 'git extra pull passed'\n"
+      +"IT: git pull remote0 remotebranch0; 0; 'git extra pull passed'\n"
+      +"IT: git pull remote1 remotebranch1; 0; 'git extra pull passed'\n"
+      +cmndinterceptsGetRepoStatsPass(numCommits="2") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="1") \
+      +g_cmndinterceptsDiffOnlyPasses \
+      +g_cmndinterceptsDiffOnlyPasses \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      True,
+      \
+      "pullInitial.out\n" \
+      "pullInitial.preCopyrightTrilinos.out\n" \
+      "3.c.0. Git Repo: \n" \
+      "3.c.1. Git Repo: preCopyrightTrilinos\n" \
+      "pullInitialExtra.out\n" \
+      "pullInitialExtra.preCopyrightTrilinos.out\n" \
+      ,
+      \
+      envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
+      )
+    # NOTE: In the above scenario, there are no local changes until the
+    # --extra-pull-from pulls in commits to the extra repo only!.
+
+
+  def test_extra_repo_pull_extra_pull_repo0_repo1_pass(self):
+    projectDepsXmlFileOverride=g_testBaseDir+"/TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml"
+    checkin_test_run_case(
+      \
+      self,
+      \
+      "extra_repo_pull_extra_pull_pass",
+      \
+      "--extra-repos=preCopyrightTrilinos,extraTrilinosRepo --pull " \
+        +" --extra-pull-from=extraTrilinosRepo:remote0:remotebranch0,preCopyrightTrilinos:remote1:remotebranch1", \
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +g_cmndinterceptsPullOnlyPasses \
+      +g_cmndinterceptsPullOnlyPasses \
+      +g_cmndinterceptsPullOnlyPasses \
+      +"IT: git pull remote1 remotebranch1; 0; 'git extra pull passed'\n"
+      +"IT: git pull remote0 remotebranch0; 0; 'git extra pull passed'\n"
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="1") \
+      +cmndinterceptsGetRepoStatsPass(numCommits="0") \
+      +g_cmndinterceptsDiffOnlyPasses \
+      +g_cmndinterceptsLogCommitsPasses \
+      +g_cmndinterceptsSendFinalEmail \
+      ,
+      \
+      True,
+      \
+      "pullInitial.out\n" \
+      "pullInitial.preCopyrightTrilinos.out\n" \
+      "pullInitial.extraTrilinosRepo.out\n" \
+      "3.c.0. Git Repo: preCopyrightTrilinos\n" \
+      "3.c.1. Git Repo: extraTrilinosRepo\n" \
+      "pullInitialExtra.preCopyrightTrilinos.out\n" \
+      "pullInitialExtra.extraTrilinosRepo.out\n" \
+      ,
+      \
+      envVars = [ "CHECKIN_TEST_DEPS_XML_FILE_OVERRIDE="+projectDepsXmlFileOverride ]
+      )
+    # NOTE: In the above scenario, there are no local changes until the
+    # --extra-pull-from pulls in commits to the extra repo only!.
 
 
   def test_extra_repo_1_trilinos_changes_do_all_push_pass(self):
