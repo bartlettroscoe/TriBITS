@@ -851,7 +851,7 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
       " 'NIGHTLY', or 'WEEKLY' (default 'BASIC')." )
 
   clp.add_option(
-    "-j", dest="overallNumProcs", type="string", default="",
+    "-j", "--parallel", dest="overallNumProcs", type="string", default="",
     help="The options to pass to make and ctest (e.g. -j4)." )
 
   clp.add_option(
@@ -1287,13 +1287,32 @@ def loadConfigurationFile(filepath):
     raise Exception('The file %s does not exist.' % filepath)
 
 
+def loadLocalDefaults(configuration_inout):
+  checkinTestDir = os.getcwd()
+  localProjectDefaultsBaseName = "local-checkin-test-defaults"
+  localProjectDefaultsFile = checkinTestDir+"/"+localProjectDefaultsBaseName+".py"
+  print "localProjectDefaultsFile = '"+localProjectDefaultsFile+"'"
+  if os.path.exists(localProjectDefaultsFile):
+    sys_path_old = sys.path
+    try:
+      sys.path = [checkinTestDir] + sys_path_old
+      if debugDump:
+        print "\nLoading local project configuration from "+localProjectDefaultsFile+"..."
+        print "\nsys.path =", sys.path
+      localDefaults = __import__(localProjectDefaultsBaseName).defaults
+      configuration_inout["defaults"].update(localDefaults)
+    finally:
+      sys.path = sys_path_old
+      if debugDump:
+        print "\nsys.path =", sys.path
+
+
 def locateAndLoadConfiguration(path_hints = []):
   """
-  Locate and load a module called
-  checkin_test_project_configuration.py. The path_hints argument can
-  be used to provide location hints at which to locate the
-  file. Returns a configuration dictionary. If the module is not
-  found, this dictionary will be empty.
+  Locate and load a module called checkin_test_project_configuration.py. The
+  path_hints argument can be used to provide location hints at which to locate
+  the file. Returns a configuration dictionary. If the module is not found,
+  this dictionary will be empty.
   """
   for path in path_hints:
     candidate = os.path.join(path, "project-checkin-test-config.py")
@@ -1340,8 +1359,9 @@ def main(cmndLineArgs):
           configuration = locateAndLoadConfiguration([arg.split('=')[1]])
       if not configuration:
         configuration = locateAndLoadConfiguration(getConfigurationSearchPaths())
+      loadLocalDefaults(configuration)
       if debugDump:
-        print "\nConfiguration loaded from configuration file =", configuration 
+        print "\nConfiguration loaded from configuration file =", configuration
       success = runProjectTestsWithCommandLineArgs(cmndLineArgs, configuration)
     except SystemExit, e:
       # In Python 2.6, SystemExit inherits Exception, but for proper exit
