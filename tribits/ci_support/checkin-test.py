@@ -1287,7 +1287,8 @@ def loadConfigurationFile(filepath):
     raise Exception('The file %s does not exist.' % filepath)
 
 
-def loadLocalDefaults(configuration_inout):
+def getLocalCmndLineArgs():
+  localDefaults = []
   checkinTestDir = os.getcwd()
   localProjectDefaultsBaseName = "local-checkin-test-defaults"
   localProjectDefaultsFile = checkinTestDir+"/"+localProjectDefaultsBaseName+".py"
@@ -1297,14 +1298,14 @@ def loadLocalDefaults(configuration_inout):
     try:
       sys.path = [checkinTestDir] + sys_path_old
       if debugDump:
-        print "\nLoading local project configuration from "+localProjectDefaultsFile+"..."
+        print "\nLoading local default command-line args from "+localProjectDefaultsFile+"..."
         print "\nsys.path =", sys.path
       localDefaults = __import__(localProjectDefaultsBaseName).defaults
-      configuration_inout["defaults"].update(localDefaults)
     finally:
       sys.path = sys_path_old
       if debugDump:
         print "\nsys.path =", sys.path
+  return localDefaults
 
 
 def locateAndLoadConfiguration(path_hints = []):
@@ -1359,7 +1360,14 @@ def main(cmndLineArgs):
           configuration = locateAndLoadConfiguration([arg.split('=')[1]])
       if not configuration:
         configuration = locateAndLoadConfiguration(getConfigurationSearchPaths())
-      loadLocalDefaults(configuration)
+      localCmndLineArgs = getLocalCmndLineArgs()
+      if localCmndLineArgs:
+        if debugDump:
+          print "\ncmndLineArgs =", cmndLineArgs
+          print "\nlocalCmndLineArgs =", localCmndLineArgs
+        cmndLineArgs = localCmndLineArgs + cmndLineArgs
+        if debugDump:
+          print "\ncmndLineArgs =", cmndLineArgs
       if debugDump:
         print "\nConfiguration loaded from configuration file =", configuration
       success = runProjectTestsWithCommandLineArgs(cmndLineArgs, configuration)

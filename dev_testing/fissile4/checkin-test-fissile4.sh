@@ -49,7 +49,6 @@ echo "
 export PATH=/projects/vera/common_tools/cmake-2.8.11/bin:$PATH
 
 $TRIBITS_BASE_DIR_ABS/checkin-test.py \
--j16 \
 --ctest-timeout=180 \
 --skip-case-no-email \
 $EXTRA_ARGS
