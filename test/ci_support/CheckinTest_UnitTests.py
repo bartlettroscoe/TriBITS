@@ -1921,6 +1921,86 @@ class test_checkin_test(unittest.TestCase):
       False)
 
 
+  def test_local_defaults_override_project_defaults(self):
+    
+    testName = "local_defaults_override_project_defaults"
+
+    testBaseDir = create_checkin_test_case_dir(testName, g_verbose)
+
+    writeStrToFile(testBaseDir+"/local-checkin-test-defaults.py",
+      "defaults = [\n" \
+      "  \"--send-email-to-on-push=dummy@nogood.com\",\n" \
+      "  \"-j10\",\n" \
+      "  \"--no-rebase\",\n" \
+      "  \"--ctest-options=-E '(PackageA_Test1|PackageB_Test2)'\"\n" \
+      "  ]\n"
+      )
+
+    checkin_test_run_case(
+      \
+      self,
+      \
+      testName,
+      \
+      " --default-builds=MPI_DEBUG --allow-no-pull --send-email-to=" \
+      ,
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass() \
+      +g_cmndinterceptsDiffOnlyPasses \
+      +g_cmndinterceptsLogCommitsPasses \
+      ,
+      \
+      True,
+      \
+      "\-\-send-email-to-on-push=.dummy@nogood.com.\n" \
+      "\-j10\n" \
+      "\-\-no-rebase\n" \
+      "\-\-ctest-options=.-E ..PackageA_Test1.PackageB_Test2...\n" \
+      )
+
+
+  def test_command_args_override_local_defaults(self):
+    
+    testName = "command_args_override_local_defaults"
+
+    testBaseDir = create_checkin_test_case_dir(testName, g_verbose)
+
+    writeStrToFile(testBaseDir+"/local-checkin-test-defaults.py",
+      "defaults = [\n" \
+      "  \"--send-email-to-on-push=dummy@nogood.com\",\n" \
+      "  \"-j10\",\n" \
+      "  \"--no-rebase\",\n" \
+      "  \"--ctest-options=-E '(PackageA_Test1|PackageB_Test2)'\"\n" \
+      "  ]\n"
+      )
+
+    checkin_test_run_case(
+      \
+      self,
+      \
+      testName,
+      \
+      " --default-builds=MPI_DEBUG --allow-no-pull --send-email-to=" \
+      " --send-email-to-on-push=nothing@good.gov" \
+      " -j6 --rebase --ctest-options=\"-E '(Test5_|Test6_)'\""
+      ,
+      \
+      g_cmndinterceptsDumpDepsXMLFile \
+      +cmndinterceptsGetRepoStatsPass() \
+      +g_cmndinterceptsDiffOnlyPasses \
+      +g_cmndinterceptsLogCommitsPasses \
+      ,
+      \
+      True,
+      \
+      "\-\-send-email-to-on-push=.nothing@good.gov.\n" \
+      "\-j6\n" \
+      "\-\-rebase\n" \
+      "\-\-ctest-options=.-E ..Test5_.Test6...\n" \
+      )
+
+
   def test_do_all_push_pass(self):
     checkin_test_run_case(
       \
