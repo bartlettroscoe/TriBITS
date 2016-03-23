@@ -123,13 +123,15 @@ SET( CMAKE_MODULE_PATH
   "${${PROJECT_NAME}_TRIBITS_DIR}/ci_support"
   )
 
+INCLUDE(TribitsConstants)
+INCLUDE(TribitsCMakePolicies)
+
 INCLUDE(PrintVar)
 INCLUDE(SetDefaultAndFromEnv)
 INCLUDE(AssertDefined)
 INCLUDE(AppendSet)
 INCLUDE(AppendStringVar)
 INCLUDE(TribitsGlobalMacros)
-INCLUDE(TribitsConstants)
 INCLUDE(TribitsStripCommentsFromCMakeCacheFile)
 
 INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsUpdateExtraRepo.cmake)
