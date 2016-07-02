@@ -11,6 +11,26 @@ distRepoStatusLegend = r"""Legend:
 * ?: Number of untracked, non-ignored files (empty if zero)
 """
 
+
+helpTopics = [
+  'overview',
+  'repo-selection-and-setup',
+  'gitdist-options',
+  'dist-repo-status',
+  'repo-version-files',
+  'useful-aliases', 
+  'usage-tips',
+  'script-dependencies',
+  ]
+
+
+def getHelpTopicsStr():
+  helpTopicStr = "" 
+  for helpTopic in helpTopics:
+    helpTopicStr += "* '" + helpTopic + "'\n"
+  return helpTopicStr
+
+
 usageHelp = r"""gitdist [gitdist arguments] [git arguments]
        gitdist [gitdist arguments] dist-repo-status
 
@@ -18,33 +38,35 @@ Run git recursively over set of git repos in a multi-repository git project.
 This script also includes other tools like printing a repo status table and
 tracking versions through RepoVersion.txt files.
 
-Instead of typing:
+OVERVIEW:
 
-  $ git [git arguments]
-
-type:
+Running:
 
   $ gitdist [gitdist options] [git arguments]
 
-This will distribute git commands across all the listed git repos, including
-the base git repo.  The options in [gitdist options] are prefixed with
-'--dist-' and are pulled out before passing the remaining arguments in [git
-arguments] to git for each processed git repo.  See --help to see [gitdist
-options].
+will distribute git commands specified by [git arguments] across the current
+base git repo and the set of git repos as listed in the file ./.gitdist (or
+./.gitdist.default, or --dist-extra-repos=<repo>,<repo1>,..., see
+--help-topic=repo-selection-and-setup).
 
 For example, consider the following base git repo 'BaseRepo' with other git
 repos cloned under it:
 
   BaseRepo/
     .git/
+    .gitdist
     ExtraRepo1/
       .git/
     ExtraRep2/
       .git/
 
-The gitdist command is run in the base git repo 'BaseRepo' which runs the git
-command in the base repo as the git repos 'ExtraRepo1' and 'ExtraRepo2'.  For
-example, running:
+The file .gitdist shown above is created by the user and in this example
+should have the contents:
+
+  ExtraRepo1
+  ExtraRepos2
+
+For this example, running the command:
 
   $ gitdist status
 
@@ -55,27 +77,45 @@ in 'BaseRepo/' produces the equivalent commands:
   $ cd ExtraRepo2/ ; git status ; ../
 
 The gitdist tool allows managing a set of git repos like one big continuously
-integrated git repo.  For example, after cloning a set of git repos like the
-structure shown above, one can perform basic operations like for single git
-repos like, for example, creating a new release branch and pushing it:
+integrated git repo.  For example, after cloning a set of git repos, one can
+perform basic operations like for single git repos like creating a new release
+branch and pushing it with:
 
   $ gitdist checkout master
   $ gitdist pull
-  $ gitdist checkout -b release-2.3
+  $ gitdist tag -a -m "Start of the 2.3 release" release-2.3-start
+  $ gitdist checkout -b release-2.3 release-2.3-start
+  $ gitdist push origin release-2.3-start
   $ gitdist push origin -u release 2.3
   $ gitdist checkout master
 
-The above command creates the same branch 'release-2.3' in all of the git
-repos and pushes them to their 'origin' git repo.
+The above command creates the same tag `release-2.3-start' and the same branch
+'release-2.3' in all of the git repos and pushes these to 'origin' for each
+repo.
 
-The set of repos processed by gitdist is determined by the argument
---dist-extra-repos or the files .gitdist or .gitdist.default.  If
---dist-extra-repos="", then the list of extra repos will be read from the file
-'.gitdist' in the current working directory.  If the file '.gitdist' does not
-exist, then the list of extra repos will be read from the file
-'.gitdist.default' in the current working directory.  The format of this files
-'.gitdist' and '.gitdist.default' is to have one repo directory/name per line
-as in the 'BaseRepo' example:
+For more information, see --help-topic=<topic-name> for <topic-name>=
+"""+getHelpTopicsStr()+r"""
+To see full help with all topics, use --help-all.
+
+This script is self-contained and has no dependencies other than standard
+python 2.6 packages so it can be copied to anywhere and used.
+
+REPO SELECTION AND SETUP:
+
+Before using the gitdist tool, one will want to set up some useful aliases
+(see --help-topic=aliases) for one's shell like 'gitdist-status',
+'gitdist-mod', and 'gitdist-mod-status'.
+
+The set of git repos processed by gitdist is determined by the argument:
+
+  --dist-extra-repos=<repo0>,<repo1>,...
+
+or the files .gitdist or .gitdist.default.  If --dist-extra-repos="", then the
+list of extra repos will be read from the file '.gitdist' in the current
+working directory.  If the file '.gitdist' does not exist, then the list of
+extra repos will be read from the file '.gitdist.default' in the current
+working directory.  The format of this files '.gitdist' and '.gitdist.default'
+is to have one repo directory/name per line as in the 'BaseRepo' example:
 
   ExtraRepo1
   ExtraRepo2
@@ -83,39 +123,83 @@ as in the 'BaseRepo' example:
 where each repo is the relative path to the repo under the base git repo
 (e.g. under 'BaseRepo/').  The file .gitdist.default is meant to be committed
 to the base git repo so that gitdist is ready to use right away after the
-extra repos are cloned (see the tool clone_extra_repos.py for example).
+extra repos are cloned.
 
-If a specified extra repository directory (i.e. listed --dist-extra-repos,
-.gitdist, or .gitdist.default) does not exist, then it will be ignored by the
-script.  Therefore, be careful to manually verify that the script recognizes
-the repositories that you list.  The best way to do that is to run 'gitdist
-dist-repo-status' and see which repos are listed.
+If a specified extra repository directory (i.e. listed in
+--dist-extra-repos=<repo0>,<repo1>,..., .gitdist, or .gitdist.default) does
+not exist, then it will be ignored by the script.  Therefore, be careful to
+manually verify that the script recognizes the repositories that you list.
+The best way to do that is to run 'gitdist dist-repo-status' and see which
+repos are listed.
 
-This script is self-contained and has no dependencies other than standard
-python 2.6 packages so it can be copied to anywhere and used.
+Certain git repos can also be selectively excluded using the options
+--dist-not-baes-repo and --dist-not-extra-repos=<repox>,<repoy>,...
 
-TIPS:
+Setting up to use gitdist requires first setting up and organizing the local
+git clones. For the example listed here, one would clone the base repo
+'BaseRepo', then clone the two extra git repos like 'ExtraRepo1' and
+'ExtraRepo2' and then set up a .gitdist file like:
 
- - To see the status of all repos in a compact way, use the special
-   'dist-repo-status' command (see below and the 'gitdist-status' alias
-   below).
+  $ git clone git@some.url:BaseRepo.git
+  $ cd BaseRepo/
+  $ git clone git@some.url:ExtraRepo1.git
+  $ git clone git@some.url:ExtraRepo2.git
+  $ echo ExtraRepo1 > .gitdist
+  $ echo ExtraRepo2 >> .gitdist
 
- - To process only repos that are changed w.r.t. their tracking branch, run
-   'gitdist --dist-mod-only [git arguments]'.  For example, to see the status
-   of only changed repos use 'gitdist --dist-mod-only status' (see the
-   'gitdist-mod' alias below).
+This produces the repo structure:
+
+  BaseRepo/
+    .git/
+    .gitdist
+    ExtraRepo1/
+      .git/
+    ExtraRep2/
+      .git/
+
+After that setup, running:
+
+  $ gitdist [git command and options]
+
+in the BaseRepo/ directory will automatically distribute the commands across
+the repos ExtraRepo1 and ExtraRepo2.
+
+To simplify the setup of gitdist, one may choose to instead create the file
+.gitdist.default in the base repo and commit that file to the BaseRepo git
+repo.  That way, one does not have to manually create the .gitdist file in
+every new local clone of the repos.  But if the file BaseRepo/.gitdist is
+present, then it will override the file .gitdist.default.
+
+GITDIST OPTIONS:
+
+The options in [gitdist options] are prefixed with '--dist-' and are pulled
+out before passing the remaining arguments in [git arguments] to git for each
+processed git repo.  See --help for the list of [gitdist options].
+
+USAGE TIPS:
+
+Since gitdist allows treating a set of git repos as one big git repo, almost
+any git workflow that is used for a single git repo can be used for a set of
+repos using gitdist.  The one difference is that one will typically create
+commits individually for each repo using 'gitdist'.
+
+Other usage tips:
 
  - 'gitdist --help' will run gitdist help, not git help.  If you want raw git
    help, run 'git --help'.
+
+ - To see the status of all repos in a compact way, use the special
+   'dist-repo-status' command (see below and the 'gitdist-status' alias).
+
+ - To process only repos that are changed w.r.t. their tracking branch, run
+   'gitdist-mod --dist-mod-only [git arguments]'.  For example, to see the status
+   of only changed repos use 'gitdist --dist-mod-only status' (see the
+   'gitdist-mod' alias below).
 
  - By default, gitdist will use 'git' in the environment.  If it can't find
    'git' in the environment, it will require that the user specify the git
    command to run with --dist-use-git=<git command> (which is typically only
    used in automated testing).
-
- - Pass in --dist-not-base-repo and/or
-   --dist-not-extra-repos=RepoX,RepoZ,... to exclude the processing of either
-   the base git repo and/or other git repos, respectively.
 
 SUMMARY OF REPO STATUS:
 
@@ -152,7 +236,7 @@ which prints a table like:
   |  2 | ExtraRepo2      | HEAD   |                 |   | 25 | 4 |
   ----------------------------------------------------------------
 
-(se the alias 'gitdist-mod-status' below).
+(see the alias 'gitdist-mod-status' below).
 
 Note the base repo was left out but the repo indexes are the same.  This
 allows one to effectively show the status of changes in multiple repos even
@@ -244,7 +328,7 @@ in the RepVersion.txt file one can exclude them with:
 
 USEFUL ALIASES:
 
-A few very useful Linux/Unix aliases are:
+A few very useful Linux/Unix aliases for the gitdist script are:
 
   $ alias gitdist-status="gitdist dist-repo-status"
   $ alias gitdist-mod="gitdist --dist-mod-only"
