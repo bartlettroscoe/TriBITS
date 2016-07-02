@@ -638,6 +638,8 @@ class test_gitdist(unittest.TestCase):
   # ToDO: ADd test for --help-topics=<anything> (verify that it is picked up
   # as not a native option and flaged).
 
+  # ToDo: Add test for --help-topic=<anything> (verify what happens with no --help).
+
 
   def test_noEgGit(self):
     (cmndOut, errOut) = getCmndOutput(gitdistPathNoColor+" --dist-use-git= log",

@@ -55,7 +55,7 @@ helpTopics = [
   'gitdist-options',
   'dist-repo-status',
   'repo-version-files',
-  'useful-aliases', 
+  'aliases', 
   'usage-tips',
   'script-dependencies'
   ]
@@ -383,7 +383,7 @@ To just see the status table of changed repos only, do:
 To process only repos that have changes and see commits in these repos
 w.r.t. their tracking branches, use:
 
-  $ gitdist-mod log --name-status HEAD ^origin/master
+  $ gitdist-mod log --name-status HEAD ^@{u}
 
 or
 
@@ -392,7 +392,7 @@ or
 (where 'local-stat' is a useful git alias defined in the script
 'git-config-alias.sh').
 """
-helpTopicsDict.update( { 'useful-aliases' : usefulAliasesHelp } )
+helpTopicsDict.update( { 'aliases' : usefulAliasesHelp } )
 
 
 usageTipsHelp = r"""
@@ -707,7 +707,8 @@ def getCommandlineOps():
   addOptionParserChoiceOption(
     helpTopicArgName, "helpTopic", helpTopics+["all", ""], 0,
     "Print help topic with --help --help-topic=HELPTOPIC.  Using" \
-    +" --help-topic=all --help prints all help topics." ,
+    +" --help-topic=all --help prints all help topics.  Has not effect if" \
+    +" --help is not also given." ,
     clp )
 
   clp.add_option(
