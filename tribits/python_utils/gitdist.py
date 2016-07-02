@@ -1,5 +1,42 @@
 #!/usr/bin/env python
 
+#
+# Helper functions
+#
+
+
+def addOptionParserChoiceOption(
+  optionName,
+  optionDest,
+  choiceOptions,
+  defaultChoiceIndex,
+  helpStr,
+  optionParser
+  ):
+  """ Add a general choice option to a optparse.OptionParser object"""
+  defaultOptionValue = choiceOptions[defaultChoiceIndex]
+  optionParser.add_option(
+    optionName,
+    dest=optionDest,
+    type="choice",
+    choices=choiceOptions,
+    default=defaultOptionValue,
+    help='%s Choices = (\'%s\').  [default = \'%s\']'
+    % (helpStr, '\', \''.join(choiceOptions), defaultOptionValue)
+    )
+
+ 
+def getHelpTopicsStr():
+  helpTopicStr = "" 
+  for helpTopic in helpTopics:
+    helpTopicStr += "* '" + helpTopic + "'\n"
+  return helpTopicStr
+
+
+#
+# Pieces of the --help documentation
+#
+
 
 distRepoStatusLegend = r"""Legend:
 * ID: Repository ID, zero based (order git commands are run)
@@ -21,23 +58,20 @@ helpTopics = [
   'useful-aliases', 
   'usage-tips',
   'script-dependencies',
+  'all'
   ]
 
 
-def getHelpTopicsStr():
-  helpTopicStr = "" 
-  for helpTopic in helpTopics:
-    helpTopicStr += "* '" + helpTopic + "'\n"
-  return helpTopicStr
-
-
-usageHelp = r"""gitdist [gitdist arguments] [git arguments]
+helpUsageHeader = r"""gitdist [gitdist arguments] [git arguments]
        gitdist [gitdist arguments] dist-repo-status
 
 Run git recursively over set of git repos in a multi-repository git project.
 This script also includes other tools like printing a repo status table and
 tracking versions through RepoVersion.txt files.
+"""
 
+
+overviewHelp = r"""
 OVERVIEW:
 
 Running:
@@ -93,13 +127,17 @@ The above command creates the same tag `release-2.3-start' and the same branch
 'release-2.3' in all of the git repos and pushes these to 'origin' for each
 repo.
 
-For more information, see --help-topic=<topic-name> for <topic-name>=
+For more information about a certain topic, use --help
+--help-topic=<topic-name> for <topic-name>=
 """+getHelpTopicsStr()+r"""
-To see full help with all topics, use --help-all.
+To see full help with all topics, use --help-topic=all.
 
 This script is self-contained and has no dependencies other than standard
 python 2.6 packages so it can be copied to anywhere and used.
+"""
 
+
+repoSelectionAndSetup = r"""
 REPO SELECTION AND SETUP:
 
 Before using the gitdist tool, one will want to set up some useful aliases
@@ -169,38 +207,19 @@ To simplify the setup of gitdist, one may choose to instead create the file
 repo.  That way, one does not have to manually create the .gitdist file in
 every new local clone of the repos.  But if the file BaseRepo/.gitdist is
 present, then it will override the file .gitdist.default.
+"""
 
+
+gitdistOptions = r"""
 GITDIST OPTIONS:
 
 The options in [gitdist options] are prefixed with '--dist-' and are pulled
 out before passing the remaining arguments in [git arguments] to git for each
 processed git repo.  See --help for the list of [gitdist options].
+"""
 
-USAGE TIPS:
 
-Since gitdist allows treating a set of git repos as one big git repo, almost
-any git workflow that is used for a single git repo can be used for a set of
-repos using gitdist.  The one difference is that one will typically create
-commits individually for each repo using 'gitdist'.
-
-Other usage tips:
-
- - 'gitdist --help' will run gitdist help, not git help.  If you want raw git
-   help, run 'git --help'.
-
- - To see the status of all repos in a compact way, use the special
-   'dist-repo-status' command (see below and the 'gitdist-status' alias).
-
- - To process only repos that are changed w.r.t. their tracking branch, run
-   'gitdist-mod --dist-mod-only [git arguments]'.  For example, to see the status
-   of only changed repos use 'gitdist --dist-mod-only status' (see the
-   'gitdist-mod' alias below).
-
- - By default, gitdist will use 'git' in the environment.  If it can't find
-   'git' in the environment, it will require that the user specify the git
-   command to run with --dist-use-git=<git command> (which is typically only
-   used in automated testing).
-
+distRepoStatus = r"""
 SUMMARY OF REPO STATUS:
 
 This script supports the special command 'dist-repo-status' which prints a
@@ -244,7 +263,10 @@ when there are many git repos by filtering out rows for repos that have no
 changes w.r.t. their tracking branches.  This allows one to get the status on
 a few repos with changes out of a large number of repos (i.e. 10s to 100s of
 repos).
+"""
 
+
+repoVersionFiles = r"""
 REPO VERSION FILES:
 
 This script supports the options --dist-version-file=<versionFile> and
@@ -325,10 +347,14 @@ in the RepVersion.txt file one can exclude them with:
   $ gitdist --dist-not-extra-repos=RepoX,RepoY,... \
     --dist-version-file=RepoVersion.txt \
     [other arguments]
+"""
 
+
+usefulAliases =r"""
 USEFUL ALIASES:
 
-A few very useful Linux/Unix aliases for the gitdist script are:
+A few very useful Linux/Unix aliases to use along with the the gitdist script
+are:
 
   $ alias gitdist-status="gitdist dist-repo-status"
   $ alias gitdist-mod="gitdist --dist-mod-only"
@@ -354,14 +380,48 @@ or
 
 (where 'local-stat' is a useful git alias defined in the script
 'git-config-alias.sh').
+"""
 
+
+usageTips = r"""
+USAGE TIPS:
+
+Since gitdist allows treating a set of git repos as one big git repo, almost
+any git workflow that is used for a single git repo can be used for a set of
+repos using gitdist.  The one difference is that one will typically create
+commits individually for each repo using 'gitdist'.
+
+Other usage tips:
+
+ - 'gitdist --help' will run gitdist help, not git help.  If you want raw git
+   help, run 'git --help'.
+
+ - To see the status of all repos in a compact way, use the special
+   'dist-repo-status' command (see below and the 'gitdist-status' alias).
+
+ - To process only repos that are changed w.r.t. their tracking branch, run
+   'gitdist-mod --dist-mod-only [git arguments]'.  For example, to see the status
+   of only changed repos use 'gitdist --dist-mod-only status' (see the
+   'gitdist-mod' alias below).
+
+ - By default, gitdist will use 'git' in the environment.  If it can't find
+   'git' in the environment, it will require that the user specify the git
+   command to run with --dist-use-git=<git command> (which is typically only
+   used in automated testing).
+"""
+
+
+scriptDependencies = r"""
 SCRIPT DEPENDENCIES:
 
 This Python script only depends on the Python 2.6+ standard modules 'sys',
 'os', 'subprocess', and 're'. Also, of course, it requires some compatible
 version of 'git' in your path.
-
 """
+
+
+usageHelp = helpUsageHeader
+
 
 import sys
 import os
@@ -524,9 +584,8 @@ def getCommandlineOps():
   # A) Define the native gitdist command-line arguments
   #
 
-  clp = OptionParser(usage=usageHelp)
-
   helpArgName = "--help"
+  helpTopicArgeName = "--help-topic"
   withGitArgName = "--dist-use-git"
   extraRepoArgName = "--dist-extra-repos"
   notExtraRepoArgName = "--dist-not-extra-repos"
@@ -539,7 +598,7 @@ def getCommandlineOps():
   modifiedOnlyName = "--dist-mod-only"
   legendName = "--dist-legend"
 
-  nativeArgNames = [ helpArgName, withGitArgName, \
+  nativeArgNames = [ helpArgName, helpTopicArgeName, withGitArgName, \
     extraRepoArgName, notExtraRepoArgName, notBaseRepoArgName, \
     versionFileName, versionFile2Name, noColorArgName, debugArgName, noOptName, \
     modifiedOnlyName, legendName ]
@@ -547,13 +606,22 @@ def getCommandlineOps():
   distRepoStatus = "dist-repo-status"
   nativeCmndNames = [ distRepoStatus ]
 
-  # Find a default git to use
-
   # Select a version of git (see above help documentation)
-
   defaultGit = "git" # Try system git
   if not commandExists(defaultGit):
     defaultGit = "" # Give up and make the user specify
+
+  #
+  # Set up the commandline args and run them
+  #
+
+  clp = OptionParser(usage=usageHelp)
+
+  addOptionParserChoiceOption(
+    helpTopicArgeName, "helpTopic", helpTopics, 0,
+    "Print help topic with --help --help-topic=HELPTOPIC.  Using" \
+    +" --help-topic=all --help prints all help topics." ,
+    clp )
 
   clp.add_option(
     withGitArgName, dest="useGit", type="string",
