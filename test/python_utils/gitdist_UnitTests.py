@@ -618,6 +618,25 @@ class test_gitdist(unittest.TestCase):
     cmndOutFirstLineAfterComma = cmndOutFirstLine.split(":")[1].strip() 
     cmndOutFirstLineAfterComma_expected = "gitdist [gitdist arguments] [git arguments]"
     self.assertEqual(cmndOutFirstLineAfterComma, cmndOutFirstLineAfterComma_expected)
+    # ToDo: Check for OVERVIEW header!
+
+
+  # ToDo: Add test for --help-topic= --help (verify no sections are printed)
+
+
+  # ToDo: Add test for --help-topic=all --help (verify all sections are
+  # present)
+
+
+  # ToDo: Add test for --help-topic=usage-tips --help (check for correct
+  # section headers)
+
+
+  # ToDo: Add test for --help-topic --help (verify that it prints nice error
+  # message).
+
+  # ToDO: ADd test for --help-topics=<anything> (verify that it is picked up
+  # as not a native option and flaged).
 
 
   def test_noEgGit(self):

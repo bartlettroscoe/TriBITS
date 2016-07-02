@@ -57,17 +57,23 @@ helpTopics = [
   'repo-version-files',
   'useful-aliases', 
   'usage-tips',
-  'script-dependencies',
-  'all'
+  'script-dependencies'
   ]
+
+
+helpTopicDefaultIdx = 0;
+
+
+helpTopicsDict = {}
 
 
 helpUsageHeader = r"""gitdist [gitdist arguments] [git arguments]
        gitdist [gitdist arguments] dist-repo-status
 
 Run git recursively over set of git repos in a multi-repository git project.
-This script also includes other tools like printing a repo status table and
-tracking versions through RepoVersion.txt files.
+This script also includes other tools like printing a repo status table
+(i.e. using dist-repo-status) and tracking versions through multi-repository
+version files (e.g. through --dist-repo-version-file=RepoVersion.txt).
 """
 
 
@@ -135,9 +141,10 @@ To see full help with all topics, use --help-topic=all.
 This script is self-contained and has no dependencies other than standard
 python 2.6 packages so it can be copied to anywhere and used.
 """
+helpTopicsDict.update( { 'overview' : overviewHelp } )
 
 
-repoSelectionAndSetup = r"""
+repoSelectionAndSetupHelp = r"""
 REPO SELECTION AND SETUP:
 
 Before using the gitdist tool, one will want to set up some useful aliases
@@ -208,18 +215,20 @@ repo.  That way, one does not have to manually create the .gitdist file in
 every new local clone of the repos.  But if the file BaseRepo/.gitdist is
 present, then it will override the file .gitdist.default.
 """
+helpTopicsDict.update( { 'repo-selection-and-setup' : repoSelectionAndSetupHelp } )
 
 
-gitdistOptions = r"""
+gitdistOptionsHelp = r"""
 GITDIST OPTIONS:
 
 The options in [gitdist options] are prefixed with '--dist-' and are pulled
 out before passing the remaining arguments in [git arguments] to git for each
 processed git repo.  See --help for the list of [gitdist options].
 """
+helpTopicsDict.update( { 'gitdist-options' : gitdistOptionsHelp } )
 
 
-distRepoStatus = r"""
+distRepoStatusHelp = r"""
 SUMMARY OF REPO STATUS:
 
 This script supports the special command 'dist-repo-status' which prints a
@@ -264,9 +273,10 @@ changes w.r.t. their tracking branches.  This allows one to get the status on
 a few repos with changes out of a large number of repos (i.e. 10s to 100s of
 repos).
 """
+helpTopicsDict.update( { 'dist-repo-status' : distRepoStatusHelp } )
 
 
-repoVersionFiles = r"""
+repoVersionFilesHelp = r"""
 REPO VERSION FILES:
 
 This script supports the options --dist-version-file=<versionFile> and
@@ -348,9 +358,10 @@ in the RepVersion.txt file one can exclude them with:
     --dist-version-file=RepoVersion.txt \
     [other arguments]
 """
+helpTopicsDict.update( { 'repo-version-files' : repoVersionFilesHelp } )
 
 
-usefulAliases =r"""
+usefulAliasesHelp =r"""
 USEFUL ALIASES:
 
 A few very useful Linux/Unix aliases to use along with the the gitdist script
@@ -381,9 +392,10 @@ or
 (where 'local-stat' is a useful git alias defined in the script
 'git-config-alias.sh').
 """
+helpTopicsDict.update( { 'useful-aliases' : usefulAliasesHelp } )
 
 
-usageTips = r"""
+usageTipsHelp = r"""
 USAGE TIPS:
 
 Since gitdist allows treating a set of git repos as one big git repo, almost
@@ -409,18 +421,42 @@ Other usage tips:
    command to run with --dist-use-git=<git command> (which is typically only
    used in automated testing).
 """
+helpTopicsDict.update( { 'usage-tips' : usageTipsHelp } )
 
 
-scriptDependencies = r"""
+scriptDependenciesHelp = r"""
 SCRIPT DEPENDENCIES:
 
 This Python script only depends on the Python 2.6+ standard modules 'sys',
 'os', 'subprocess', and 're'. Also, of course, it requires some compatible
 version of 'git' in your path.
 """
+helpTopicsDict.update( { 'script-dependencies' : scriptDependenciesHelp } )
 
 
-usageHelp = helpUsageHeader
+def getUsageHelpStr(helpTopicArg):
+  #print "helpTopicArg =", helpTopicArg
+  usageHelpStr = helpUsageHeader
+  if helpTopicArg == "":
+    usageHelpStr += helpTopicsDict.get(helpTopics[helpTopicDefaultIdx])
+  else:
+    helpTopicArgArray = helpTopicArg.split("=")
+    if len(helpTopicArgArray) == 1:
+      # Option not formatted correctly, set let error hander get it."
+      return ""
+    (helpTopicArgName, helpTopicVal) = helpTopicArg.split("=")
+    #print "helpTopicArgName =", helpTopicArgName
+    if helpTopicVal == "all":
+      for helpTopic in helpTopics:
+        usageHelpStr += helpTopicsDict.get(helpTopic)
+    elif helpTopicVal == "":
+      None  # Don't show any help topic
+    else:
+      helpTopicHelpStr = helpTopicsDict.get(helpTopicVal, None)
+      if helpTopicHelpStr:
+        usageHelpStr += helpTopicHelpStr
+
+  return usageHelpStr
 
 
 import sys
@@ -584,8 +620,8 @@ def getCommandlineOps():
   # A) Define the native gitdist command-line arguments
   #
 
+  helpTopicArgName = "--help-topic" # Must match --help-topic before --help!
   helpArgName = "--help"
-  helpTopicArgeName = "--help-topic"
   withGitArgName = "--dist-use-git"
   extraRepoArgName = "--dist-extra-repos"
   notExtraRepoArgName = "--dist-not-extra-repos"
@@ -598,7 +634,7 @@ def getCommandlineOps():
   modifiedOnlyName = "--dist-mod-only"
   legendName = "--dist-legend"
 
-  nativeArgNames = [ helpArgName, helpTopicArgeName, withGitArgName, \
+  nativeArgNames = [ helpTopicArgName, helpArgName, withGitArgName, \
     extraRepoArgName, notExtraRepoArgName, notBaseRepoArgName, \
     versionFileName, versionFile2Name, noColorArgName, debugArgName, noOptName, \
     modifiedOnlyName, legendName ]
@@ -612,13 +648,64 @@ def getCommandlineOps():
     defaultGit = "" # Give up and make the user specify
 
   #
-  # Set up the commandline args and run them
+  # B) Pull the native commandline arguments out of the commandline
   #
+
+  argv = sys.argv[1:]
+  nativeArgs = []
+  nativeCmnds = []
+  otherArgs = []
+  helpTopicArg = "" 
+
+  for arg in argv:
+    #print "\narg = '"+arg+"'"
+    matchedNativeArg = False
+    for nativeArgName in nativeArgNames:
+      #print "\nnativeArgName ='"+nativeArgName+"'"
+      currentArgName = arg[0:len(nativeArgName)]
+      #print "currentArgName = '"+currentArgName+"'"
+      if currentArgName == nativeArgName:
+        #print "\nMatches native arg!"
+        nativeArgs.append(arg)
+        matchedNativeArg = True
+        if currentArgName == helpTopicArgName:
+          helpTopicArg = arg
+        break
+    matchedNativeCmnd = False
+    for nativeCmndName in nativeCmndNames:
+      if arg == nativeCmndName:
+        #print "\nMatches native cmnd!"
+        nativeCmnds.append(nativeCmndName)
+        matchedNativeCmnd = True
+        break
+    if not (matchedNativeArg or matchedNativeCmnd):
+      #print "\nDoes *not* match native arg!"
+      otherArgs.append(arg)
+    #print "\nnativeArgs =", nativeArgs
+    #print "otherArgs =", otherArgs
+
+  #print "\nnativeArgs =", nativeArgs
+  #print "nativeCmnds =", nativeCmnds
+  #print "otherArgs =", otherArgs
+
+  if len(nativeCmnds) == 0:
+    nativeCmnd = None
+  elif len(nativeCmnds) == 1:
+    nativeCmnd = nativeCmnds[0]
+  elif len(nativeCmnds) > 1:
+    raise Exception("Error: Can't have more than one dist-xxx command "+\
+      " but was passed in "+str(nativeCmnds))
+
+  #
+  # C) Set up the commandline parser and parse the native args
+  #
+
+  usageHelp = getUsageHelpStr(helpTopicArg)
 
   clp = OptionParser(usage=usageHelp)
 
   addOptionParserChoiceOption(
-    helpTopicArgeName, "helpTopic", helpTopics, 0,
+    helpTopicArgName, "helpTopic", helpTopics+["all", ""], 0,
     "Print help topic with --help --help-topic=HELPTOPIC.  Using" \
     +" --help-topic=all --help prints all help topics." ,
     clp )
@@ -694,59 +781,15 @@ def getCommandlineOps():
       " for the special dist-repo-status command.  Only applicable with dist-repo-status.",
     default=False )
 
-  #
-  # B) Pull the native commandline arguments out of the commandline
-  #
-
-  argv = sys.argv[1:]
-  nativeArgs = []
-  nativeCmnds = []
-  otherArgs = []
-
-  for arg in argv:
-    #print "\narg = '"+arg+"'"
-    matchedNativeArg = False
-    for nativeArgName in nativeArgNames:
-      #print "\nnativeArgName ='"+nativeArgName+"'"
-      currentArgName = arg[0:len(nativeArgName)]
-      #print "currentArgName = '"+currentArgName+"'"
-      if currentArgName == nativeArgName:
-        #print "\nMatches native arg!"
-        nativeArgs.append(arg)
-        matchedNativeArg = True
-        break
-    matchedNativeCmnd = False
-    for nativeCmndName in nativeCmndNames:
-      if arg == nativeCmndName:
-        #print "\nMatches native cmnd!"
-        nativeCmnds.append(nativeCmndName)
-        matchedNativeCmnd = True
-        break
-    if not (matchedNativeArg or matchedNativeCmnd):
-      #print "\nDoes *not* match native arg!"
-      otherArgs.append(arg)
-    #print "\nnativeArgs =", nativeArgs
-    #print "otherArgs =", otherArgs
-
-  #print "\nnativeArgs =", nativeArgs
-  #print "nativeCmnds =", nativeCmnds
-  #print "otherArgs =", otherArgs
-
-  if len(nativeCmnds) == 0:
-    nativeCmnd = None
-  elif len(nativeCmnds) == 1:
-    nativeCmnd = nativeCmnds[0]
-  elif len(nativeCmnds) > 1:
-    raise Exception("Error: Can't have more than one dist-xxx command "+\
-      " but was passed in "+str(nativeCmnds))
-
   (options, args) = clp.parse_args(nativeArgs)
 
   debugFromEnv = os.environ.get("GITDIST_DEBUG_OVERRIDE")
   if debugFromEnv:
     options.debug = True
 
-  # Check for valid usage
+  #
+  # D) Check for valid usage
+  #
 
   if not nativeCmnd and len(otherArgs) == 0:
     print addColorToErrorMsg(options.useColor,
@@ -758,7 +801,9 @@ def getCommandlineOps():
       "Can't find git, please set --dist-use-git")
     sys.exit(1)
 
-  # Get the list of extra repos
+  #
+  # E) Get the list of extra repos
+  #
 
   if options.extraRepos:
     extraReposFullList = options.extraRepos.split(",")
