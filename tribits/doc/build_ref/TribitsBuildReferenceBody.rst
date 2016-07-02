@@ -127,14 +127,13 @@ a) Create a 'do-configure' script such as [Recommended]::
   ``SOURCE_BASE`` is set to the <Project> source base directory (or your can
   just give it explicitly in the script).
 
-  See `<Project>/sampleScripts/*cmake` for examples of real `do-configure`
-  scripts for different platforms..
+  NOTES:
 
-  NOTE: If one has already configured once and one needs to configure from
-  scratch (needs to wipe clean defaults for cache variables, updates
-  compilers, other types of changes) then one will want to delete the local
-  CASL and other CMake-generated files before configuring again (see
-  `Reconfiguring completely from scratch`_).
+  * If one has already configured once and one needs to configure from scratch
+    (needs to wipe clean defaults for cache variables, updates compilers,
+    other types of changes) then one will want to delete the local CASL and
+    other CMake-generated files before configuring again (see `Reconfiguring
+    completely from scratch`_).
 
 .. _<Project>_CONFIGURE_OPTIONS_FILE:
 
@@ -503,14 +502,14 @@ Configuring to build with default debug or release compiler flags
 
 To build a debug version, pass into 'cmake'::
 
-  -D CMAKE_BUILD_TYPE=DEBUG
+  -D CMAKE_BUILD_TYPE=DEBUG  # or 'Debug'
 
 This will result in debug flags getting passed to the compiler according to
 what is set in ``CMAKE_<LANG>_FLAGS_DEBUG``.
 
 To build a release (optimized) version, pass into 'cmake'::
 
-  -D CMAKE_BUILD_TYPE=RELEASE
+  -D CMAKE_BUILD_TYPE=RELEASE   # or 'Release'
 
 This will result in optimized flags getting passed to the compiler according
 to what is in ``CMAKE_<LANG>_FLAGS_RELEASE``.
@@ -518,6 +517,10 @@ to what is in ``CMAKE_<LANG>_FLAGS_RELEASE``.
 The default build type is typically ``CMAKE_BUILD_TYPE=RELEASE`` unless ``-D
 USE_XSDK_DEFAULTS=TRUE`` is set in which case the default build type is
 ``CMAKE_BUILD_TYPE=DEBUG`` as per the xSDK configure standard.
+
+NOTE: As shown above, the TriBITS configure of <Project> accepts all
+upper-case names for ``DEBUG`` and ``RELEASE`` but also accepts the CMake
+standard CamelCase ``Debug`` and ``Release``.
 
 Adding arbitrary compiler flags but keeping default build-type flags
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
