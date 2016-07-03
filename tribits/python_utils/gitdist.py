@@ -70,10 +70,10 @@ helpTopicsDict = {}
 helpUsageHeader = r"""gitdist [gitdist arguments] [git arguments]
        gitdist [gitdist arguments] dist-repo-status
 
-Run git recursively over set of git repos in a multi-repository git project.
-This script also includes other tools like printing a repo status table
-(i.e. using dist-repo-status) and tracking versions through multi-repository
-version files (e.g. through --dist-repo-version-file=RepoVersion.txt).
+Run git recursively over a set of git repos in a multi-repository git project.
+This script also includes other tools like printing a repo status table (using
+dist-repo-status) and tracking versions through multi-repository version files
+(e.g. --dist-repo-version-file=RepoVersion.txt).
 """
 
 
@@ -129,9 +129,9 @@ branch and pushing it with:
   $ gitdist push origin -u release 2.3
   $ gitdist checkout master
 
-The above command creates the same tag `release-2.3-start' and the same branch
-'release-2.3' in all of the git repos and pushes these to 'origin' for each
-repo.
+The above command creates the same tag 'release-2.3-start' and the same branch
+'release-2.3' in all of the local git repos and pushes these to the 'origin'
+remote repo for each repo.
 
 For more information about a certain topic, use --help
 --help-topic=<topic-name> for <topic-name>=
@@ -147,9 +147,9 @@ helpTopicsDict.update( { 'overview' : overviewHelp } )
 repoSelectionAndSetupHelp = r"""
 REPO SELECTION AND SETUP:
 
-Before using the gitdist tool, one will want to set up some useful aliases
-(see --help-topic=aliases) for one's shell like 'gitdist-status',
-'gitdist-mod', and 'gitdist-mod-status'.
+Before using the gitdist tool, one will want to set up some useful aliases for
+the user's hell like 'gitdist-status', 'gitdist-mod', and 'gitdist-mod-status'
+(see --help-topic=aliases).
 
 The set of git repos processed by gitdist is determined by the argument:
 
@@ -235,7 +235,7 @@ This script supports the special command 'dist-repo-status' which prints a
 table showing the current status of all the repos (see alias 'gitdist-status'
 below).  For the example set of repos shown above, running:
 
-  $ gitdist dist-repo-status
+  $ gitdist dist-repo-status    # gitdist-status 
 
 prints a table like:
 
@@ -253,7 +253,7 @@ If the option --dist-legend is passed in, it will print the legend:
 r"""
 One can also show the status of only changed repos with the command:
 
-  $ gitdist dist-repo-status --dist-mod-only
+  $ gitdist dist-repo-status --dist-mod-only  # gitdist-mod-status
 
 which prints a table like:
 
@@ -400,26 +400,109 @@ USAGE TIPS:
 
 Since gitdist allows treating a set of git repos as one big git repo, almost
 any git workflow that is used for a single git repo can be used for a set of
-repos using gitdist.  The one difference is that one will typically create
-commits individually for each repo using 'gitdist'.
+repos using gitdist.  The main difference is that one will typically need to
+create commits individually for each repo.  Also, pulls and pushes are no
+longer atomic like is guaranteed for a single git repo.
+
+In general, the mapping between the commands for a single repo workflow vs. a
+multi-repo workflow using raw git is (using the shell aliases
+'gitdist-status', 'gitdist-mod-status', and 'gitdist-mod'; see
+--help-topic=dist-repo-status):
+
+  git pull                    =>  gitdist pull
+  git checkout -b <branch>    =>  gitdist checkout -b <branch>
+  git tag -a "message" <tag>  =>  gitdist tag -a "message" <tag>
+  git status                  =>  gitdist-mod status
+  git commit                  =>  gitdist-mod commit
+  git log HEAD ^@{u}          =>  gitdist-mod log HEAD ^@{u} 
+  git push                    =>  gitdist-mod push
+  git push <remote> <branch>  =>  gitdist <remote> <branch>
+  git push <remote> <tag>     =>  gitdist <remote> <tag>
+
+A typical development iteration of the centralized workflow with gitdist looks
+like the following:
+
+1) Update the local branches from the remote tracking branches:
+
+    $ cd BaseRepo/
+    $ gitdist pull
+
+2) Make local modifications for each repo:
+
+    $ emacs <base-files>
+    $ cd ExtraRepo1/
+    $ emacs <files-in-extra-repo1>
+    $ cd ..
+    $ cd ExtraRepo2/
+    $ emacs <files-in-extra-repo2>
+    $ cd ..
+
+3) Build a test local modifications:
+
+    $ cd BUILD/
+    $ make -j16
+    $ make test  # hopefully all pass!
+    $ cd ..
+
+4) View the modifications before committing:
+
+    $ gitdist-mod-status   # Produces a summary table
+    $ gitdist-mod status   # See status details
+
+5) Make commits to each repo:
+
+    $ gitdist-mod commit -a  # Opens editor for each repo in order
+
+  or use the same commit message for all repos:
+
+    $ emacs commitmsg.txt
+    $ echo /commitmsg.txt >> .git/info/exclude
+    $ gitdist-mod commit -a -F $PWD/commitmsg.txt
+
+  or manually create the commits in each repo separately with raw git:
+
+    $ git commit -a
+    $ cd ExtraRepo1/
+    $ git commit -a
+    $ cd ..
+    $ cd ExtraRepo2/
+    $ git commit -a
+    $ cd ..
+
+6) Examine the local commits that are about to be pushed:
+
+    $ gitdist-mod-status  # Should be no unmodified or untracked files!
+    $ gitdist-mod log --name-status HEAD ^@{u}
+
+7) Rebase and push local commits to remote tracking branch:
+
+    $ gitdist pull --rebase
+    $ gitdist-mod push
+
+NOTE, the usage of gitdist-mod can be replaced with just gitdist and all of
+the above commands work just fine.  It is just that gitdist-mod produces more
+compact output by avoiding do-nothing commands in repos that have no changes.
+
+Another example of a workflow is creating a new release branch as shown in the
+OVERVIEW (--help-topic=overview).
 
 Other usage tips:
 
  - 'gitdist --help' will run gitdist help, not git help.  If you want raw git
-   help, run 'git --help'.
+   help, then run 'git --help'.
 
- - To see the status of all repos in a compact way, use the special
-   'dist-repo-status' command (see below and the 'gitdist-status' alias).
+ - Be sure to run 'gitdist-status' to make sure that each repo is on the
+   correct local branch and is tracking the correct remote branch.
 
- - To process only repos that are changed w.r.t. their tracking branch, run
-   'gitdist-mod --dist-mod-only [git arguments]'.  For example, to see the status
-   of only changed repos use 'gitdist --dist-mod-only status' (see the
-   'gitdist-mod' alias below).
+ - In general, for most workflows, one should use the local branch name,
+   remote repo name, and remote tracking branch name.
 
- - By default, gitdist will use 'git' in the environment.  If it can't find
-   'git' in the environment, it will require that the user specify the git
-   command to run with --dist-use-git=<git command> (which is typically only
-   used in automated testing).
+ - For many git commands, it is better to process only repos that are changed
+   w.r.t. their tracking branch with 'gitdist-mod [git arguments]'.  For
+   example, to see the status of only changed repos use 'gitdist-mod status'.
+
+ - A few different types of git commands tend to be run on all the git repos
+    like 'gitdist pull', 'gitdist checkout', and 'gitdist tag'.
 """
 helpTopicsDict.update( { 'usage-tips' : usageTipsHelp } )
 
@@ -714,7 +797,11 @@ def getCommandlineOps():
   clp.add_option(
     withGitArgName, dest="useGit", type="string",
     default=defaultGit,
-    help="The (path) to the git executable to use for each git repo command (default='"+defaultGit+"')"
+    help="The (path) to the git executable to use for each git repo command."
+    +"  By default, gitdist will use 'git' in the environment.  If it can't find"
+    +" 'git' in the environment, then it will require setting"
+    +" --dist-use-git=<git command> (which is typically only  used in automated"
+    +" testing). (default='"+defaultGit+"')"
     )
 
   clp.add_option(
@@ -772,7 +859,7 @@ def getCommandlineOps():
       " from 'rev-parse --abbrev-ref --symbolic-full-name @{u}'.  In order words," \
       " if a git repo is unchanged w.r.t. its tracking branch, then the git command is" \
       " skipped for that repo.  If a repo does not have a tracking branch, then the repo will" \
-      " be skipped as well.  Therefore, be careful to first run with dist-local-stat to see the" \
+      " be skipped as well.  Therefore, be careful to first run with dist-repo-status to see the" \
       " status of each local repo to know which repos don't have tracking branches.",
     default=False )
 
