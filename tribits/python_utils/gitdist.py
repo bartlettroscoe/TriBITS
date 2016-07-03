@@ -1,37 +1,5 @@
 #!/usr/bin/env python
 
-#
-# Helper functions
-#
-
-
-def addOptionParserChoiceOption(
-  optionName,
-  optionDest,
-  choiceOptions,
-  defaultChoiceIndex,
-  helpStr,
-  optionParser
-  ):
-  """ Add a general choice option to a optparse.OptionParser object"""
-  defaultOptionValue = choiceOptions[defaultChoiceIndex]
-  optionParser.add_option(
-    optionName,
-    dest=optionDest,
-    type="choice",
-    choices=choiceOptions,
-    default=defaultOptionValue,
-    help='%s Choices = (\'%s\').  [default = \'%s\']'
-    % (helpStr, '\', \''.join(choiceOptions), defaultOptionValue)
-    )
-
- 
-def getHelpTopicsStr():
-  helpTopicStr = "" 
-  for helpTopic in helpTopics:
-    helpTopicStr += "* '" + helpTopic + "'\n"
-  return helpTopicStr
-
 
 #
 # Pieces of the --help documentation
@@ -60,7 +28,15 @@ helpTopics = [
   'script-dependencies'
   ]
 
+ 
+def getHelpTopicsStr():
+  helpTopicStr = "" 
+  for helpTopic in helpTopics:
+    helpTopicStr += "* '" + helpTopic + "'\n"
+  return helpTopicStr
 
+
+# Look up help help string given keys from helpTopics array.
 helpTopicDefaultIdx = 0;
 
 
@@ -517,41 +493,8 @@ version of 'git' in your path.
 helpTopicsDict.update( { 'script-dependencies' : scriptDependenciesHelp } )
 
 
-def getUsageHelpStr(helpTopicArg):
-  #print "helpTopicArg =", helpTopicArg
-  usageHelpStr = helpUsageHeader
-  if helpTopicArg == "":
-    usageHelpStr += helpTopicsDict.get(helpTopics[helpTopicDefaultIdx])
-  else:
-    helpTopicArgArray = helpTopicArg.split("=")
-    if len(helpTopicArgArray) == 1:
-      # Option not formatted correctly, set let error hander get it."
-      return ""
-    (helpTopicArgName, helpTopicVal) = helpTopicArg.split("=")
-    #print "helpTopicArgName =", helpTopicArgName
-    if helpTopicVal == "all":
-      for helpTopic in helpTopics:
-        usageHelpStr += helpTopicsDict.get(helpTopic)
-    elif helpTopicVal == "":
-      None  # Don't show any help topic
-    else:
-      helpTopicHelpStr = helpTopicsDict.get(helpTopicVal, None)
-      if helpTopicHelpStr:
-        usageHelpStr += helpTopicHelpStr
-
-  return usageHelpStr
-
-
-import sys
-import os
-import subprocess
-import re
-
-from optparse import OptionParser
-
-
 #
-# Format an ASCII table
+# Functions to help Format an ASCII table
 #
 
 
@@ -627,6 +570,58 @@ def createAsciiTable(tableData):
 #
 # Helper functions for gitdist
 #
+
+import sys
+import os
+import subprocess
+import re
+
+from optparse import OptionParser
+
+def addOptionParserChoiceOption(
+  optionName,
+  optionDest,
+  choiceOptions,
+  defaultChoiceIndex,
+  helpStr,
+  optionParser
+  ):
+  """ Add a general choice option to a optparse.OptionParser object"""
+  defaultOptionValue = choiceOptions[defaultChoiceIndex]
+  optionParser.add_option(
+    optionName,
+    dest=optionDest,
+    type="choice",
+    choices=choiceOptions,
+    default=defaultOptionValue,
+    help='%s Choices = (\'%s\').  [default = \'%s\']'
+    % (helpStr, '\', \''.join(choiceOptions), defaultOptionValue)
+    )
+
+
+def getUsageHelpStr(helpTopicArg):
+  #print "helpTopicArg =", helpTopicArg
+  usageHelpStr = helpUsageHeader
+  if helpTopicArg == "":
+    usageHelpStr += helpTopicsDict.get(helpTopics[helpTopicDefaultIdx])
+  else:
+    helpTopicArgArray = helpTopicArg.split("=")
+    if len(helpTopicArgArray) == 1:
+      # Option not formatted correctly, set let error hander get it."
+      return ""
+    (helpTopicArgName, helpTopicVal) = helpTopicArg.split("=")
+    #print "helpTopicArgName =", helpTopicArgName
+    if helpTopicVal == "all":
+      for helpTopic in helpTopics:
+        usageHelpStr += helpTopicsDict.get(helpTopic)
+    elif helpTopicVal == "":
+      None  # Don't show any help topic
+    else:
+      helpTopicHelpStr = helpTopicsDict.get(helpTopicVal, None)
+      if helpTopicHelpStr:
+        usageHelpStr += helpTopicHelpStr
+
+  return usageHelpStr
 
 def filterWarningsGen(lines): 
   for line in lines:
