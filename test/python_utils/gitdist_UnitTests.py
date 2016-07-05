@@ -642,7 +642,7 @@ class test_gitdist(unittest.TestCase):
     cmndOut = getCmndOutput(gitdistPath+" --help")
     assertContainsGitdistHelpHeader(self, cmndOut)
     self.assertEqual(
-      GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^OVERVIEW:$"), "OVERVIEW:\n")
+      GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^OVERVIEW:$"), "")
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^REPO SELECTION AND SETUP:$"), "")
 
@@ -677,18 +677,59 @@ class test_gitdist(unittest.TestCase):
   # Tet that --dist-help --help prints nice error message
   def test_dist_help_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help --help")
-    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-version-files', 'aliases', 'usage-tips', 'script-dependencies', 'all', '')\n"
+    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-version-files', 'aliases', 'usage-tips', 'script-dependencies', 'all')\n"
     self.assertEqual(cmndOut, cmndOut_expected)
 
 
   # Test --dist-helps=invalid-pick picked up as invalid value.
   def test_dist_help_invalid_pick_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help=invalid-pick --help")
-    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: 'invalid-pick' (choose from 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-version-files', 'aliases', 'usage-tips', 'script-dependencies', 'all', '')\n"
-    self.assertEqual(cmndOut, cmndOut_expected)
+    assertContainsGitdistHelpHeader(self, cmndOut)
+    errorToFind = "gitdist: error: option --dist-help: invalid choice: 'invalid-pick' (choose from '', 'overview', 'repo-selection-and-setup', 'dist-repo-status', 'repo-version-files', 'aliases', 'usage-tips', 'script-dependencies', 'all')"
+    self.assertEqual(
+      GeneralScriptSupport.extractLinesMatchingSubstr(cmndOut,errorToFind), errorToFind+"\n")
 
 
-  # ToDo: Add test for --dist-help=<anything> (verify what happens with no --help).
+  # Test --dist-help (show error string)
+  def test_dist_help(self):
+    (cmndOut, errOut) = getCmndOutput(gitdistPath+" --dist-help", rtnCode=True)
+    self.assertEqual(
+      cmndOut, "gitdist: error: --dist-help option requires an argument\n")
+    self.assertEqual(errOut, 2)
+
+
+  # Test --dist-help= (show no-op string)
+  def test_dist_help_none(self):
+    (cmndOut, errOut) = getCmndOutput(gitdistPathNoColor+" --dist-help=", rtnCode=True)
+    self.assertEqual(
+      cmndOut, "Must specify git command. See 'git --help' for options.\n")
+    self.assertEqual(errOut, 1)
+
+
+  # Test --dist-help=overview
+  def test_dist_help_overview(self):
+    cmndOut = getCmndOutput(gitdistPath+" --dist-help=overview")
+    self.assertEqual(
+      GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^OVERVIEW:$"), "OVERVIEW:\n")
+    self.assertEqual(
+      GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^Options:$"), "")
+
+
+  # Test --dist-help=usage-tips
+  def test_dist_help_usage_tips(self):
+    cmndOut = getCmndOutput(gitdistPath+" --dist-help=usage-tips")
+    self.assertEqual(
+      GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^USAGE TIPS:$"), "USAGE TIPS:\n")
+    self.assertEqual(
+      GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^Options:$"), "")
+
+
+  # Test --dist-help=all
+  def test_dist_help_all(self):
+    cmndOut = getCmndOutput(gitdistPath+" --dist-help=all")
+    assertContainsAllGitdistHelpSections(self, cmndOut)
+    self.assertEqual(
+      GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^Options:$"), "")
 
 
   def test_noEgGit(self):

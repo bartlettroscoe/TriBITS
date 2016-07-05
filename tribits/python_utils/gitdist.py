@@ -52,8 +52,8 @@ tracking versions through multi-repository SHA1 version files (see
 --dist-help=repo-version-files).
 
 The options in [gitdist options] are prefixed with '--dist-' and are pulled
-out before passing the remaining arguments in [git arguments] to THE 'git'
-command in each processed local git repo..
+out before running 'git [git arguments]' in each local git repo that is
+processed (see --dist-help=repo-selection-and-setup).
 """
 
 
@@ -65,9 +65,9 @@ Running:
   $ gitdist [gitdist options] [git arguments]
 
 will distribute git commands specified by [git arguments] across the current
-base git repo and the set of git repos as listed in the file ./.gitdist (or
-./.gitdist.default, or --dist-extra-repos=<repo0>,<repo1>,..., see
---dist-help=repo-selection-and-setup).
+base git repo and the set of git repos listed in the file ./.gitdist (or
+./.gitdist.default, or the argument --dist-extra-repos=<repo0>,<repo1>,...,
+see --dist-help=repo-selection-and-setup).
 
 For example, consider the following base git repo 'BaseRepo' with other git
 repos cloned under it:
@@ -113,10 +113,10 @@ The above command creates the same tag 'release-2.3-start' and the same branch
 'release-2.3' in all of the local git repos and pushes these to the 'origin'
 remote repo for each repo.
 
-For more information about a certain topic, use --help
---dist-help=<topic-name> for <topic-name>=
-"""+getHelpTopicsStr()+r"""
-To see full help with all topics, use --dist-help=all.
+For more information about a certain topic, us 'e--dist-help=<topic-name>
+[--help]' for <topic-name>=
+"""+getHelpTopicsStr()+r""" To see full help with all topics, use
+'--dist-help=all [--help]'.
 
 This script is self-contained and has no dependencies other than standard
 python 2.6 packages so it can be copied to anywhere and used.
@@ -599,31 +599,40 @@ def addOptionParserChoiceOption(
     )
 
 
+def getDistHelpTopicStr(helpTopicVal):
+  helpTopicStr = ""
+  if helpTopicVal == "":
+    return "" # Don't add any text
+  elif helpTopicVal == "all":
+    for helpTopic in helpTopics:
+      helpTopicStr += helpTopicsDict.get(helpTopic)
+  else:
+    helpTopicHelpStr = helpTopicsDict.get(helpTopicVal, None)
+    if helpTopicHelpStr:
+      helpTopicStr += helpTopicHelpStr
+    else:
+      # Invalid help topic so return nonthing and help error handler deal!
+      return ""
+  return helpTopicStr
+
+
 def getUsageHelpStr(helpTopicArg):
   #print "helpTopicArg =", helpTopicArg
   usageHelpStr = helpUsageHeader
   if helpTopicArg == "":
-    usageHelpStr += helpTopicsDict.get(helpTopics[helpTopicDefaultIdx])
+    # No help topic option so just use the standard help header
+    None
   else:
     helpTopicArgArray = helpTopicArg.split("=")
     if len(helpTopicArgArray) == 1:
-      # Option not formatted correctly, set let error hander get it."
+      # Option not formatted correctly, set let error handler get it."
       return ""
     (helpTopicArgName, helpTopicVal) = helpTopicArg.split("=")
     #print "helpTopicArgName =", helpTopicArgName
-    if helpTopicVal == "all":
-      for helpTopic in helpTopics:
-        usageHelpStr += helpTopicsDict.get(helpTopic)
-    elif helpTopicVal == "":
-      None  # Don't show any help topic
-    else:
-      helpTopicHelpStr = helpTopicsDict.get(helpTopicVal, None)
-      if helpTopicHelpStr:
-        usageHelpStr += helpTopicHelpStr
-      else:
-        # Invalid help topic so return just the error:
-        return ""
+    #print "helpTopicVal =", helpTopicVal
+    usageHelpStr += getDistHelpTopicStr(helpTopicVal)
   return usageHelpStr
+
 
 def filterWarningsGen(lines): 
   for line in lines:
@@ -785,10 +794,11 @@ def getCommandlineOps():
   clp = OptionParser(usage=usageHelp)
 
   addOptionParserChoiceOption(
-    distHelpArgName, "helpTopic", helpTopics+["all", ""], 0,
-    "Print help topic with --help --dist-help=HELPTOPIC.  Using" \
-    +" --dist-help=all --help prints all help topics.  Has no effect if" \
-    +" --help is not also given." ,
+    distHelpArgName, "helpTopic", [""]+helpTopics+["all"], 0,
+    "Print a gitdist help topic with -dist-help=HELPTOPIC.  Using" \
+    +" --dist-help=all prints all help topics.  If" \
+    +" --help is also given, then the help usage header and the" \
+    +" command-line arguments not also given." ,
     clp )
 
   clp.add_option(
@@ -818,7 +828,7 @@ def getCommandlineOps():
 
   clp.add_option(
     notBaseRepoArgName, dest="processBaseRepo", action="store_false",
-    help="If set, don't pass the git command on to the base git repo.",
+    help="If set, don't process or run the git command in the base git repo.",
     default=True )
 
   clp.add_option(
@@ -873,8 +883,12 @@ def getCommandlineOps():
     options.debug = True
 
   #
-  # D) Check for valid usage
+  # D) Print --dist-topic=<topic-name>, check for valid usage
   #
+
+  if options.helpTopic:
+    print getDistHelpTopicStr(options.helpTopic)
+    sys.exit(0)
 
   if not nativeCmnd and len(otherArgs) == 0:
     print addColorToErrorMsg(options.useColor,
@@ -910,6 +924,10 @@ def getCommandlineOps():
     notExtraReposFullList = options.notExtraRepos.split(",")
   else:
     notExtraReposFullList = []
+
+  #
+  # F) Return
+  #
 
   return (options, nativeCmnd, otherArgs, extraReposFullList,
     notExtraReposFullList)
