@@ -63,7 +63,7 @@ Running:
 will distribute git commands specified by [git arguments] across the current
 base git repo and the set of git repos as listed in the file ./.gitdist (or
 ./.gitdist.default, or --dist-extra-repos=<repo0>,<repo1>,..., see
---help-topic=repo-selection-and-setup).
+--dist-help=repo-selection-and-setup).
 
 For example, consider the following base git repo 'BaseRepo' with other git
 repos cloned under it:
@@ -110,9 +110,9 @@ The above command creates the same tag 'release-2.3-start' and the same branch
 remote repo for each repo.
 
 For more information about a certain topic, use --help
---help-topic=<topic-name> for <topic-name>=
+--dist-help=<topic-name> for <topic-name>=
 """+getHelpTopicsStr()+r"""
-To see full help with all topics, use --help-topic=all.
+To see full help with all topics, use --dist-help=all.
 
 This script is self-contained and has no dependencies other than standard
 python 2.6 packages so it can be copied to anywhere and used.
@@ -125,7 +125,7 @@ REPO SELECTION AND SETUP:
 
 Before using the gitdist tool, one will want to set up some useful aliases for
 the user's hell like 'gitdist-status', 'gitdist-mod', and 'gitdist-mod-status'
-(see --help-topic=aliases).
+(see --dist-help=aliases).
 
 The set of git repos processed by gitdist is determined by the argument:
 
@@ -209,8 +209,8 @@ SUMMARY OF REPO STATUS:
 
 This script supports the special command 'dist-repo-status' which prints a
 table showing the current status of all the repos (see alias 'gitdist-status'
-in --help-topic=aliases).  For the example set of repos shown in OVERVIEW (see
---help-topic=overview), running:
+in --dist-help=aliases).  For the example set of repos shown in OVERVIEW (see
+--dist-help=overview), running:
 
   $ gitdist dist-repo-status    # alias 'gitdist-status'
 
@@ -241,7 +241,7 @@ which prints a table like:
   |  2 | ExtraRepo2      | HEAD   |                 |   | 25 | 4 |
   ----------------------------------------------------------------
 
-(see the alias 'gitdist-mod-status' in --help-topic=aliases).
+(see the alias 'gitdist-mod-status' in --dist-help=aliases).
 
 Note that the base repo was left out but the repo indexes are the same.  This
 allows one to compactly show the status of changes of the changed repos even
@@ -384,7 +384,7 @@ longer atomic like is guaranteed for a single git repo.
 In general, the mapping between the commands for a single-repo git workflow
 using raw git vs. a multi-repo git workflow using gitdist (using the shell
 aliases 'gitdist-status', 'gitdist-mod-status', and 'gitdist-mod'; see
---help-topic=aliases) is given by:
+--dist-help=aliases) is given by:
 
   git pull                          =>  gitdist pull
   git checkout -b <branch> [<ref>]  =>  gitdist checkout -b <branch> [<ref>]
@@ -466,7 +466,7 @@ multiple git repos looks like the following:
     $ gitdist-mod-status   # Make sure all the pushes occurred!
 
 Another example workflow is creating a new release branch as shown in the
-OVERVIEW section (--help-topic=overview).
+OVERVIEW section (--dist-help=overview).
 
 Other usage tips:
 
@@ -706,7 +706,7 @@ def getCommandlineOps():
   # A) Define the native gitdist command-line arguments
   #
 
-  helpTopicArgName = "--help-topic" # Must match --help-topic before --help!
+  distHelpArgName = "--dist-help" # Must match --dist-help before --help!
   helpArgName = "--help"
   withGitArgName = "--dist-use-git"
   extraRepoArgName = "--dist-extra-repos"
@@ -720,7 +720,7 @@ def getCommandlineOps():
   modifiedOnlyName = "--dist-mod-only"
   legendName = "--dist-legend"
 
-  nativeArgNames = [ helpTopicArgName, helpArgName, withGitArgName, \
+  nativeArgNames = [ distHelpArgName, helpArgName, withGitArgName, \
     extraRepoArgName, notExtraRepoArgName, notBaseRepoArgName, \
     versionFileName, versionFile2Name, noColorArgName, debugArgName, noOptName, \
     modifiedOnlyName, legendName ]
@@ -754,7 +754,7 @@ def getCommandlineOps():
         #print "\nMatches native arg!"
         nativeArgs.append(arg)
         matchedNativeArg = True
-        if currentArgName == helpTopicArgName:
+        if currentArgName == distHelpArgName:
           helpTopicArg = arg
         break
     matchedNativeCmnd = False
@@ -791,9 +791,9 @@ def getCommandlineOps():
   clp = OptionParser(usage=usageHelp)
 
   addOptionParserChoiceOption(
-    helpTopicArgName, "helpTopic", helpTopics+["all", ""], 0,
-    "Print help topic with --help --help-topic=HELPTOPIC.  Using" \
-    +" --help-topic=all --help prints all help topics.  Has no effect if" \
+    distHelpArgName, "helpTopic", helpTopics+["all", ""], 0,
+    "Print help topic with --help --dist-help=HELPTOPIC.  Using" \
+    +" --dist-help=all --help prints all help topics.  Has no effect if" \
     +" --help is not also given." ,
     clp )
 

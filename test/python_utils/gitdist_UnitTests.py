@@ -625,27 +625,27 @@ class test_gitdist(unittest.TestCase):
       GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^REPO SELECTION AND SETUP:$"), "")
 
 
-  # Make sure --help-topic= does not print OVERVIEW section
-  def test_help_topic_none_help(self):
-    cmndOut = getCmndOutput(gitdistPath+" --help-topic= --help")
+  # Make sure --dist-help= does not print OVERVIEW section
+  def test_dist_help_none_help(self):
+    cmndOut = getCmndOutput(gitdistPath+" --dist-help= --help")
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^OVERVIEW:$"), "")
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^Options:$"), "Options:\n")
 
 
-  # --help-topic=aliases --help
-  def test_help_topic_aliases_help(self):
-    cmndOut = getCmndOutput(gitdistPath+" --help-topic=aliases --help")
+  # --dist-help=aliases --help
+  def test_dist_help_aliases_help(self):
+    cmndOut = getCmndOutput(gitdistPath+" --dist-help=aliases --help")
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^USEFUL ALIASES:$"), "USEFUL ALIASES:\n")
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^REPO SELECTION AND SETUP:$"), "")
 
 
-  # Make sure --help-topic=all prints all the topic headers
-  def test_help_topic_all_help(self):
-    cmndOut = getCmndOutput(gitdistPath+" --help-topic=all --help")
+  # Make sure --dist-help=all prints all the topic headers
+  def test_dist_help_all_help(self):
+    cmndOut = getCmndOutput(gitdistPath+" --dist-help=all --help")
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^OVERVIEW:$"), "OVERVIEW:\n")
     self.assertEqual(
@@ -664,21 +664,21 @@ class test_gitdist(unittest.TestCase):
       GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^SCRIPT DEPENDENCIES:$"), "SCRIPT DEPENDENCIES:\n")
 
 
-  # Tet that --help-topic --help prints nice error message
-  def test_help_topic_help(self):
-    cmndOut = getCmndOutput(gitdistPath+" --help-topic --help")
-    cmndOut_expected = "gitdist: error: option --help-topic: invalid choice: '--help' (choose from 'overview', 'repo-selection-and-setup', 'gitdist-options', 'dist-repo-status', 'repo-version-files', 'aliases', 'usage-tips', 'script-dependencies', 'all', '')\n"
+  # Tet that --dist-help --help prints nice error message
+  def test_dist_help_help(self):
+    cmndOut = getCmndOutput(gitdistPath+" --dist-help --help")
+    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: '--help' (choose from 'overview', 'repo-selection-and-setup', 'gitdist-options', 'dist-repo-status', 'repo-version-files', 'aliases', 'usage-tips', 'script-dependencies', 'all', '')\n"
     self.assertEqual(cmndOut, cmndOut_expected)
 
 
-  # Test --help-topics=invalid-pick picked up as invalid value.
-  def test_help_topic_invalid_pick_help(self):
-    cmndOut = getCmndOutput(gitdistPath+" --help-topic=invalid-pick --help")
-    cmndOut_expected = "gitdist: error: option --help-topic: invalid choice: 'invalid-pick' (choose from 'overview', 'repo-selection-and-setup', 'gitdist-options', 'dist-repo-status', 'repo-version-files', 'aliases', 'usage-tips', 'script-dependencies', 'all', '')\n"
+  # Test --dist-helps=invalid-pick picked up as invalid value.
+  def test_dist_help_invalid_pick_help(self):
+    cmndOut = getCmndOutput(gitdistPath+" --dist-help=invalid-pick --help")
+    cmndOut_expected = "gitdist: error: option --dist-help: invalid choice: 'invalid-pick' (choose from 'overview', 'repo-selection-and-setup', 'gitdist-options', 'dist-repo-status', 'repo-version-files', 'aliases', 'usage-tips', 'script-dependencies', 'all', '')\n"
     self.assertEqual(cmndOut, cmndOut_expected)
 
 
-  # ToDo: Add test for --help-topic=<anything> (verify what happens with no --help).
+  # ToDo: Add test for --dist-help=<anything> (verify what happens with no --help).
 
 
   def test_noEgGit(self):
