@@ -594,7 +594,16 @@ class test_gitdist_getRepoVersionDictFromRepoVersionFileString(unittest.TestCase
 
 
 #
-# Test entire script gitdist#
+# Test entire script gitdist
+#
+
+
+def assertContainsGitdistHelpHeader(testObj, cmndOut):
+  cmndOutList = cmndOut.split("\n")
+  cmndOutFirstLine = cmndOutList[0] 
+  cmndOutFirstLineAfterComma = cmndOutFirstLine.split(":")[1].strip() 
+  cmndOutFirstLineAfterComma_expected = "gitdist [gitdist arguments] [git arguments]"
+  testObj.assertEqual(cmndOutFirstLineAfterComma, cmndOutFirstLineAfterComma_expected)
 
 
 class test_gitdist(unittest.TestCase):
@@ -614,11 +623,7 @@ class test_gitdist(unittest.TestCase):
   # Make sure the default --help shows the section "OVERVIEW"
   def test_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --help")
-    cmndOutList = cmndOut.split("\n")
-    cmndOutFirstLine = cmndOutList[0] 
-    cmndOutFirstLineAfterComma = cmndOutFirstLine.split(":")[1].strip() 
-    cmndOutFirstLineAfterComma_expected = "gitdist [gitdist arguments] [git arguments]"
-    self.assertEqual(cmndOutFirstLineAfterComma, cmndOutFirstLineAfterComma_expected)
+    assertContainsGitdistHelpHeader(self, cmndOut)
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^OVERVIEW:$"), "OVERVIEW:\n")
     self.assertEqual(
@@ -628,6 +633,7 @@ class test_gitdist(unittest.TestCase):
   # Make sure --dist-help= does not print OVERVIEW section
   def test_dist_help_none_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help= --help")
+    assertContainsGitdistHelpHeader(self, cmndOut)
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^OVERVIEW:$"), "")
     self.assertEqual(
@@ -637,6 +643,7 @@ class test_gitdist(unittest.TestCase):
   # --dist-help=aliases --help
   def test_dist_help_aliases_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help=aliases --help")
+    assertContainsGitdistHelpHeader(self, cmndOut)
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^USEFUL ALIASES:$"), "USEFUL ALIASES:\n")
     self.assertEqual(
@@ -646,6 +653,7 @@ class test_gitdist(unittest.TestCase):
   # Make sure --dist-help=all prints all the topic headers
   def test_dist_help_all_help(self):
     cmndOut = getCmndOutput(gitdistPath+" --dist-help=all --help")
+    assertContainsGitdistHelpHeader(self, cmndOut)
     self.assertEqual(
       GeneralScriptSupport.extractLinesMatchingRegex(cmndOut,"^OVERVIEW:$"), "OVERVIEW:\n")
     self.assertEqual(
