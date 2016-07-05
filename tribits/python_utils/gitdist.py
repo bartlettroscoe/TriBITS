@@ -62,7 +62,7 @@ Running:
 
 will distribute git commands specified by [git arguments] across the current
 base git repo and the set of git repos as listed in the file ./.gitdist (or
-./.gitdist.default, or --dist-extra-repos=<repo>,<repo1>,..., see
+./.gitdist.default, or --dist-extra-repos=<repo0>,<repo1>,..., see
 --help-topic=repo-selection-and-setup).
 
 For example, consider the following base git repo 'BaseRepo' with other git
@@ -73,14 +73,14 @@ repos cloned under it:
     .gitdist
     ExtraRepo1/
       .git/
-    ExtraRep2/
+    ExtraRepo2/
       .git/
 
 The file .gitdist shown above is created by the user and in this example
 should have the contents:
 
   ExtraRepo1
-  ExtraRepos2
+  ExtraRepo2
 
 For this example, running the command:
 
@@ -154,7 +154,7 @@ The best way to do that is to run 'gitdist dist-repo-status' and see which
 repos are listed.
 
 Certain git repos can also be selectively excluded using the options
---dist-not-baes-repo and --dist-not-extra-repos=<repox>,<repoy>,...
+--dist-not-base-repo and --dist-not-extra-repos=<repox>,<repoy>,...
 
 Setting up to use gitdist requires first setting up and organizing the local
 git clones. For the example listed here, one would clone the base repo
@@ -175,14 +175,14 @@ This produces the repo structure:
     .gitdist
     ExtraRepo1/
       .git/
-    ExtraRep2/
+    ExtraRepo2/
       .git/
 
 After that setup, running:
 
   $ gitdist [git command and options]
 
-in the BaseRepo/ directory will automatically distribute the commands across
+in the 'BaseRepo/ 'directory will automatically distribute the commands across
 the repos ExtraRepo1 and ExtraRepo2.
 
 To simplify the setup of gitdist, one may choose to instead create the file
@@ -209,9 +209,10 @@ SUMMARY OF REPO STATUS:
 
 This script supports the special command 'dist-repo-status' which prints a
 table showing the current status of all the repos (see alias 'gitdist-status'
-below).  For the example set of repos shown above, running:
+in --help-topic=aliases).  For the example set of repos shown in OVERVIEW (see
+--help-topic=overview), running:
 
-  $ gitdist dist-repo-status    # gitdist-status 
+  $ gitdist dist-repo-status    # alias 'gitdist-status'
 
 prints a table like:
 
@@ -240,10 +241,10 @@ which prints a table like:
   |  2 | ExtraRepo2      | HEAD   |                 |   | 25 | 4 |
   ----------------------------------------------------------------
 
-(see the alias 'gitdist-mod-status' below).
+(see the alias 'gitdist-mod-status' in --help-topic=aliases).
 
-Note the base repo was left out but the repo indexes are the same.  This
-allows one to effectively show the status of changes in multiple repos even
+Note that the base repo was left out but the repo indexes are the same.  This
+allows one to compactly show the status of changes of the changed repos even
 when there are many git repos by filtering out rows for repos that have no
 changes w.r.t. their tracking branches.  This allows one to get the status on
 a few repos with changes out of a large number of repos (i.e. 10s to 100s of
@@ -299,16 +300,16 @@ use:
   $ gitdist fetch origin
   $ gitdist --dist-version-file=RepoVersion.<date>.txt checkout _VERSION_
 
-The '_VERSION_' string will be replaced with the SHA1 for each of the repos
-listed in the file RepoVersion.<date>.txt.  (NOTE: this puts the repos into a
+The '_VERSION_' string is replaced with the SHA1 for each of the repos listed
+in the file RepoVersion.<date>.txt.  (NOTE: this puts the repos into a
 detached head state so one has to know what that means.)
 
-To tag a set of repos using a consistent set of versions, use, for example:
+To tag a set of repos using a consistent set of versions, use (for example):
 
   $ gitdist --dist-version-file=RepoVersion.<date>.txt \
       tag -a <some_tag> _VERSION_
 
-To create a branch off of a consistent set of versions, use, for example:
+To create a branch off of a consistent set of versions, use (for example):
 
   $ gitdist --dist-version-file=RepoVersion.<date>.txt \
       checkout -b some-branch _VERSION_
@@ -340,15 +341,15 @@ helpTopicsDict.update( { 'repo-version-files' : repoVersionFilesHelp } )
 usefulAliasesHelp =r"""
 USEFUL ALIASES:
 
-A few very useful Linux/Unix aliases to use along with the the gitdist script
+A few very useful (bash) shell aliases to use along with the gitdist script
 are:
 
   $ alias gitdist-status="gitdist dist-repo-status"
   $ alias gitdist-mod="gitdist --dist-mod-only"
   $ alias gitdist-mod-status="gitdist dist-repo-status --dist-mod-only"
 
-This avoids lots of extra typing as these arguments are used a lot when working with
-many git repos.  For example, to see the status table of all your repos, do:
+This avoids lots of extra typing as these gitdist arguments are used a lot.
+For example, to see the status table of all your repos, do:
 
   $ gitdist-status
 
@@ -357,7 +358,7 @@ To just see the status table of changed repos only, do:
   $ gitdist-mod-status
 
 To process only repos that have changes and see commits in these repos
-w.r.t. their tracking branches, use:
+w.r.t. their tracking branches, use (for example):
 
   $ gitdist-mod log --name-status HEAD ^@{u}
 
@@ -380,23 +381,31 @@ repos using gitdist.  The main difference is that one will typically need to
 create commits individually for each repo.  Also, pulls and pushes are no
 longer atomic like is guaranteed for a single git repo.
 
-In general, the mapping between the commands for a single repo workflow vs. a
-multi-repo workflow using raw git is (using the shell aliases
-'gitdist-status', 'gitdist-mod-status', and 'gitdist-mod'; see
---help-topic=dist-repo-status):
+In general, the mapping between the commands for a single-repo git workflow
+using raw git vs. a multi-repo git workflow using gitdist (using the shell
+aliases 'gitdist-status', 'gitdist-mod-status', and 'gitdist-mod'; see
+--help-topic=aliases) is given by:
 
-  git pull                    =>  gitdist pull
-  git checkout -b <branch>    =>  gitdist checkout -b <branch>
-  git tag -a "message" <tag>  =>  gitdist tag -a "message" <tag>
-  git status                  =>  gitdist-mod status
-  git commit                  =>  gitdist-mod commit
-  git log HEAD ^@{u}          =>  gitdist-mod log HEAD ^@{u} 
-  git push                    =>  gitdist-mod push
-  git push <remote> <branch>  =>  gitdist <remote> <branch>
-  git push <remote> <tag>     =>  gitdist <remote> <tag>
+  git pull                          =>  gitdist pull
+  git checkout -b <branch> [<ref>]  =>  gitdist checkout -b <branch> [<ref>]
+  git tag -a -m "<message>" <tag>   =>  gitdist tag -a -m "<message>" <tag>
+  git status                        =>  gitdist-mod status  # status details
+                                    =>  gitdist-status      # table for all
+                                    =>  gitdist-mod-status  # table for mod.
+  git commit                        =>  gitdist-mod commit
+  git log HEAD ^@{u}                =>  gitdist-mod log HEAD ^@{u} 
+  git push                          =>  gitdist-mod push
+  git push [-u] <remote> <branch>   =>  gitdist push [-u] <remote> <branch>
+  git push <remote> <tag>           =>  gitdist push <remote> <tag>
 
-A typical development iteration of the centralized workflow with gitdist looks
-like the following:
+NOTE: The usage of 'gitdist-mod' can be replaced with just 'gitdist' in all of
+the above commands.  It is just that in these cases gitdist-mod produces more
+compact output and avoids do-nothing commands for repos that have no changes
+with respect to their tracking branch.  But when it doubt, just use raw
+'gitdist' if you are confused.
+
+A typical development iteration of the centralized workflow using using
+multiple git repos looks like the following:
 
 1) Update the local branches from the remote tracking branches:
 
@@ -413,7 +422,7 @@ like the following:
     $ emacs <files-in-extra-repo2>
     $ cd ..
 
-3) Build a test local modifications:
+3) Build and test local modifications:
 
     $ cd BUILD/
     $ make -j16
@@ -454,13 +463,10 @@ like the following:
 
     $ gitdist pull --rebase
     $ gitdist-mod push
+    $ gitdist-mod-status   # Make sure all the pushes occurred!
 
-NOTE, the usage of gitdist-mod can be replaced with just gitdist and all of
-the above commands work just fine.  It is just that gitdist-mod produces more
-compact output by avoiding do-nothing commands in repos that have no changes.
-
-Another example of a workflow is creating a new release branch as shown in the
-OVERVIEW (--help-topic=overview).
+Another example workflow is creating a new release branch as shown in the
+OVERVIEW section (--help-topic=overview).
 
 Other usage tips:
 
@@ -620,7 +626,9 @@ def getUsageHelpStr(helpTopicArg):
       helpTopicHelpStr = helpTopicsDict.get(helpTopicVal, None)
       if helpTopicHelpStr:
         usageHelpStr += helpTopicHelpStr
-
+      else:
+        # Invalid help topic so return just the error:
+        return ""
   return usageHelpStr
 
 def filterWarningsGen(lines): 
@@ -785,7 +793,7 @@ def getCommandlineOps():
   addOptionParserChoiceOption(
     helpTopicArgName, "helpTopic", helpTopics+["all", ""], 0,
     "Print help topic with --help --help-topic=HELPTOPIC.  Using" \
-    +" --help-topic=all --help prints all help topics.  Has not effect if" \
+    +" --help-topic=all --help prints all help topics.  Has no effect if" \
     +" --help is not also given." ,
     clp )
 
