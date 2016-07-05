@@ -20,7 +20,6 @@ distRepoStatusLegend = r"""Legend:
 helpTopics = [
   'overview',
   'repo-selection-and-setup',
-  'gitdist-options',
   'dist-repo-status',
   'repo-version-files',
   'aliases', 
@@ -46,10 +45,15 @@ helpTopicsDict = {}
 helpUsageHeader = r"""gitdist [gitdist arguments] [git arguments]
        gitdist [gitdist arguments] dist-repo-status
 
-Run git recursively over a set of git repos in a multi-repository git project.
-This script also includes other tools like printing a repo status table (using
-dist-repo-status) and tracking versions through multi-repository version files
-(e.g. --dist-repo-version-file=RepoVersion.txt).
+Run git recursively over a set of git repos in a multi-repository git project
+(see --dist-help=overview --help).  This script also includes other tools like
+printing a compact repo status table (see --dist-help=dist-repo-status) and
+tracking versions through multi-repository SHA1 version files (see
+--dist-help=repo-version-files).
+
+The options in [gitdist options] are prefixed with '--dist-' and are pulled
+out before passing the remaining arguments in [git arguments] to THE 'git'
+command in each processed local git repo..
 """
 
 
@@ -192,16 +196,6 @@ every new local clone of the repos.  But if the file BaseRepo/.gitdist is
 present, then it will override the file .gitdist.default.
 """
 helpTopicsDict.update( { 'repo-selection-and-setup' : repoSelectionAndSetupHelp } )
-
-
-gitdistOptionsHelp = r"""
-GITDIST OPTIONS:
-
-The options in [gitdist options] are prefixed with '--dist-' and are pulled
-out before passing the remaining arguments in [git arguments] to git for each
-processed git repo.  See --help for the list of [gitdist options].
-"""
-helpTopicsDict.update( { 'gitdist-options' : gitdistOptionsHelp } )
 
 
 distRepoStatusHelp = r"""
