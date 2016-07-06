@@ -21,7 +21,7 @@ helpTopics = [
   'overview',
   'repo-selection-and-setup',
   'dist-repo-status',
-  'repo-version-files',
+  'repo-versions',
   'aliases', 
   'usage-tips',
   'script-dependencies'
@@ -49,7 +49,7 @@ Run git recursively over a set of git repos in a multi-repository git project
 (see --dist-help=overview --help).  This script also includes other tools like
 printing a compact repo status table (see --dist-help=dist-repo-status) and
 tracking versions through multi-repository SHA1 version files (see
---dist-help=repo-version-files).
+--dist-help=repo-versions).
 
 The options in [gitdist options] are prefixed with '--dist-' and are pulled
 out before running 'git [git arguments]' in each local git repo that is
@@ -77,14 +77,17 @@ repos cloned under it:
     .gitdist
     ExtraRepo1/
       .git/
-    ExtraRepo2/
+      ExtraRepo2/
+        .git/
+    ExtraRepo3/
       .git/
 
 The file .gitdist shown above is created by the user and in this example
 should have the contents:
 
   ExtraRepo1
-  ExtraRepo2
+  ExtraRepo1/ExtraRepo2
+  ExtraRepo3
 
 For this example, running the command:
 
@@ -93,8 +96,9 @@ For this example, running the command:
 in 'BaseRepo/' produces the equivalent commands:
 
   $ git status
-  $ cd ExtraRepo1/ ; git status ; ../
-  $ cd ExtraRepo2/ ; git status ; ../
+  $ cd ExtraRepo1/ ; git status ; ..
+  $ cd ExtraRepo1/ExtraRepo2/ ; git status ; ../..
+  $ cd ExtraRepo3/ ; git status ; ..
 
 The gitdist tool allows managing a set of git repos like one big continuously
 integrated git repo.  For example, after cloning a set of git repos, one can
@@ -143,7 +147,8 @@ working directory.  The format of this files '.gitdist' and '.gitdist.default'
 is to have one repo directory/name per line as in the 'BaseRepo' example:
 
   ExtraRepo1
-  ExtraRepo2
+  ExtraRepo1/ExtraRepo2
+  ExtraRepo3
 
 where each repo is the relative path to the repo under the base git repo
 (e.g. under 'BaseRepo/').  The file .gitdist.default is meant to be committed
@@ -162,15 +167,19 @@ Certain git repos can also be selectively excluded using the options
 
 Setting up to use gitdist requires first setting up and organizing the local
 git clones. For the example listed here, one would clone the base repo
-'BaseRepo', then clone the two extra git repos like 'ExtraRepo1' and
-'ExtraRepo2' and then set up a .gitdist file like:
+'BaseRepo', then clone the extra git repos and 'ExtraRepo2' and then set up a
+.gitdist file like:
 
   $ git clone git@some.url:BaseRepo.git
   $ cd BaseRepo/
   $ git clone git@some.url:ExtraRepo1.git
+  $ cd ExtraRepo1/
   $ git clone git@some.url:ExtraRepo2.git
+  $ cd ..
+  $ git clone git@some.url:ExtraRepo3.git
   $ echo ExtraRepo1 > .gitdist
-  $ echo ExtraRepo2 >> .gitdist
+  $ echo ExtraRepo1/ExtraRepo2 >> .gitdist
+  $ echo ExtraRepo3 >> .gitdist
 
 This produces the repo structure:
 
@@ -179,7 +188,9 @@ This produces the repo structure:
     .gitdist
     ExtraRepo1/
       .git/
-    ExtraRepo2/
+      ExtraRepo2/
+        .git/
+    ExtraRepo3/
       .git/
 
 After that setup, running:
@@ -187,7 +198,7 @@ After that setup, running:
   $ gitdist [git command and options]
 
 in the 'BaseRepo/ 'directory will automatically distribute the commands across
-the repos ExtraRepo1 and ExtraRepo2.
+the repos ExtraRepo1, ExtraRepo1/ExtraRepo2, and ExtraRepo3.
 
 To simplify the setup of gitdist, one may choose to instead create the file
 .gitdist.default in the base repo and commit that file to the BaseRepo git
@@ -210,13 +221,14 @@ in --dist-help=aliases).  For the example set of repos shown in OVERVIEW (see
 
 prints a table like:
 
-  ----------------------------------------------------------------
-  | ID | Repo Dir        | Branch | Tracking Branch | C | M  | ? |
-  |----|-----------------|--------|-----------------|---|----|---|
-  |  0 | BaseRepo (Base) | dummy  |                 |   |    |   |
-  |  1 | ExtraRepo1      | master | origin/master   | 1 |  2 |   |
-  |  2 | ExtraRepo2      | HEAD   |                 |   | 25 | 4 |
-  ----------------------------------------------------------------
+  ----------------------------------------------------------------------
+  | ID | Repo Dir              | Branch | Tracking Branch | C | M  | ? |
+  |----|-----------------------|--------|-----------------|---|----|---|
+  |  0 | BaseRepo (Base)       | dummy  |                 |   |    |   |
+  |  1 | ExtraRepo1            | master | origin/master   | 1 |  2 |   |
+  |  2 | ExtraRepo1/ExtraRepo2 | HEAD   |                 |   | 25 | 4 |
+  |  3 | ExtraRepo3            | master | origin/master   |   |    |   |
+  ----------------------------------------------------------------------
 
 If the option --dist-legend is passed in, it will print the legend:
 
@@ -228,12 +240,11 @@ One can also show the status of only changed repos with the command:
 
 which prints a table like:
 
-  ----------------------------------------------------------------
-  | ID | Repo Dir        | Branch | Tracking Branch | C | M  | ? |
-  |----|-----------------|--------|-----------------|---|----|---|
-  |  1 | ExtraRepo1      | master | origin/master   | 1 |  2 |   |
-  |  2 | ExtraRepo2      | HEAD   |                 |   | 25 | 4 |
-  ----------------------------------------------------------------
+  | ID | Repo Dir              | Branch | Tracking Branch | C | M  | ? |
+  |----|-----------------------|--------|-----------------|---|----|---|
+  |  1 | ExtraRepo1            | master | origin/master   | 1 |  2 |   |
+  |  2 | ExtraRepo1/ExtraRepo2 | HEAD   |                 |   | 25 | 4 |
+  ----------------------------------------------------------------------
 
 (see the alias 'gitdist-mod-status' in --dist-help=aliases).
 
@@ -259,14 +270,17 @@ The format of these repo version files is shown in the following example:
 
 -----------------------------------------------------
 *** Base Git Repo: BaseRepo
-e102e27 [Mon Sep 23 11:34:59 2013 -0400] <author1@someurl.com>
+e102e27 [Mon Sep 23 11:34:59 2013 -0400] <author0@someurl.com>
 First summary message
 *** Git Repo: ExtraRepo1
-b894b9c [Fri Aug 30 09:55:07 2013 -0400] <author2@someurl.com>
+b894b9c [Fri Aug 30 09:55:07 2013 -0400] <author1@someurl.com>
 Second summary message
-*** Git Repo: ExtraRepo2
-97cf1ac [Thu Dec 1 23:34:06 2011 -0500] <author3@someurl.com>
+*** Git Repo: ExtraRepo1/ExtraRepo2
+97cf1ac [Thu Dec 1 23:34:06 2011 -0500] <author2@someurl.com>
 Third summary message
+*** Git Repo: ExtraRepo3
+6facf33 [Fri May 6 15:28:35 2013 -0400] <author3@someurl.com>
+Fourth summary message
 -----------------------------------------------------
 
 (the lines '---------' are *not* included in the file.)
@@ -329,7 +343,7 @@ in the RepVersion.txt file one can exclude them with:
     --dist-version-file=RepoVersion.txt \
     [other arguments]
 """
-helpTopicsDict.update( { 'repo-version-files' : repoVersionFilesHelp } )
+helpTopicsDict.update( { 'repo-versions' : repoVersionFilesHelp } )
 
 
 usefulAliasesHelp =r"""
@@ -411,10 +425,9 @@ multiple git repos looks like the following:
     $ emacs <base-files>
     $ cd ExtraRepo1/
     $ emacs <files-in-extra-repo1>
-    $ cd ..
     $ cd ExtraRepo2/
     $ emacs <files-in-extra-repo2>
-    $ cd ..
+    $ cd ../..
 
 3) Build and test local modifications:
 
@@ -443,10 +456,9 @@ multiple git repos looks like the following:
     $ git commit -a
     $ cd ExtraRepo1/
     $ git commit -a
-    $ cd ..
     $ cd ExtraRepo2/
     $ git commit -a
-    $ cd ..
+    $ cd ../..
 
 6) Examine the local commits that are about to be pushed:
 
