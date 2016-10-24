@@ -363,7 +363,8 @@ ENDFUNCTION()
 
 MACRO(TRIBITS_SETUP_EXTRAREPOS)
 
-  IF( EXISTS "${${PROJECT_NAME}_EXTRAREPOS_FILE}" )
+  PRINT_VAR(${PROJECT_NAME}_EXTRAREPOS_FILE)
+  IF (EXISTS "${${PROJECT_NAME}_EXTRAREPOS_FILE}" )
     # Repos many not already exist because we have not cloned them yet!
     SET(${PROJECT_NAME}_CHECK_EXTRAREPOS_EXIST FALSE)
     TRIBITS_GET_AND_PROCESS_EXTRA_REPOSITORIES_LISTS()
@@ -1100,8 +1101,14 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # even been checked out yet!  Unless, of course, we are unit testing
   # in which case we will use whatever has been passed in.
 
+  IF (${PROJECT_NAME}_NO_EXTRAREPOS_FILE)
+    SET(${PROJECT_NAME}_EXTRAREPOS_FILE_DEFAULT)
+  ELSE()
+    SET(${PROJECT_NAME}_EXTRAREPOS_FILE_DEFAULT
+      "${TRIBITS_PROJECT_ROOT}/cmake/${${PROJECT_NAME}_EXTRA_EXTERNAL_REPOS_FILE_NAME}")
+  ENDIF()
   SET_DEFAULT_AND_FROM_ENV(${PROJECT_NAME}_EXTRAREPOS_FILE
-    "${TRIBITS_PROJECT_ROOT}/cmake/${${PROJECT_NAME}_EXTRA_EXTERNAL_REPOS_FILE_NAME}")
+    "${${PROJECT_NAME}_EXTRAREPOS_FILE_DEFAULT}")
 
   # Select the set of extra external repos to add in packages.
   # These are the same types as CTEST_TEST_TYPE (e.g. 'Continuous' and
