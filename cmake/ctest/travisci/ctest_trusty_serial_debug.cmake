@@ -1,4 +1,12 @@
 #
+# Set the locations of things for this project
+#
+
+SET(TRIBITS_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../..")
+
+SET(TriBITS_TRIBITS_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../tribits")
+
+#
 # Set the options specific to this build case
 #
 
@@ -7,9 +15,9 @@ SET(BUILD_TYPE DEBUG)
 SET(BUILD_DIR_NAME ${COMM_TYPE}_${BUILD_TYPE}_TravisCI)
 #SET(CTEST_TEST_TIMEOUT 900)
 
-#override the default number of processors to run on.
-SET( CTEST_BUILD_FLAGS "-j10 -i" )
-SET( CTEST_PARALLEL_LEVEL "10" )
+SET( CTEST_BUILD_FLAGS "-j1 -i" )
+
+SET( CTEST_PARALLEL_LEVEL "1" )
 
 SET( EXTRA_CONFIGURE_OPTIONS
   "-DBUILD_SHARED_LIBS:BOOL=ON"
@@ -21,15 +29,7 @@ SET( EXTRA_CONFIGURE_OPTIONS
   "-DTriBITS_HOSTNAME=travis-ci-server-linux"
   )
 
-SET(CTEST_TEST_TYPE Experimental)
-
-#
-# Set the locations of things
-#
-
-SET(TRIBITS_PROJECT_ROOT "${CMAKE_CURRENT_LIST_DIR}/../../..")
-
-SET(TriBITS_TRIBITS_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../tribits")
+SET(CTEST_TEST_TYPE Continuous)
 
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/../../../tribits/ctest_driver/TribitsCTestDriverCore.cmake")
 

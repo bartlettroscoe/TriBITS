@@ -16,3 +16,4 @@ install:
 
 script:
   - ctest -VV
+  - ctest -V -S ../cmake/ctest/travisci/ctest_trusty_serial_debug.cmake
