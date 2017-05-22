@@ -38,6 +38,12 @@
 # @HEADER
 
 
+# Set up to use CMAKE_PARSE_ARGUMENTS() function!
+INCLUDE(CMakeParseArguments)
+# NOTE: For CMake versions 3.5.0 and above, this module is empty so the
+# natively implemented function CMAKE_PARSE_ARGUMENTS() will get used!
+
+
 # Set PARSE_ARGUMENTS_DUMP_OUTPUT_ENABLED to TRUE to see output from parsing.
 
 FUNCTION(PARSE_ARGUMENTS_DUMP_OUTPUT  OUTPUT_STR)
