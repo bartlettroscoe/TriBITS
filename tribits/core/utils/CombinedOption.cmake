@@ -68,13 +68,15 @@ INCLUDE(ConcatStrings)
 #
 FUNCTION(COMBINED_OPTION  COMBINED_OPTION_NAME)
 
-  PARSE_ARGUMENTS(
+  CMAKE_PARSE_ARGUMENTS(
     #prefix
     PARSE
-    #lists
-    "DEP_OPTIONS_NAMES;DOCSTR"
     #options
     ""
+    #one_value_keywords
+    ""
+    #multi_value_keywords
+    "DEP_OPTIONS_NAMES;DOCSTR"
     ${ARGN}
     )
 
