@@ -196,7 +196,9 @@ ENDFUNCTION()
 # names and input argument list names.
 #
 MACRO(PARSE_ARGUMENTS prefix arg_names option_names)
-
+   
+  MESSAGE(WARNING "PARSE_ARGUMENTS() is depricted and should not be used.  Instead use CMAKE_PARSE_ARGUMENTS()")
+ 
   PARSE_ARGUMENTS_DUMP_OUTPUT("PARSE_ARGUMENTS: prefix='${prefix}'")
   PARSE_ARGUMENTS_DUMP_OUTPUT("PARSE_ARGUMENTS: arg_names='${arg_names}'")
   PARSE_ARGUMENTS_DUMP_OUTPUT("PARSE_ARGUMENTS: option_names='${option_names}'")
