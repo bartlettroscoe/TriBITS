@@ -526,11 +526,11 @@ INCLUDE(PrintVar)
 # **Argument Parsing and Ordering (TRIBITS_ADD_ADVANCED_TEST())**
 #
 # The basic tool used for parsing the arguments to this function is the macro
-# `PARSE_ARGUMENTS()`_ which has a certain set of behaviors.  The parsing
-# using `PARSE_ARGUMENTS()`_ is actually done in two phases.  There is a
+# `CMAKE_PARSE_ARGUMENTS()`_ which has a certain set of behaviors.  The parsing
+# using `CMAKE_PARSE_ARGUMENTS()`_ is actually done in two phases.  There is a
 # top-level parsing of the "overall" arguments listed in `Overall Arguments
 # (TRIBITS_ADD_ADVANCED_TEST())`_ that also pulls out the test blocks.  Then
-# there is a second level of parsing using ``PARSE_ARGUMENTS()`` for each of
+# there is a second level of parsing using ``CMAKE_PARSE_ARGUMENTS()`` for each of
 # the ``TEST_<idx>`` blocks.  Because of this usage, there are a few
 # restrictions that one needs to be aware of when using
 # ``TRIBITS_ADD_ADVANCED_TEST()``.  This short sections tries to explain the
