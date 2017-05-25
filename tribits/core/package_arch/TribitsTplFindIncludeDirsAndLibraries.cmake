@@ -50,7 +50,7 @@ INCLUDE(DualScopeSet)
 INCLUDE(GlobalNullSet)
 INCLUDE(GlobalSet)
 INCLUDE(MultilineSet)
-INCLUDE(ParseVariableArguments)
+INCLUDE(CMakeParseArguments)
 INCLUDE(SetNotFound)
 INCLUDE(Split)
 

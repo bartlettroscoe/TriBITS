@@ -55,7 +55,7 @@ INCLUDE(RemoveGlobalDuplicates)
 INCLUDE(SetDefault)
 INCLUDE(MessageWrapper)
 INCLUDE(DualScopeSet)
-INCLUDE(ParseVariableArguments)
+INCLUDE(CMakeParseArguments)
 
 
 #

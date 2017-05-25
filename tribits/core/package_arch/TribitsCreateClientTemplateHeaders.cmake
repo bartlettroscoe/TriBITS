@@ -38,7 +38,7 @@
 # @HEADER
 
 
-INCLUDE(ParseVariableArguments)
+INCLUDE(CMakeParseArguments)
 INCLUDE(PrintVar)
 
 

@@ -38,7 +38,7 @@
 # @HEADER
 
 INCLUDE(GetCurrentListDir)
-INCLUDE(ParseVariableArguments)
+INCLUDE(CMakeParseArguments)
 INCLUDE(SetDefaultAndFromEnv)
 
 # Set if the inner CMake installs are performed or not

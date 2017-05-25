@@ -38,7 +38,7 @@
 # @HEADER
 
 INCLUDE(TribitsCreateClientTemplateHeaders)
-INCLUDE(ParseVariableArguments)
+INCLUDE(CMakeParseArguments)
 INCLUDE(GlobalSet)
 INCLUDE(AppendSet)
 INCLUDE(AppendGlob)

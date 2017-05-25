@@ -41,7 +41,7 @@ INCLUDE(TribitsPackageSetupCompilerFlags)
 INCLUDE(TribitsWriteClientExportFiles)
 INCLUDE(TribitsGeneralMacros)
 
-INCLUDE(ParseVariableArguments)
+INCLUDE(CMakeParseArguments)
 INCLUDE(GlobalNullSet)
 INCLUDE(AppendGlobalSet)
 INCLUDE(PrintVar)

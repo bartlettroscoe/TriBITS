@@ -45,7 +45,7 @@ INCLUDE(TribitsGeneralMacros)
 
 INCLUDE(PrintVar)
 INCLUDE(AppendSet)
-INCLUDE(ParseVariableArguments)
+INCLUDE(CMakeParseArguments)
 
 ###
 ### WARNING: See "NOTES TO DEVELOPERS" at the bottom of the file

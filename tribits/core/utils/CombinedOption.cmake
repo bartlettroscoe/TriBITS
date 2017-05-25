@@ -37,7 +37,7 @@
 # ************************************************************************
 # @HEADER
 
-INCLUDE(ParseVariableArguments)
+INCLUDE(CMakeParseArguments)
 INCLUDE(MultilineSet)
 INCLUDE(ConcatStrings)
 

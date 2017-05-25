@@ -37,7 +37,7 @@
 # ************************************************************************
 # @HEADER
 
-INCLUDE(ParseVariableArguments)
+INCLUDE(CMakeParseArguments)
 
 #
 # FUNCTION: TRIBITS_INCLUDE_DIRECTORIES()

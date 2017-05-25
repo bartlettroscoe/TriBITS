@@ -39,7 +39,7 @@
 
 
 INCLUDE(TribitsAddTestHelpers)
-INCLUDE(ParseVariableArguments)
+INCLUDE(CMakeParseArguments)
 
 
 #
