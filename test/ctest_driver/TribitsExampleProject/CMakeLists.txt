@@ -38,6 +38,10 @@
 # @HEADER
 
 
+#
+# Set up common vars/args for all tests
+#
+
 SET(TribitsExProj_DIR "${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject")
 
 SET(COMMON_ENV_ARGS
@@ -48,13 +52,45 @@ SET(COMMON_ENV_ARGS
   TribitsExProj_PRE_REPOSITORIES=
   TribitsExProj_EXTRA_REPOSITORIES=
   # Other args
-  TribitsExProj_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/../../ci_support/ExtraReposListEmptyList.cmake
+  #TribitsExProj_SKIP_EXTRAREPOS_FILE=TRUE
+  #TribitsExProj_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/../../ci_support/ExtraReposListEmptyList.cmake
+  #TribitsExProj_EXTRAREPOS_FILE=
+  TribitsExProj_EXTRAREPOS_FILE=NONE
   CTEST_DO_UPDATES=OFF
   CTEST_DO_SUBMIT=OFF
   )
 
 
-TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ALL_PASS
+#
+# Set up to submit to CDash if reqeusted
+#
+
+SET_DEFAULT_AND_FROM_ENV(${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO "")
+
+IF ("${${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO}" STREQUAL "")
+  SET(CDASH_SUBMIT_ARGS "")
+ELSEIF (${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO STREQUAL "MY_CDASH")
+  SET(CDASH_SUBMIT_ARGS CTEST_DO_SUBMIT=TRUE)
+ELSEIF (${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO STREQUAL "TRILINOS_CDASH")
+  SET(CDASH_SUBMIT_ARGS
+    CTEST_DROP_SITE=testing.sandia.gov/cdash
+    CTEST_PROJECT_NAME=TribitsExProj
+    CTEST_DROP_LOCATION="/submit.php?project=TribitsExProj"
+    )
+ELSE()
+  MESSAGE(FATAL_ERROR "Error, the value"
+    " ${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO='${${PACKAGE_NAME}_TRIBITEXPROJ_SUBMIT_TO}'"
+    " is invalid!  Valid choices are '', 'MY_CDASH' and 'TRILINOS_CDASH'"
+   ) 
+ENDIF()
+
+
+#
+# Run the tests
+#
+
+
+TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ST_ALL_PASS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
   TEST_0
@@ -65,10 +101,45 @@ TRIBITS_ADD_ADVANCED_TEST( CTestDriver_ALL_PASS
     MESSAGE "Run ctest driver testing everyting but no push."
     CMND env
     ARGS
-      ${COMMON_ENV_ARGS}
       CTEST_DASHBOARD_ROOT=${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_CTestDriver_ALL_PASS
-      ${CMAKE_CTEST_COMMAND} -S
+      ${COMMON_ENV_ARGS}
+      TribitsExProj_ENABLE_SECONDARY_TESTED_CODE=TRUE
+      ${CDASH_SUBMIT_ARGS}
+      ${CMAKE_CTEST_COMMAND} -V -S
         ${TribitsExProj_DIR}/cmake/ctest/general_gcc/ctest_serial_debug.cmake
     PASS_REGULAR_EXPRESSION_ALL
-      "DUMMY NO MATCH"
+      "NONE does not exist, skipping extra repositories"
+      "Setting TribitsExProj_ENABLE_ALL_PACKAGES=ON since TribitsExProj_PACKAGES_USER_SELECTED=''"
+      "Final set of enabled packages:  SimpleCxx MixedLang WithSubpackages WrapExternal 4"
+      "Final set of enabled SE packages:  SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
+      "SimpleCxx: Configure passed"
+      "SimpleCxx: Libs build passed"
+      "SimpleCxx: All build passed"
+      "SimpleCxx_HelloWorldProg .* Passed"
+      "MixedLang: Configure passed"
+      "MixedLang: Libs build passed"
+      "MixedLang: All build passed"
+      "MixedLang_RayTracerTests .* Passed"
+      "WithSubpackages: Configure passed"
+      "WithSubpackages: Libs build passed"
+      "WithSubpackages: All build passed"
+      "WithSubpackagesA_test_of_a .* Passed"
+      "WithSubpackagesB_test_of_b .* Passed"
+      "WithSubpackagesC_test_of_c_util .* Passed"
+      "WithSubpackagesC_test_of_c_b_mixed_lang .* Passed"
+      "WrapExternal: Configure passed"
+      "WrapExternal: Libs build passed"
+      "WrapExternal: All build passed"
+      "WrapExternal_run_external_func .* Passed"
+      "TRIBITS_CTEST_DRIVER: OVERALL: ALL PASSSED"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
   )
+
+
+# ToDo: Test breaking the lib build of an upstream package
+
+
+# ToDo: Test breaking the all build for an upstream package
+
+
+# ToDo: 
