@@ -13,4 +13,4 @@ install:
   - cd build/
 
 script:
-  - ctest -V -S ../cmake/ctest/travisci/ctest_trusty_serial_debug.cmake
+  - env TriBITS_TRIBITEXPROJ_SUBMIT_TO=TRILINOS_CDASH ctest -V -S ../cmake/ctest/travisci/ctest_trusty_serial_debug.cmake
