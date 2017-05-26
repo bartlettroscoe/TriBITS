@@ -48,6 +48,7 @@ SET(COMMON_ENV_ARGS
   TribitsExProj_PRE_REPOSITORIES=
   TribitsExProj_EXTRA_REPOSITORIES=
   # Other args
+  TribitsExProj_EXTRAREPOS_FILE=${CMAKE_CURRENT_SOURCE_DIR}/../../ci_support/ExtraReposListEmptyList.cmake
   CTEST_DO_UPDATES=OFF
   CTEST_DO_SUBMIT=OFF
   )
