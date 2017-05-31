@@ -2,6 +2,10 @@
 
 # Used to test TriBITS on any SNL machine with the SEMS Dev ENv
 #
+# To push, can't use --push arg.  Instead have to use:
+#
+#   env CHECKIN_TEST_SEMS_PUSH=1 ./checkin-test-sems.sh [other args]
+#
 # Requires that the TriBITS repo be cloned under Trilinos as:
 #
 #   Trilinos/
@@ -12,31 +16,21 @@
 # NOTE: You will also want to create a local-checkin-test-defaults.py file to
 # set -j<N> for the particular machine (see --help).
 #
+# 
+#
 
 if [ "$TRIBITS_BASE_DIR" == "" ] ; then
   _ABS_FILE_PATH=`readlink -f $0`
-  _SCRIPT_DIR=`dirname $_ABS_FILE_PATH`
-  TRIBITS_BASE_DIR=$_SCRIPT_DIR/../..
+  CHECKIN_TEST_SEMS_SCRIPT_DIR=`dirname $_ABS_FILE_PATH`
+  TRIBITS_BASE_DIR=$CHECKIN_TEST_SEMS_SCRIPT_DIR/../..
 fi
+#echo "CHECKIN_TEST_SEMS_SCRIPT_DIR = $CHECKIN_TEST_SEMS_SCRIPT_DIR"
 
-TRIBITS_BASE_DIR_ABS=$(readlink -f $TRIBITS_BASE_DIR)
+export TRIBITS_BASE_DIR_ABS=$(readlink -f $TRIBITS_BASE_DIR)
 #echo "TRIBITS_BASE_DIR_ABS = $TRIBITS_BASE_DIR_ABS"
 
-TRILINOS_BASE_DIR_ABS=$(readlink -f $TRIBITS_BASE_DIR_ABS/..)
+export TRILINOS_BASE_DIR_ABS=$(readlink -f $TRIBITS_BASE_DIR_ABS/..)
 #echo "TRIBITS_BASE_DIR_ABS = $TRIBITS_BASE_DIR_ABS"
-
-# Make sure the right env is loaded!
-export TRILINOS_SEMS_DEV_ENV_VERBOSE=1
-source $TRILINOS_BASE_DIR_ABS/cmake/load_sems_dev_env.sh default default sems-cmake/2.8.11
-
-echo "
-" > MPI_DEBUG.config
-
-echo "
--DCMAKE_C_COMPILER=gcc
--DCMAKE_CXX_COMPILER=g++
--DCMAKE_Fortran_COMPILER=gfortran
-" > SERIAL_RELEASE.config
 
 # Create local defaults file if one does not exist
 _LOCAL_CHECKIN_TEST_DEFAULTS=local-checkin-test-defaults.py
@@ -51,8 +45,26 @@ defaults = [
   " > $_LOCAL_CHECKIN_TEST_DEFAULTS
 fi
 
-$TRIBITS_BASE_DIR_ABS/checkin-test.py \
---ctest-timeout=180 \
---skip-case-no-email \
+for arg in "$@" ; do
+  #echo "arg = '$arg'"
+  if [ "$arg" == "--push" ] ; then
+    echo "ERROR: Passed in '--push': To push you must use 'env CHECKIN_TEST_SEMS_PUSH=1 ..."
+    exit 1
+  fi
+done
+
+$CHECKIN_TEST_SEMS_SCRIPT_DIR/checkin-test-sems-cmake-2.8.11.sh \
 "$@"
+
+$CHECKIN_TEST_SEMS_SCRIPT_DIR/checkin-test-sems-cmake-3.3.2.sh \
+"$@"
+
+if [ "$CHECKIN_TEST_SEMS_PUSH" == "1" ] ; then
+  $TRIBITS_BASE_DIR_ABS/checkin-test.py \
+  --st-extra-builds=MPI_DEBUG_CMAKE-2.8.11,SERIAL_RELEASE_CMAKE-2.8.11,MPI_DEBUG_CMAKE-3.3.2,SERIAL_RELEASE_CMAKE-3.3.2 \
+  --push
+fi
+
+
+
 
