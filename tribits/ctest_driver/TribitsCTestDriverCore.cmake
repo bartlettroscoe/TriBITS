@@ -238,9 +238,9 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # **Mode 2**: A new binary directory is created and new sources are cloned (or
 # updated) in a driver directory (i.e. ``CTEST_DASHBOARD_ROOT`` is set before
 # call).  In this case, there are always two (partial) project source tree's,
-# a) a "driver" skeleton source tree (typically embedded with TriBITS
-# directory) that bootstraps the testing process, and b) a true full "source"
-# that is (optionally) cloned and/or updated and tested..
+# a) a "driver" skeleton source tree (typically with an embedded tribits/
+# directory) that bootstraps the testing process, and b) a full "source" tree
+# that is (optionally) cloned and/or updated and tested.
 #
 # There are a few different directory locations are significant for this
 # script:
@@ -283,20 +283,50 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 # **Determining What Packages Get Tested:**
 #
-# Before any testing is done, the set of packages to be tested is determined
-# are determined.  By default, the set of packages to be tested is determined
-# by the var:
+# Before any testing is done, the set of packages to be tested is determined.
+# By default, the set of packages to be tested and otherwise explicitly
+# processed is determined by the vars:
 #
 #   ``${PROJECT_NAME}_PACKAGES``
 #
-#     Determines the specific set of packages to test.  If left at the default
-#     value of empty "", then `${PROJECT_NAME}_ENABLE_ALL_PACKAGES`_ is set to
-#     ``ON`` and that enables packages as described in
-#     `<Project>_ENABLE_ALL_PACKAGES enables all PT (cond. ST) SE packages`_.
-#     This variable can also be specified and read from from the env and can
-#     use `,` to separate package names instead of ';'.
+#     A semi-colon ';' or comma ',' separated list of packages that determines
+#     the specific set of packages to test.  If left at the default value of
+#     empty "", then `${PROJECT_NAME}_ENABLE_ALL_PACKAGES`_ is set to ``ON``
+#     and that enables packages as described in `<Project>_ENABLE_ALL_PACKAGES
+#     enables all PT (cond. ST) SE packages`_.  This variable can also be
+#     specified and read from the env and can use `,` to separate package
+#     names instead of ';'.
 #
-# ToDo: Document other variables that determine what packages get tested.
+#   ``CTEST_EXPLICITLY_ENABLE_IMPLICITLY_ENABLED_PACKAGES``
+#
+#     If set to ``TRUE``, then all of the upstream packages for those selected
+#     to be explicitly tested will be processed with results posted to CDash.
+#     The default is ``TRUE`` unless
+#     ``CTEST_ENABLE_MODIFIED_PACKAGES_ONLY==TRUE``.  Most builds that specify
+#     a specific set of packages in ``${PROJECT_NAME}_PACKAGES`` should likely
+#     set this to ``FALSE`` in all cases.
+#
+#   ``${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES``
+#
+#     If set to ``TRUE``, then all of the downstream packages from those
+#     specified in ``${PROJECT_NAME}_PACKAGES`` will be enabled (see
+#     `<Project>_ENABLE_ALL_FORWARD_DEP_PACKAGES enables downstream
+#     packages/tests`_).  The default value is ``FALSE`` unless
+#     ``CTEST_ENABLE_MODIFIED_PACKAGES_ONLY==TRUE`` is set in which case the
+#     default value is ``TRUE``.
+#
+#   ``${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES``
+#
+#     If set to ``ON`` (or ``TRUE``), then if there are conflicts between
+#     explicit enables and disables then explicit disables will override the
+#     explicit enables (see `Disables trump enables where there is a
+#     conflict`_).  The default is ``ON`` and likely should not be changed.
+#     This can also be set as an env var and it will override that is set in
+#     the CTest -S script.
+#
+# NOTE: Any and all of the above vars can be set as env vars and they will
+# override that is set inside the CTest -S script with ``SET()``` (or
+# `SET_DEFAULT`_) statements.
 #
 # The other mode is to only test the packages that have changes since the last
 # time this build was run and testing packages that previously failed.  That
@@ -436,6 +466,18 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # tracking branch.  Therefore, it is recommended to always set
 # ``${PROJECT_NAME}_BRANCH`` to a non-null value like ``master`` for git
 # repos.
+#
+# **Specifying where the results go to CDash:**
+#
+# By default, the target CDash server and project are specified by the
+# variables set in the file `<projectDir>/CTestConfig.cmake`_; specifically,
+# ``CTEST_DROP_SITE``, ``CTEST_PROJECT_NAME``, and ``CTEST_DROP_LOCATION``.
+# If these are set using `SET_DEFAULT_AND_FROM_ENV()`_, as shown in the
+# example ``TribitsExampleProject/CTestConfig.cmake`` file, then they can be
+# overridden with ``SET()`` statements in the CTest -S script or as env vars.
+# 
+
+# ToDo: Finish this!
 #
 # ToDo: Finish Documentation!
 #
@@ -700,6 +742,14 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   SET_DEFAULT_AND_FROM_ENV( CTEST_EXPLICITLY_ENABLE_IMPLICITLY_ENABLED_PACKAGES
     ${CTEST_EXPLICITLY_ENABLE_IMPLICITLY_ENABLED_PACKAGES_DEFAULT})
 
+  IF (CTEST_ENABLE_MODIFIED_PACKAGES_ONLY)
+    SET(${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES_DEFAULT TRUE)
+  ELSE()
+    SET(${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES_DEFAULT FALSE)
+  ENDIF()
+  SET_DEFAULT_AND_FROM_ENV( ${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES
+    ${${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES_DEFAULT})
+
   # Set if we should disable enabled fwd packages based on disabled required deps.
   # To make testing robust, we need to do this.
   IF ("${${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES_DEFAULT}" STREQUAL "")
@@ -946,7 +996,6 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
       "\n*** Determining what packages to enable based on what changed (and failed last CI iteration) ..."
       "\n***\n")
     ENABLE_ONLY_MODIFIED_PACKAGES()
-    SET(${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES ON)
   ENDIF()
 
 
