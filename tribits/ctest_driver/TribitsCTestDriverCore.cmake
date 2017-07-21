@@ -224,6 +224,20 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # default), or in an all-at-once mode (see
 # ``${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE``).
 #
+# *Sections:*
+#
+# * `Source and Binary Directory Locations (TRIBITS_CTEST_DRIVER())`_
+# * `Determining What Packages Get Tested (TRIBITS_CTEST_DRIVER())`_
+# * `Setting variables in the inner CMake configure (TRIBITS_CTEST_DRIVER())`_
+# * `Determining what testing-related actions are performed (TRIBITS_CTEST_DRIVER())`_
+# * `Identifying what build is being done to be displayed on CDash (TRIBITS_CTEST_DRIVER())`_
+# * `Specifying where the results go to CDash (TRIBITS_CTEST_DRIVER())`_
+# * `Determining what TriBITS repositories are pulled in (TRIBITS_CTEST_DRIVER())`_
+# * `All-at-once versus package-by-package mode (TRIBITS_CTEST_DRIVER())`_
+# * `Repository Updates (TRIBITS_CTEST_DRIVER())`_
+#
+# .. _Source and Binary Directory Locations (TRIBITS_CTEST_DRIVER()):
+#
 # **Source and Binary Directory Locations:**
 #
 # To understand how to set the source and binary directories, one must
@@ -237,13 +251,14 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 # **Mode 2**: A new binary directory is created and new sources are cloned (or
 # updated) in a driver directory (i.e. ``CTEST_DASHBOARD_ROOT`` is set before
-# call).  In this case, there are always two (partial) project source tree's,
-# a) a "driver" skeleton source tree (typically with an embedded tribits/
-# directory) that bootstraps the testing process, and b) a full "source" tree
-# that is (optionally) cloned and/or updated and tested.
+# call and that directory will be created if it does not already exist).  In
+# this case, there are always two (partial) project source tree's, a) the
+# "driver" skeleton source tree (typically with an embedded tribits/
+# directory) that bootstraps the testing process, and b) the full "source"
+# tree that is (optionally) cloned and/or updated and tested.
 #
-# There are a few different directory locations are significant for this
-# script:
+# There are a few different directory locations that are significant for this
+# script used in one or both of the modes described above:
 #
 #   ``TRIBITS_PROJECT_ROOT``
 #
@@ -281,11 +296,14 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     the TriBITS system.  If ``CTEST_DASHBOARD_ROOT`` is set, then this is
 #     hard-coded internally to ``${CTEST_DASHBOARD_ROOT}/BUILD``.
 #
+# .. _Determining What Packages Get Tested (TRIBITS_CTEST_DRIVER()):
+#
 # **Determining What Packages Get Tested:**
 #
 # Before any testing is done, the set of packages to be tested is determined.
-# By default, the set of packages to be tested and otherwise explicitly
-# processed is determined by the vars:
+# This determination usages the basic `TriBITS Dependency Handling Behaviors`_
+# and logic.  By default, the set of packages to be tested and otherwise
+# explicitly processed is determined by the vars:
 #
 #   ``${PROJECT_NAME}_PACKAGES``
 #
@@ -294,8 +312,50 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     empty "", then `${PROJECT_NAME}_ENABLE_ALL_PACKAGES`_ is set to ``ON``
 #     and that enables packages as described in `<Project>_ENABLE_ALL_PACKAGES
 #     enables all PT (cond. ST) SE packages`_.  This variable can also be
-#     specified and read from the env and can use `,` to separate package
-#     names instead of ';'.
+#     specified and read from the env and can use ',' to separate package
+#     names instead of ';'.  The default value is empty "".
+#
+#   ``${PROJECT_NAME}_ADDITIONAL_PACKAGES``
+#
+#     If ``${PROJECT_NAME}_PACKAGES`` is empty (and therefore
+#     ``${PROJECT_NAME}_ENABLE_ALL_PACKAGES=ON`` is set), then additional
+#     packages not enabled in that logic can be listed
+#     ``${PROJECT_NAME}_ADDITIONAL_PACKAGES`` and they will be tested as well.
+#     For example, if there are some additional ST or EX packages that should
+#     be tested in a PT build
+#     (e.g. ``${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE=FALSE``.  The
+#     default value is empty "".
+#
+#   ``${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES``
+#
+#     If set to ``TRUE``, then all of the downstream packages from those
+#     specified in ``${PROJECT_NAME}_PACKAGES`` will be enabled (see
+#     `<Project>_ENABLE_ALL_FORWARD_DEP_PACKAGES enables downstream
+#     packages/tests`_).  The default value is ``FALSE`` unless
+#     ``CTEST_ENABLE_MODIFIED_PACKAGES_ONLY==TRUE`` is set in which case the
+#     default value is ``TRUE``.  This also gets passed to the inner CMake
+#     configure.
+#
+#   ``${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE``
+#
+#     If set to ``TRUE``, then ST packages will get enabled in automated logic
+#     in the outer determination of what packages to get tested.  This also
+#     gets passed to the inner CMake configure.  The default value is ``OFF``.
+#
+#   ``${PROJECT_NAME}_EXCLUDE_PACKAGES``
+#
+#     A list of package **NOT** to enable when determining the set of packages
+#     to be tested.  This list can be specified with semi-colons ';' or with
+#     comas ','.  The default value is empty "".
+#
+#   ``${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES``
+#
+#     If set to ``ON`` (or ``TRUE``), then if there are conflicts between
+#     explicit enables and disables then explicit disables will override the
+#     explicit enables (see `Disables trump enables where there is a
+#     conflict`_).  The default is ``ON`` and likely should not be changed.
+#     This can also be set as an env var and it will override that is set in
+#     the CTest -S script.  The default value is ``ON``.
 #
 #   ``CTEST_EXPLICITLY_ENABLE_IMPLICITLY_ENABLED_PACKAGES``
 #
@@ -306,27 +366,12 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     a specific set of packages in ``${PROJECT_NAME}_PACKAGES`` should likely
 #     set this to ``FALSE`` in all cases.
 #
-#   ``${PROJECT_NAME}_ENABLE_ALL_FORWARD_DEP_PACKAGES``
-#
-#     If set to ``TRUE``, then all of the downstream packages from those
-#     specified in ``${PROJECT_NAME}_PACKAGES`` will be enabled (see
-#     `<Project>_ENABLE_ALL_FORWARD_DEP_PACKAGES enables downstream
-#     packages/tests`_).  The default value is ``FALSE`` unless
-#     ``CTEST_ENABLE_MODIFIED_PACKAGES_ONLY==TRUE`` is set in which case the
-#     default value is ``TRUE``.
-#
-#   ``${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES``
-#
-#     If set to ``ON`` (or ``TRUE``), then if there are conflicts between
-#     explicit enables and disables then explicit disables will override the
-#     explicit enables (see `Disables trump enables where there is a
-#     conflict`_).  The default is ``ON`` and likely should not be changed.
-#     This can also be set as an env var and it will override that is set in
-#     the CTest -S script.
-#
 # NOTE: Any and all of the above vars can be set as env vars and they will
 # override that is set inside the CTest -S script with ``SET()``` (or
-# `SET_DEFAULT`_) statements.
+# `SET_DEFAULT()`_) statements.  Also, any of the vars that take a list, the
+# CMake standard semi-colon char ';' can be used to separate list items or one
+# can use comas ',' so that they can be used when setting env vars.  (The
+# comas ',' are then replaced with semi-colons ';' internally.)
 #
 # The other mode is to only test the packages that have changes since the last
 # time this build was run and testing packages that previously failed.  That
@@ -343,7 +388,46 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # ToDo: Document other input variables that have defaults, to be set before,
 # and can be overridden from the env.
 #
-# **All-at-once vs. package-by-package mode:**
+# .. _Setting variables in the inner CMake configure (TRIBITS_CTEST_DRIVER()):
+#
+# **Setting variables in the inner CMake configure:**
+# 
+# ToDo: Finish this!
+#
+# .. _Determining what testing-related actions are performed (TRIBITS_CTEST_DRIVER()):
+#
+# **Determining what testing-related actions are performed:**
+#
+# ToDo: Fill in!
+#
+# .. _Identifying what build is being done to be displayed on CDash (TRIBITS_CTEST_DRIVER()):
+#
+# **Identifying what build is being done to be displayed on CDash:**
+#
+# ToDo: Fill in!
+#
+# .. _Specifying where the results go to CDash (TRIBITS_CTEST_DRIVER()):
+#
+# **Specifying where the results go to CDash:**
+#
+# By default, the target CDash server and project are specified by the
+# variables set in the file `<projectDir>/CTestConfig.cmake`_; specifically,
+# ``CTEST_DROP_SITE``, ``CTEST_PROJECT_NAME``, and ``CTEST_DROP_LOCATION``.
+# If these are set using `SET_DEFAULT_AND_FROM_ENV()`_, as shown in the
+# example ``TribitsExampleProject/CTestConfig.cmake`` file, then they can be
+# overridden with ``SET()`` statements in the CTest -S script or as env vars.
+# 
+# ToDo: Finish this!
+#
+# .. _Determining what TriBITS repositories are pulled in (TRIBITS_CTEST_DRIVER()):
+#
+# **Determining what TriBITS repositories are pulled in:**
+#
+# ToDo: Finish this!
+#
+# .. _All-at-once versus package-by-package mode (TRIBITS_CTEST_DRIVER()):
+#
+# **All-at-once versus package-by-package mode:**
 #
 # This function supports driving the configure, build, testing, and submitting
 # to CDash of the packages in the TriBITS project either all-at-once or
@@ -369,6 +453,8 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # package-by-package basis on CDash.  For older versions of CMake or CDash, it
 # will not break down results on a package-by-package basis on CDash and all
 # of the build warnings and errors and test will be all globed together.
+#
+# .. _Repository Updates (TRIBITS_CTEST_DRIVER()):
 #
 # **Repository Updates:**
 #
@@ -466,18 +552,6 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # tracking branch.  Therefore, it is recommended to always set
 # ``${PROJECT_NAME}_BRANCH`` to a non-null value like ``master`` for git
 # repos.
-#
-# **Specifying where the results go to CDash:**
-#
-# By default, the target CDash server and project are specified by the
-# variables set in the file `<projectDir>/CTestConfig.cmake`_; specifically,
-# ``CTEST_DROP_SITE``, ``CTEST_PROJECT_NAME``, and ``CTEST_DROP_LOCATION``.
-# If these are set using `SET_DEFAULT_AND_FROM_ENV()`_, as shown in the
-# example ``TribitsExampleProject/CTestConfig.cmake`` file, then they can be
-# overridden with ``SET()`` statements in the CTest -S script or as env vars.
-# 
-
-# ToDo: Finish this!
 #
 # ToDo: Finish Documentation!
 #
@@ -645,8 +719,8 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
 
   SET_DEFAULT_AND_FROM_ENV( ${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF )
 
-  # List of additional packges that will be enabled over the current set
-  # of all packagess (that would be set by ${PROJECT_NAME}_ENABLE_ALL_PACKAGES).
+  # List of additional packages that will be enabled over the current set of
+  # all packages (that would be set by ${PROJECT_NAME}_ENABLE_ALL_PACKAGES).
   SET_DEFAULT_AND_FROM_ENV( ${PROJECT_NAME}_ADDITIONAL_PACKAGES "" )
 
   # List of packages to not directly process.  NOTE: Listing these packages
@@ -690,9 +764,9 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # Set the file that the extra repos will be read from
   #
   # NOTE: Here, we have no choice but to point into the "driver"
-  # ${PROJECT_NAME} source treee because the local ${PROJECT_NAME} sources have not
-  # even been checked out yet!  Unless, of course, we are unit testing
-  # in which case we will use whatever has been passed in.
+  # ${PROJECT_NAME} source tree because the local ${PROJECT_NAME} sources have
+  # not even been checked out yet!  Unless, of course, we are unit testing in
+  # which case we will use whatever has been passed in.
 
   IF (${PROJECT_NAME}_SKIP_EXTRAREPOS_FILE)
     SET(${PROJECT_NAME}_EXTRAREPOS_FILE_DEFAULT)
@@ -782,7 +856,7 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # Setup and create the base dashboard directory if it is not created yet.
   #
 
-  # NOTE: This is only used in general testing dashbaoard mode, not in local
+  # NOTE: This is only used in general testing dashboard mode, not in local
   # experimental testing mode.
 
   IF (CTEST_DASHBOARD_ROOT)
