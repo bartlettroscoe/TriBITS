@@ -2859,7 +2859,8 @@ will set verbose output with CTest.
 Also note that one can submit results to a second CDash site as well by
 setting::
 
-  $ env TRIBITS_2ND_CTEST_DROP_SITE=<second-site> \
+  $ env \
+    TRIBITS_2ND_CTEST_DROP_SITE=<second-site> \
     TRIBITS_2ND_CTEST_DROP_LOCATION=<second-location> \
     ... \
     make dashboard
