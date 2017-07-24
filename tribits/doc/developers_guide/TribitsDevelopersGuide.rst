@@ -8635,6 +8635,12 @@ Below is a snapshot of the output from ``install_devtools.py --help``.
 
 .. _Setting the install prefix at configure time: TribitsBuildReference.html#setting-the-install-prefix-at-configure-time
 
+.. _TRIBITS_2ND_CTEST_DROP_SITE: TribitsBuildReference.html#tribits_2nd_ctest_drop_site
+
+.. _TRIBITS_2ND_CTEST_DROP_LOCATION: TribitsBuildReference.html#tribits_2nd_ctest_drop_locaion
+
+.. _Enabling extra repositories through a file: TribitsBuildReference.html#enabling-extra-repositories-through-a-file
+
 .. Common references to the TribitsOverview document
 
 .. _TriBITS Overview: ../overview/TribitsOverview.pdf

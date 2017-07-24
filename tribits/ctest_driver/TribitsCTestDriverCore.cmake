@@ -210,19 +210,29 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 # @FUNCTION: TRIBITS_CTEST_DRIVER()
 #
-# Platform-independent CTest/CDash driver
+# Platform-independent CTest/CDash driver function for CTest -S scripts
 #
 # Usage::
 #
 #   TRIBITS_CTEST_DRIVER()
 #
-# This driver code is platform independent.  CTest -S scripts use this
-# function to drive the testing process for a TriBITS projects by doing a
-# version control (VC) source update on all of the VC repos and then
-# configuring, building, testing, and submitting results to CDash for the
-# TriBITS packages in a project either in package-by-package mode (the
-# default), or in an all-at-once mode (see
-# ``${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE``).
+# This platform independent code used in CTest -S scripts to drive the testing
+# process for submitting to CDash for a TriBITS projects by doing a version
+# control (VC) source update on all of the VC repos and then configuring,
+# building, testing, and submitting results to CDash for the TriBITS packages
+# in a project either in package-by-package mode or in an all-at-once mode
+# (see ``${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE``).
+#
+# For context for how this function is used, see:
+#
+# * `TriBITS Package-by-Package CTest/Dash Driver`_
+# * `How to submit testing results to a CDash site`_
+#
+# Also note that this function executes `Reduced Package Dependency
+# Processing`_ so all of the files described in that process are read in while
+# this function runs.  This is needed to determine the package dependency
+# graph and to determine the set of packages to be enabled or disabled when
+# determining the set of packages to be tested.
 #
 # *Sections:*
 #
@@ -239,7 +249,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 # .. _Source and Binary Directory Locations (TRIBITS_CTEST_DRIVER()):
 #
-# **Source and Binary Directory Locations:**
+# **Source and Binary Directory Locations (TRIBITS_CTEST_DRIVER()):**
 #
 # To understand how to set the source and binary directories, one must
 # understand that it gets run in one of two different modes:
@@ -265,7 +275,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 #     The root directory to an existing source tree where the project's
 #     `<projectDir>/ProjectName.cmake`_ (defining the ``PROJECT_NAME``
-#     variable) and ``Version.cmake`` files can be found.
+#     variable) and `<projectDir>/Version.cmake`_ files can be found.
 #
 #   ``${PROJECT_NAME}_TRIBITS_DIR``
 #
@@ -299,7 +309,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 # .. _Determining What Packages Get Tested (TRIBITS_CTEST_DRIVER()):
 #
-# **Determining What Packages Get Tested:**
+# **Determining What Packages Get Tested (TRIBITS_CTEST_DRIVER()):**
 #
 # Before any testing is done, the set of packages to be tested is determined.
 # This determination usages the basic `TriBITS Dependency Handling Behaviors`_
@@ -389,9 +399,6 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     packages to be tested is determined by ``${PROJECT_NAME}_PACKAGES`` and
 #     other variables as described above.
 #
-# ToDo: Document other input variables that have defaults, to be set before,
-# and can be overridden from the env.
-#
 # .. _Setting variables in the inner CMake configure (TRIBITS_CTEST_DRIVER()):
 #
 # **Setting variables in the inner CMake configure:**
@@ -400,24 +407,45 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # (but they can be overridden by options listed in
 # ``EXTRA_SYSTEM_CONFIGURE_OPTIONS`` or ``EXTRA_CONFIGURE_OPTIONS``):
 #
+#     The selected TriBITS version used in the outer CTest -S script is used
+#     in the inner CMake configure to ensure they are consistent.
+#
+#   ``-D${PROJECT_NAME}_IGNORE_MISSING_EXTRA_REPOSITORIES=ON``
+#
+#     Missing extra repos are always ignored in the inner CMake configure.
+#     This is because any problems reading an extra repo will be caught in the
+#     outer CTest -S drivers script.
+#
 #   ``-D${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES:BOOL=ON``
 #
-#     ???
+#     Because of the behavior of the package-by-package mode, currently, this
+#     is hard-coded to `ON`.
 #
 #   ``-D${PROJECT_NAME}_ALLOW_NO_PACKAGES:BOOL=ON``
 #
-#     ???
+#     This is currently set for the package-by-package mode since some
+#     packages may get disabled because required upstream dependent packages
+#     may be disabled.
 #
 # The following variables set in the CTest -S driver script will be passed
 # down into the inner CMake configure through the ``OPTIONS`` variable to the
 # ``CTEST_CONFIGURE()`` command:
 #
-# * ``MPI_EXEC_MAX_NUMPROCS``: Direct pass-through
 # * ``${PROJECT_NAME}_WARNINGS_AS_ERRORS_FLAGS``: Direct pass-through
-# * ???
+# * ``${PROJECT_NAME}_DISABLE_ENABLED_FORWARD_DEP_PACKAGES``: Direct pass-through
+# * ``${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE``: Set to empty if
+#   ``CTEST_GENERATE_DEPS_XML_OUTPUT_FILE==FALSE``
+# * ``${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE``: Direct pass-through
+# * ``MPI_EXEC_MAX_NUMPROCS``: Direct pass-through
+# * ``${PROJECT_NAME}_ENABLE_COVERAGE_TESTING``: Set to ``ON`` if
+#   ``CTEST_DO_COVERAGE_TESTING==TRUE``
+# * ``${PROJECT_NAME}_EXTRAREPOS_FILE``: Set to empty if
+#   ``${PROJECT_NAME}_EXTRAREPOS_FILE=NONE``. Otherwise, passed through.
+# * ``${PROJECT_NAME}_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE``: Direct pass-through
 #
-# Arbitrary options to be passed to the inner CMake configure are done by
-# setting:
+# Arbitrary options to be passed to the inner CMake configure after the above
+# options are passed in are done by setting the following variables in the
+# outer CTest -S driver script code:
 #
 #   ``EXTRA_SYSTEM_CONFIGURE_OPTIONS``
 #
@@ -436,11 +464,9 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     ``EXTRA_SYSTEM_CONFIGURE_OPTIONS`` so they can override any of those
 #     options.
 #
-# ToDo: Finish this!
-#
 # .. _Determining what testing-related actions are performed (TRIBITS_CTEST_DRIVER()):
 #
-# **Determining what testing-related actions are performed:**
+# **Determining what testing-related actions are performed (TRIBITS_CTEST_DRIVER()):**
 #
 #   ``CTEST_START_WITH_EMPTY_BINARY_DIRECTORY``
 #
@@ -540,9 +566,10 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     in the outer CTest -S program.  This file is used to help determine what
 #     packages have changed and need to be tested when in CI mode (e.g. when
 #     ``CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=TRUE`` is set).  It is also needed
-#     to generate the ??? file that gets submitted to CDash to inform it of
-#     the list of subprojects and subproject dependencies (i.e. TriBITS
-#     packages).  The default value is ``TRUE``.
+#     to generate the ``CDashSubprojectDependencies.xml`` file that gets
+#     submitted to CDash to inform it of the list of subprojects and
+#     subproject dependencies (i.e. TriBITS packages).  The default value is
+#     ``TRUE``.
 #
 #   ``CTEST_SUBMIT_CDASH_SUBPROJECTS_DEPS_FILE``
 #
@@ -556,11 +583,9 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     locally debugging a CTest -S driver script to avoid spamming CDash.  The
 #     default value is ``TRUE``.
 #
-# ToDo: Fill in!
-#
 # .. _Identifying how the results are displayed on CDash (TRIBITS_CTEST_DRIVER()):
 #
-# **Identifying how the results are displayed on CDash:**
+# **Identifying how the results are displayed on CDash (TRIBITS_CTEST_DRIVER()):**
 #
 # These options all primarily determine how the update, configure, build,
 # test, and other results and submitted and displayed on CDash (but not what
@@ -608,15 +633,14 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     failures, new passing tests, etc.).  If not specified, it is given the
 #     default value ``${HOST_TYPE}-${COMPILER_VERSION}-${BUILD_DIR_NAME}``.
 #     Here, ``HOST_TYPE`` is determined automatically from the ``uname``
-#     system command.  The value of ``BUILD_DIR_NAME`` is expected to be set
-#     in the CTest -S driver script.  And if the env var ``CTEST_BUILD_NAME``
-#     is set to non-empty, then that value is used.
-#
-# ToDo: Fill in!
+#     system command (``FIND_PROGRAM(uname)``).  The value of
+#     ``BUILD_DIR_NAME`` is expected to be set in each specific CTest -S
+#     driver script.  If the env var ``CTEST_BUILD_NAME`` is set to non-empty,
+#     then that value is used.
 #
 # .. _Specifying where the results go to CDash (TRIBITS_CTEST_DRIVER()):
 #
-# **Specifying where the results go to CDash:**
+# **Specifying where the results go to CDash (TRIBITS_CTEST_DRIVER()):**
 #
 # By default, the target CDash server and project are specified by the
 # variables set in the file `<projectDir>/CTestConfig.cmake`_; specifically,
@@ -625,20 +649,53 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 # example ``TribitsExampleProject/CTestConfig.cmake`` file, then they can be
 # overridden with ``SET()`` statements in the CTest -S script or as env vars;
 # simple enough.
-# 
-# ToDo: Finish this!
+#
+# In addition, results can be sent to a second CDash site using the variables:
+#
+#   ``TRIBITS_2ND_CTEST_DROP_SITE``
+#
+#     CDash drop site for second configure.  If empty, then
+#     ``CTEST_DROP_SITE`` is used.
+#
+#   ``TRIBITS_2ND_CTEST_DROP_LOCATION``
+#
+#     Location for the second drop site.  If empty, then
+#     ``CTEST_DROP_LOCATION`` is used.
+#
+# At lease one of these vars must be set or a second submit will not be
+# performed.  For more details, see `TRIBITS_2ND_CTEST_DROP_SITE`_ and
+# `TRIBITS_2ND_CTEST_DROP_LOCATION`_.
 #
 # .. _Determining what TriBITS repositories are included (TRIBITS_CTEST_DRIVER()):
 #
-# **Determining what TriBITS repositories are included:**
+# **Determining what TriBITS repositories are included (TRIBITS_CTEST_DRIVER()):**
 #
-# 
+# This script is set up to process extra VC and TriBITS repos that contribute
+# additional TriBITS packages to the base TriBITS project.  This set of extra
+# repos is determined using the following vars:
 #
-# ToDo: Finish this!
+#   ``${PROJECT_NAME}_EXTRAREPOS_FILE``
+#
+#     Points to a file that lists the extra VC and TriiBITS repos. If not
+#     explicitly set, then by default it will read from the file
+#     ``cmake/ExtraRepositoriesList.cmake`` unless
+#     ``${PROJECT_NAME}_SKIP_EXTRAREPOS_FILE=TRUE`` is set in the
+#     ``ProjectName.cmake`` file in which case no extra repos file is read in.
+#
+#   ``${PROJECT_NAME}_ENABLE_KNOWN_EXTERNAL_REPOS_TYPE``
+#
+#   ``${PROJECT_NAME}_PRE_REPOSITORIES``
+#
+#   ``${PROJECT_NAME}_EXTRA_REPOSITORIES``
+#
+# The behavior for selecting extra repos using these variables is determined
+# as described in:
+#
+# * `Enabling extra repositories through a file`_
 #
 # .. _All-at-once versus package-by-package mode (TRIBITS_CTEST_DRIVER()):
 #
-# **All-at-once versus package-by-package mode:**
+# **All-at-once versus package-by-package mode (TRIBITS_CTEST_DRIVER()):**
 #
 # This function supports driving the configure, build, testing, and submitting
 # to CDash of the packages in the TriBITS project either all-at-once or
@@ -676,7 +733,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 # .. _Repository Updates (TRIBITS_CTEST_DRIVER()):
 #
-# **Repository Updates:**
+# **Repository Updates (TRIBITS_CTEST_DRIVER()):**
 #
 # Like the rest of TriBITS, ``ctest -S`` scripts written using this function
 # supports a collection of extra repositories in addition to the base git
@@ -717,7 +774,8 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 #   git clone <extrarepo_url>
 #
-# where ``<extrarepo_url>`` is given in the ??? file.
+# where ``<extrarepo_url>`` is given in the
+# ``${PROJECT_NAME}_EXTRAREPOS_FILE`` file.
 # 
 # Therefore, by default, whatever the default branch is set to on clone in the
 # base repos, that is the branch that will be used.  Also, future repository
@@ -729,17 +787,21 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #   ``${PROJECT_NAME}_BRANCH``
 #
 #     The branch of the base repo to explicitly checkout after clone (and on
-#     each update).  The default is empty "" (which means to use the default
-#     branch in external repo (usually 'master') or leave the current branch
-#     alone if the repo is already cloned.
+#     each update).  The default is
+#     ``${${PROJECT_NAME}_REPOSITORY_BRANCH}}``.
 #
 #   ``${PROJECT_NAME}_REPOSITORY_BRANCH``
 #
-#     ???
+#     Defines the default for ``${PROJECT_NAME}_BRANCH``.  This musts be set
+#     in the CTest -S script (e.g. in the ``<projectDir>/CTestConfig.cmake``
+#     file).  The default if not otherwise specified is empty "".
 #
 #   ``${PROJECT_NAME}_EXTRAREPOS_BRANCH``
 #
-#     ???
+#     The branch that each extra VC repo that is cloned.  The default value is
+#     set to ``${${PROJECT_NAME}_BRANCH}``.  (NOTE: Checking out a separate
+#     branch on the extra repos from the base repo was needed for backward
+#     compatibility for the Trilinos project and is not recommended.)
 #
 # If ``${PROJECT_NAME}_BRANCH`` is set to non-empty, then that branch will be
 # checked out in all of the repositories.  For the base repository, after the
@@ -806,14 +868,10 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 # .. _Other CTest Driver options (TRIBITS_CTEST_DRIVER()):
 #
-# **Other CTest Driver options:**
+# **Other CTest Driver options (TRIBITS_CTEST_DRIVER()):**
 #
 # Other misc. vars can be set in the CTest -S script or as an env var are
 # given below.
-#
-#   ``${PROJECT_NAME}_TRIBITS_DIR``
-#
-#     ???
 #
 #   ``CTEST_CMAKE_GENERATOR``
 #
@@ -825,7 +883,10 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 #   ``${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE``
 #
-#     ???
+#     Puts TriBITS configure into development mode (vs. release mode).  The
+#     default is provided by
+#     ``${${PROJECT_NAME}_ENABLE_DEVELOPMENT_MODE_DEFAULT}}`` (which is
+#     typically set in the `<projectDir>/Version.cmake`_ file).
 #
 #   ``${PROJECT_NAME}_VERBOSE_CONFIGURE``
 #
@@ -835,10 +896,6 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 #     If set to ``TRUE``, then TRIBITS_CTEST_DRIVER() is put in unit testing
 #     mode and does not actually drive configure, build, test, and submit.
-#
-# ToDo: Finish this!
-#
-# ToDo: Finish Documentation!
 #
 FUNCTION(TRIBITS_CTEST_DRIVER)
 
