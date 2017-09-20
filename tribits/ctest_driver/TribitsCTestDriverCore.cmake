@@ -238,11 +238,12 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #   TRIBITS_CTEST_DRIVER()
 #
 # This platform independent code is used in CTest -S scripts to drive the
-# testing process for submitting to CDash for a TriBITS projects.  It drives
+# testing process for submitting to CDash for a TriBITS project.  It drives
 # the steps for doing the version control (VC) source update on all of the VC
 # repos, configuring, building, testing, and submitting results to CDash for
-# the TriBITS packages.  It does this in either in package-by-package mode or
-# in an all-at-once mode (see ``${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE``).
+# the selected TriBITS packages.  It does this in either in package-by-package
+# mode or in an all-at-once mode (see
+# ``${PROJECT_NAME}_CTEST_DO_ALL_AT_ONCE``).
 #
 # For context for how this function is used, see:
 #
@@ -251,7 +252,7 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 # Also note that this function executes `Reduced Package Dependency
 # Processing`_ so all of the files described in that process are read in while
-# this function runs.  This processings is needed to determine the TriBITS
+# this function runs.  This processing is needed to determine the TriBITS
 # package dependency graph and to determine the set of packages to be enabled
 # or disabled when determining the set of packages to be tested.
 #
@@ -274,17 +275,17 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 # **Setting variables (TRIBITS_CTEST_DRIVER()):**
 #
-# Variables are set control the behavior of this function before the function
-# is called.  Some variables must be set in the CTest -S driver script before
-# calling this function ``TRIBITS_CTEST_DRIVER()``.  Many variables have a
-# default value that will will work in most cases.
+# Variables can be set to control the behavior of this function before the
+# function is called.  Some variables must be set in the CTest -S driver
+# script before calling this function ``TRIBITS_CTEST_DRIVER()``.  Many
+# variables have a default value that will work in most cases.
 #
 # In general, these variables fall into one of three different categories:
 #
 # * **Variables that must be set in the outer CTest -S driver script before
-#   the TribitsCTestDriverCore.cmake module is even included:** Many of
-#   these can also be overridden from an env var of the same name.  There are
-#   very few of these variables and they are called out below.
+#   the TribitsCTestDriverCore.cmake module is even included:** Many of these
+#   can also be overridden from an env var of the same name.  There are very
+#   few of these variables and they are specifically called out below.
 #
 # * **Variables with no default value that must set in the outer CTest -S
 #   driver script after the TribitsCTestDriverCore.cmake module is included
@@ -336,18 +337,19 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #
 #     The root directory to an existing source tree where the project's
 #     `<projectDir>/ProjectName.cmake`_ (defining the ``PROJECT_NAME``
-#     variable) and `<projectDir>/Version.cmake`_ files can be found.  SET()
-#     in CTest -S script or override as an env var.  The default and env
-#     override is set for this during the INCLUDE() of
-#     ``TribitsCTestDriverCoreHelpers.cmake``.
+#     variable) and `<projectDir>/Version.cmake`_ files can be found.  This
+#     can be SET() in the CTest -S script or override as an env var.  The
+#     default and env override is set for this during the INCLUDE() of the
+#     module ``TribitsCTestDriverCore.cmake``.
 #
 #   ``${PROJECT_NAME}_TRIBITS_DIR``
 #
 #     The base directory for the TriBITS system's various CMake modules,
 #     python scripts, and other files.  By default this is assumed to be
-#     ``${TRIBITS_PROJECT_ROOT}/cmake/tribits``.  SET() in CTest -S script or
-#     override as an env var.  The default and env override is set for this
-#     during the INCLUDE() of ``TribitsCTestDriverCoreHelpers.cmake``.
+#     ``${TRIBITS_PROJECT_ROOT}/cmake/tribits``.  This can be SET() in the
+#     CTest -S script or override as an env var.  The default and env override
+#     is set for this during the INCLUDE() of
+#     ``TribitsCTestDriverCore.cmake``.
 #
 #   ``CTEST_DASHBOARD_ROOT``
 #
@@ -356,6 +358,11 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     be created.  If provided as the special value "PWD", then the present
 #     working directory is used.  If empty, then this var has no effect.
 #     SET() in CTest -S script or override as an env var.
+#
+#   ``CTEST_SOURCE_NAME``
+#
+#     The name of the source directory.  By default, this is set to
+#     ``${PROJECT_NAME}``.
 #
 #   ``CTEST_SOURCE_DIRECTORY``
 #
@@ -370,24 +377,22 @@ INCLUDE(${CMAKE_CURRENT_LIST_DIR}/TribitsCTestDriverCoreHelpers.cmake)
 #     This can only be SET() in the CTest -S driver script and is not
 #     overridden as an env var.
 #
-#   ``CTEST_SOURCE_NAME``
-#
-#     The name of the source directory.  By default, this is set to
-#     ``${PROJECT_NAME}``.
-#
 #   ``CTEST_BINARY_DIRECTORY``
 #
-#     Determines the location of the binary tree where output from CMake/CTest
-#     is put.  This is used to set to `PROJECT_BINARY_DIR`_ which is used by
-#     the TriBITS system.  If ``CTEST_DASHBOARD_ROOT`` is set, then this is
-#     hard-coded internally to ``${CTEST_DASHBOARD_ROOT}/BUILD``.
+#     Built-in CTest variable that determines the location of the binary tree
+#     where output from CMake/CTest is put.  This is used to set to
+#     `PROJECT_BINARY_DIR`_ which is used by the TriBITS system and this
+#     variable is directly ready by CTest itself.  If ``CTEST_DASHBOARD_ROOT``
+#     is set, then this is hard-coded internally to
+#     ``${CTEST_DASHBOARD_ROOT}/BUILD`` (overwriting any existing value of
+#     ``CTEST_BINARY_DIRECTORY``).
 #
 # .. _Determining What Packages Get Tested (TRIBITS_CTEST_DRIVER()):
 #
 # **Determining What Packages Get Tested (TRIBITS_CTEST_DRIVER()):**
 #
 # Before any testing is done, the set of packages to be tested is determined.
-# This determination usages the basic `TriBITS Dependency Handling Behaviors`_
+# This determination uses the basic `TriBITS Dependency Handling Behaviors`_
 # and logic.  By default, the set of packages to be tested and otherwise
 # explicitly processed is determined by the vars:
 #
