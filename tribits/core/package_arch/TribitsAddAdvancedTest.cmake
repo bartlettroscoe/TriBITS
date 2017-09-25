@@ -698,6 +698,7 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
   GLOBAL_SET(TRIBITS_SET_TEST_PROPERTIES_INPUT)
   GLOBAL_SET(MESSAGE_WRAPPER_INPUT)
 
+  # Set the full TEST_NAME
   IF (PACKAGE_NAME)
     SET(TEST_NAME ${PACKAGE_NAME}_${TEST_NAME_IN})
   ELSE()
@@ -845,21 +846,61 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
 
     #PRINT_VAR(PARSE_TEST_${TEST_CMND_IDX})
 
-    CMAKE_PARSE_ARGUMENTS(
-       #prefix
-       PARSE
-       #options
-        "NOEXEPREFIX;NOEXESUFFIX;NO_ECHO_OUTPUT;PASS_ANY;STANDARD_PASS_OUTPUT;ALWAYS_FAIL_ON_NONZERO_RETURN;ALWAYS_FAIL_ON_ZERO_RETURN;WILL_FAIL;ADD_DIR_TO_NAME;SKIP_CLEAN_WORKING_DIRECTORY"
-       # one_value_keywords
-       ""
-       # multi_value_keywords
-       "EXEC;CMND;ARGS;DIRECTORY;MESSAGE;WORKING_DIRECTORY;OUTPUT_FILE;NUM_MPI_PROCS;NUM_TOTAL_CORES_USED;PASS_REGULAR_EXPRESSION_ALL;FAIL_REGULAR_EXPRESSION;PASS_REGULAR_EXPRESSION"
-       ${PARSE_TEST_${TEST_CMND_IDX}}
-       )
+    # Search to see if we are copying files or not for this TEST_<IDX> block ...
 
-  TRIBITS_CHECK_FOR_UNPARSED_ARGUMENTS()
+    SET(PARSE_COPY_FILES_TO_TEST_DIR)
+    SET(COPY_FILES_TO_TEST_DIR_IDX FALSE)
+    FOREACH(PARSE_TEST_IDX_ARGS ${PARSE_TEST_${TEST_CMND_IDX}})
+      IF (PARSE_TEST_IDX_ARGS STREQUAL "COPY_FILES_TO_TEST_DIR")
+        SET(COPY_FILES_TO_TEST_DIR_IDX TRUE)
+      ENDIF()
+    ENDFOREACH()
 
-    # Write the command
+    IF (COPY_FILES_TO_TEST_DIR_IDX)
+
+      # Do a special parse just for TEST_<IDX> blocks of type
+      # COPY_FILES_TO_TEST_DIR
+
+      CMAKE_PARSE_ARGUMENTS(
+         #prefix
+         PARSE
+         #options
+         ""
+         # one_value_keywords
+         ""
+         # multi_value_keywords
+         "COPY_FILES_TO_TEST_DIR;SOURCE_DIR;DEST_DIR" 
+	 # Arguments to parse
+         ${PARSE_TEST_${TEST_CMND_IDX}}
+         )
+      TRIBITS_CHECK_FOR_UNPARSED_ARGUMENTS()
+
+      SET(PARSE_EXEC)
+      SET(PARSE_CMND)
+
+    ELSE()
+
+      # Parse TEST_<IDX> block args for types EXEC and CMND
+
+      CMAKE_PARSE_ARGUMENTS(
+         #prefix
+         PARSE
+         #options
+          "NOEXEPREFIX;NOEXESUFFIX;NO_ECHO_OUTPUT;PASS_ANY;STANDARD_PASS_OUTPUT;ALWAYS_FAIL_ON_NONZERO_RETURN;ALWAYS_FAIL_ON_ZERO_RETURN;WILL_FAIL;ADD_DIR_TO_NAME;SKIP_CLEAN_WORKING_DIRECTORY"
+         # one_value_keywords
+         ""
+         # multi_value_keywords
+         "EXEC;CMND;ARGS;DIRECTORY;MESSAGE;WORKING_DIRECTORY;OUTPUT_FILE;NUM_MPI_PROCS;NUM_TOTAL_CORES_USED;PASS_REGULAR_EXPRESSION_ALL;FAIL_REGULAR_EXPRESSION;PASS_REGULAR_EXPRESSION"
+         ${PARSE_TEST_${TEST_CMND_IDX}}
+         )
+  
+      TRIBITS_CHECK_FOR_UNPARSED_ARGUMENTS()
+
+    ENDIF()
+
+    #
+    # Set up the command that will be written into the cmake -P *.cmake file
+    #
 
     SET(ARGS_STR ${PARSE_ARGS})
     #PRINT_VAR(ARGS_STR)
@@ -868,6 +909,10 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
     #ENDIF()
 
     IF (PARSE_EXEC)
+
+      #
+      # This is an EXEC test block
+      #
 
       SET(HAS_AT_LEAST_ONE_EXEC TRUE)
 
@@ -878,7 +923,8 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
       ENDIF()
 
       TRIBITS_ADD_TEST_GET_EXE_BINARY_NAME( "${PARSE_EXEC}"
-        ${PARSE_NOEXEPREFIX} ${PARSE_NOEXESUFFIX} ${PARSE_ADD_DIR_TO_NAME} EXE_BINARY_NAME )
+        ${PARSE_NOEXEPREFIX} ${PARSE_NOEXESUFFIX}
+        ${PARSE_ADD_DIR_TO_NAME} EXE_BINARY_NAME )
 
       TRIBITS_ADD_TEST_ADJUST_DIRECTORY( ${EXE_BINARY_NAME} "${PARSE_DIRECTORY}"
         EXECUTABLE_PATH)
@@ -929,6 +975,10 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
 
     ELSEIF (PARSE_CMND)
 
+      #
+      # This is a COMMAND test block
+      #
+
       LIST( LENGTH PARSE_CMND PARSE_CMND_LEN )
       IF (NOT PARSE_CMND_LEN EQUAL 1)
         MESSAGE(SEND_ERROR "Error, TEST_${TEST_CMND_IDX} CMND = '${PARSE_CMND}'"
@@ -966,23 +1016,102 @@ FUNCTION(TRIBITS_ADD_ADVANCED_TEST TEST_NAME_IN)
 
       SET( TEST_CMND_ARRAY ${PARSE_CMND} ${ARGS_STR} )
 
+    ELSEIF (PARSE_COPY_FILES_TO_TEST_DIR)
+
+      #
+      # This is a COPY_FLES_TO_TEST_DIR block
+      #
+
+      # FILES_TO_COPY_COMMA_SEP
+      SET(FILES_TO_COPY_COMMA_SEP "${PARSE_COPY_FILES_TO_TEST_DIR}")
+      string(REPLACE ";" "," FILES_TO_COPY_COMMA_SEP
+        "${FILES_TO_COPY_COMMA_SEP}" )
+      # NOTE: Above, we have to replace ';' with ',' or the lower commands
+      # APPEND_STRING_VAR() will replace ';' with ''.  This is *not* what we
+      # want.  In DriveAdvancedTest.cmake, we will replace the ',' with ';'
+      # again :-)  
+
+      # SOURCE_DIR
+      IF (PARSE_SOURCE_DIR)
+        IF (IS_ABSOLUTE "${PARSE_SOURCE_DIR}")
+          SET(COPY_FILES_TO_TEST_DIR_SOURCE_DIR
+            "${PARSE_SOURCE_DIR}")
+        ELSE()
+          SET(COPY_FILES_TO_TEST_DIR_SOURCE_DIR
+            "${CMAKE_CURRENT_SOURCE_DIR}/${PARSE_SOURCE_DIR}")
+        ENDIF()
+      ELSE()
+        SET(COPY_FILES_TO_TEST_DIR_SOURCE_DIR
+          "${CMAKE_CURRENT_SOURCE_DIR}")
+      ENDIF()
+
+      # DEST_DIR
+      IF (PARSE_DEST_DIR)
+        IF (IS_ABSOLUTE "${PARSE_DEST_DIR}")
+          SET(COPY_FILES_TO_TEST_DIR_DEST_DIR
+            "${PARSE_DEST_DIR}")
+        ELSE()
+          SET(COPY_FILES_TO_TEST_DIR_DEST_DIR
+            "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}/${PARSE_DEST_DIR}")
+        ENDIF()
+      ELSE()
+        SET(COPY_FILES_TO_TEST_DIR_DEST_DIR
+          "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}")
+      ENDIF()
+
     ELSE()
 
       MESSAGE( FATAL_ERROR
-        "Must have EXEC or CMND for TEST_${TEST_CMND_IDX}" )
+        "Must have EXEC, CMND, or COPY_FILES_TO_TEST_DIR for TEST_${TEST_CMND_IDX}" )
 
     ENDIF()
 
-    TRIBITS_JOIN_EXEC_PROCESS_SET_ARGS( TEST_CMND_STR "${TEST_CMND_ARRAY}" )
-    #PRINT_VAR(TEST_CMND_STR)
+    #
+    # Write parts for this TEST_<IDX> block to TEST_SCRIPT_STR
+    #
 
-    APPEND_STRING_VAR( TEST_SCRIPT_STR
-      "\n"
-      "SET( TEST_${TEST_CMND_IDX}_CMND ${TEST_CMND_STR} )\n"
-      )
-    IF (TRIBITS_ADD_ADVANCED_TEST_UNITTEST)
-      GLOBAL_SET(TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_${TEST_CMND_IDX}
-        "${TEST_CMND_STR}" )
+    IF (PARSE_COPY_FILES_TO_TEST_DIR)
+
+      # Write the vars for COPY_FILES_TO_TEST_DIR 
+  
+      APPEND_STRING_VAR( TEST_SCRIPT_STR
+        "\n"
+        "SET( TEST_${TEST_CMND_IDX}_COPY_FILES_TO_TEST_DIR\n"
+        "  \"${FILES_TO_COPY_COMMA_SEP}\")\n"
+        )
+      IF (TRIBITS_ADD_ADVANCED_TEST_UNITTEST)
+        GLOBAL_SET(TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_${TEST_CMND_IDX}
+          "${TEST_CMND_STR}" )
+      ENDIF()
+  
+      APPEND_STRING_VAR( TEST_SCRIPT_STR
+        "\n"
+        "SET( TEST_${TEST_CMND_IDX}_SOURCE_DIR\n"
+        "  \"${COPY_FILES_TO_TEST_DIR_SOURCE_DIR}\")\n"
+        )
+  
+      APPEND_STRING_VAR( TEST_SCRIPT_STR
+        "\n"
+        "SET( TEST_${TEST_CMND_IDX}_DEST_DIR\n"
+        "  \"${COPY_FILES_TO_TEST_DIR_DEST_DIR}\")\n"
+        )
+
+    ELSE()
+
+      # Write the command to be run for EXEC and CMND blocks ...
+
+      TRIBITS_JOIN_EXEC_PROCESS_SET_ARGS( TEST_CMND_STR "${TEST_CMND_ARRAY}" )
+      #PRINT_VAR(TEST_CMND_STR)
+  
+      APPEND_STRING_VAR( TEST_SCRIPT_STR
+        "\n"
+        "SET( TEST_${TEST_CMND_IDX}_CMND ${TEST_CMND_STR} )\n"
+        )
+      IF (TRIBITS_ADD_ADVANCED_TEST_UNITTEST)
+        GLOBAL_SET(TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_${TEST_CMND_IDX}
+          "${TEST_CMND_STR}" )
+      ENDIF()
+
     ENDIF()
 
     IF (PARSE_MESSAGE)
