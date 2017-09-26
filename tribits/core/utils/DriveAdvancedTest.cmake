@@ -87,27 +87,64 @@ ENDFUNCTION()
 
 MACRO(SETUP_AND_RUN_TEST_IDX_COPY_FILES_BLOCK)
 
+  STRING(REPLACE "," ", "  FILES_TO_COPY_COMMA_SPACE
+    "${TEST_${CMND_IDX}_COPY_FILES_TO_TEST_DIR}")
+
   MESSAGE(
-    "Copy files from:\n"
-    "    '${TEST_${CMND_IDX}_SOURCE_DIR}/'\n"
+    "Copy files:\n"
+    "      ${FILES_TO_COPY_COMMA_SPACE}\n"
+    "  from:\n"
+    "      ${TEST_${CMND_IDX}_SOURCE_DIR}/\n"
     "  to:\n"
-    "    '${TEST_${CMND_IDX}_DEST_DIR}/' ...\n")
+    "      ${TEST_${CMND_IDX}_DEST_DIR}/\n")
 
   SPLIT("${TEST_${CMND_IDX}_COPY_FILES_TO_TEST_DIR}"
     "," COPY_FILES_TO_TEST_DIR_ARRAY)
 
-  SET(TEST_CASE_PASSED TRUE)
+  SET(FILES_TO_COPY_ABS_PATH_LIST)
   FOREACH(FILENAME ${COPY_FILES_TO_TEST_DIR_ARRAY})
-    MESSAGE("  ${FILENAME} ...")
-    CONFIGURE_FILE(
-      "${TEST_${CMND_IDX}_SOURCE_DIR}/${FILENAME}"
-      "${TEST_${CMND_IDX}_DEST_DIR}/${FILENAME}"
-      COPYONLY
-      )
-    # ToDo: Detect file copy failure and react accordingly
+    LIST(APPEND FILES_TO_COPY_ABS_PATH_LIST
+      "${TEST_${CMND_IDX}_SOURCE_DIR}/${FILENAME}")
   ENDFOREACH()
 
-  MESSAGE("")
+  SET(TEST_CASE_PASSED TRUE)
+
+  MESSAGE("${OUTPUT_SEP}\n")
+
+  # Make the dest directory if not exists (cmake -E copy will not create it)
+  IF (NOT EXISTS "${TEST_${CMND_IDX}_DEST_DIR}")
+    MESSAGE("Creating dest directory ${TEST_${CMND_IDX}_DEST_DIR}/ ...")
+    EXECUTE_PROCESS(
+      COMMAND ${CMAKE_COMMAND} -E make_directory "${TEST_${CMND_IDX}_DEST_DIR}"
+      RESULT_VARIABLE MKDIR_COMMAND_RTN
+      )
+    IF (NOT MKDIR_COMMAND_RTN EQUAL 0)
+      SET(TEST_CASE_PASSED FALSE)
+    ENDIF()
+    # NOTE: Above, it would have been great to be able use FILE(MAKE_DIRECTORY
+    # ...)  but if that fails it will just abortS the cmake -P script.  There
+    # is no way to handle that gracefully.  Therefore, we have to use
+    # EXECUTE_PROCESS(cmake -E make_directory ...).
+  ENDIF()
+
+  # Copy the full list of files to the dest dir
+  EXECUTE_PROCESS(
+    COMMAND ${CMAKE_COMMAND} -E copy
+      ${FILES_TO_COPY_ABS_PATH_LIST}
+      "${TEST_${CMND_IDX}_DEST_DIR}/"
+    RESULT_VARIABLE COPY_COMMAND_RTN
+    )
+  IF (NOT COPY_COMMAND_RTN EQUAL 0)
+    SET(TEST_CASE_PASSED FALSE)
+  ENDIF()
+  # NOTE: Above, it would have been great to be able use
+  # CONFIGURE_FILE(... COPYONLY) but if that fails it will just abortS the
+  # cmake -P script.  There is no way to handle that gracefully.  Therefore,
+  # we have to use EXECUTE_PROCESS(cmake -E copy ...).
+
+  MESSAGE("${OUTPUT_SEP}\n")
+
+  MESSAGE("") # Need a vertical space for readability of the output
 
 ENDMACRO()
 
