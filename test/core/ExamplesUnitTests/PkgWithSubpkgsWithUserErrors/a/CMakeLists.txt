@@ -26,3 +26,13 @@ TRIBITS_ADD_TEST_DIRECTORIES(tests)
 # D) Do standard post processing
 #
 TRIBITS_SUBPACKAGE_POSTPROCESS()
+
+# Not added by defeault
+IF(PkgWithSubpkgsWithUserErrors_ADD_LIBRARY_AFTER_POST_PROCESS)
+  MESSAGE("Adding librbary in subpackage after post process")
+  TRIBITS_ADD_LIBRARY(lib_after_post_process
+    SOURCES A.cpp
+    HEADERS A.hpp
+    NOINSTALLHEADERS 
+  )
+ENDIF()

@@ -3336,3 +3336,40 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
       "Test [#]2: PkgWithSubpkgsWithUserErrorsB_test_of_b [.]+ +Passed"
     ALWAYS_FAIL_ON_NONZERO_RETURN
   )
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_FAIL
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so that we can copy in PkgWithSubpkgsWithUserErrors."
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Copy PkgWithSubpkgsWithUserErrors to base dir."
+    CMND cp
+    ARGS -r ${CMAKE_CURRENT_SOURCE_DIR}/PkgWithSubpkgsWithUserErrors
+      TribitsExampleProject/.
+
+  TEST_2
+    MESSAGE "Configure PkgWithSubpkgsWithUserErrors"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithSubpkgsWithUserErrors
+      -DTribitsExProj_ENABLE_PkgWithSubpkgsWithUserErrors=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DPkgWithSubpkgsWithUserErrors_ADD_LIBRARY_AFTER_POST_PROCESS=TRUE
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Explicitly enabled packages on input [(]by user[)]:  PkgWithSubpkgsWithUserErrors 1"
+      "Final set of enabled packages:  PkgWithSubpkgsWithUserErrors 1"
+      "Processing enabled package: PkgWithSubpkgsWithUserErrors [(]A, B, Tests, Examples[)]"
+      "Configuring done"
+      "Generating done" 
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
