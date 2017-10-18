@@ -36,3 +36,12 @@ IF(PkgWithSubpkgsWithUserErrors_ADD_LIBRARY_AFTER_POST_PROCESS)
     NOINSTALLHEADERS 
   )
 ENDIF()
+
+# Not added by defeault
+IF(PkgWithSubpkgsWithUserErrors_ADD_EXECUTABLE_AFTER_POST_PROCESS)
+  MESSAGE("Adding librbary in subpackage after post process")
+  TRIBITS_ADD_EXECUTABLE(exe_after_post_process
+    SOURCES A.cpp
+    HEADERS A.hpp
+  )
+ENDIF()
