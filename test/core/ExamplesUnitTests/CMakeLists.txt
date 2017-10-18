@@ -3079,7 +3079,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_POST_
     ALWAYS_FAIL_ON_ZERO_RETURN
   )
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_SKIP_PACKAGE_INIT
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3151,9 +3151,30 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_SKIP_PACKAGE_
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
+  TEST_5
+    MESSAGE "Configure PkgWithUserErrors"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
+      -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DPkgWithUserErrors_SKIP_TRIBITS_PACKAGE_INIT=FALSE
+      -DPkgWithUserErrors_DOUBLE_PACKAGE_INIT=TRUE
+      -DPkgWithUserErrors_ADD_LIBRARY_BEFORE_POST_PROCESS=FALSE
+      -DPkgWithUserErrors_ADD_EXECUTABLE_BEFORE_POST_PROCESS=FALSE
+      -DPkgWithUserErrors_SKIP_PACKAGE_TESTS=TRUE
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Package .* declared more than once!"
+      "Configuring incomplete, errors occurred!"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
   )
 
-TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_TARGETS_AFTER_POSTPROCESS
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_AFTER_POSTPROCESS
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
 
@@ -3201,6 +3222,25 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_TARGETS_AFTER
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Must call TRIBITS_ADD_EXECUTABLE[(][)] before TRIBITS_PACKAGE_POSTPROCESS[(][)] in"
+      "Configuring incomplete, errors occurred!"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  TEST_4
+    MESSAGE "Configure PkgWithUserErrors"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
+      -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DPkgWithUserErrors_ADD_LIBRARY_AFTER_POST_PROCESS=FALSE
+      -DPkgWithUserErrors_ADD_EXECUTABLE_AFTER_POST_PROCESS=FALSE
+      -DPkgWithUserErrors_DOUBLE_PACKAGE_POSTPROCESS=TRUE
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "TRIBITS_PACKAGE_POSTPROCESS[(][)] has been called more than once in"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
