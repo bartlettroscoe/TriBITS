@@ -1,8 +1,14 @@
 #
 # A) Define the subpackage
 #
-TRIBITS_SUBPACKAGE(A)
 
+IF(NOT PkgWithSubpkgsWithUserErrors_TURN_OFF_SUBPACKAGE_INIT)
+  TRIBITS_SUBPACKAGE(A)
+ENDIF()
+
+IF(PkgWithSubpkgsWithUserErrors_DOUBLE_SUBPACKAGE_INIT)
+  TRIBITS_SUBPACKAGE(A)
+ENDIF()
 #
 # B) Set up subpackage-specific options
 #
@@ -13,12 +19,24 @@ TRIBITS_SUBPACKAGE(A)
 # C) Add the libraries, tests, and examples
 #
 
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-TRIBITS_ADD_LIBRARY(pwswue_a
-  SOURCES A.cpp
-  HEADERS A.hpp
-  NOINSTALLHEADERS 
-)
+
+IF(NOT PkgWithSubpkgsWithUserErrors_TURN_OFF_LIBRARY_BEFORE_POSTPROCESS)
+  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+  TRIBITS_ADD_LIBRARY(pwswue_a
+    SOURCES A.cpp
+    HEADERS A.hpp
+    NOINSTALLHEADERS 
+  )
+ENDIF()
+
+IF(PkgWithSubpkgsWithUserErrors_TURN_ON_EXECUTABLE_BEFORE_POSTPROCESS)
+  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+  TRIBITS_ADD_EXECUTABLE(pwswue_a
+    SOURCES A.cpp
+    HEADERS A.hpp
+    NOINSTALLHEADERS 
+  )
+ENDIF()
 
 TRIBITS_ADD_TEST_DIRECTORIES(tests)
 
@@ -27,9 +45,13 @@ TRIBITS_ADD_TEST_DIRECTORIES(tests)
 #
 TRIBITS_SUBPACKAGE_POSTPROCESS()
 
+IF(PkgWithSubpkgsWithUserErrors_DOUBLE_SUBPACKAGE_POSTPROCESS)
+  TRIBITS_SUBPACKAGE_POSTPROCESS()
+ENDIF()
+
 # Not added by defeault
 IF(PkgWithSubpkgsWithUserErrors_ADD_LIBRARY_AFTER_POST_PROCESS)
-  MESSAGE("Adding librbary in subpackage after post process")
+  MESSAGE("Adding library in subpackage after post process")
   TRIBITS_ADD_LIBRARY(lib_after_post_process
     SOURCES A.cpp
     HEADERS A.hpp
@@ -39,7 +61,7 @@ ENDIF()
 
 # Not added by defeault
 IF(PkgWithSubpkgsWithUserErrors_ADD_EXECUTABLE_AFTER_POST_PROCESS)
-  MESSAGE("Adding librbary in subpackage after post process")
+  MESSAGE("Adding executable in subpackage after post process")
   TRIBITS_ADD_EXECUTABLE(exe_after_post_process
     SOURCES A.cpp
     HEADERS A.hpp
