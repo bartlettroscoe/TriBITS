@@ -3021,7 +3021,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PASS
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
       -DTribitsExProj_ENABLE_TESTS=ON
-      -DPkgWithUserErrors_ADD_LIBRARY_BEFORE_POST_PROCESS=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Explicitly enabled packages on input [(]by user[)]:  PkgWithUserErrors 1"
@@ -3070,8 +3069,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_POST_
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
       -DTribitsExProj_ENABLE_TESTS=ON
-      -DPkgWithUserErrors_SKIP_PACKAGE_POST_PROCESS=TRUE
-      -DPkgWithUserErrors_ADD_LIBRARY_BEFORE_POST_PROCESS=TRUE
+      -DPkgWithUserErrors_turn_off_passing_call_order=TRUE
+      -DPkgWithUserErrors_no_POSTPROCESS_call=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Processing enabled package: PkgWithUserErrors [(]Libs, Tests, Examples[)]"
@@ -3104,8 +3103,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
       -DTribitsExProj_ENABLE_TESTS=ON
-      -DPkgWithUserErrors_SKIP_TRIBITS_PACKAGE_INIT=TRUE
-      -DPkgWithUserErrors_ADD_LIBRARY_BEFORE_POST_PROCESS=TRUE
+      -DPkgWithUserErrors_turn_off_passing_call_order=TRUE
+      -DPkgWithUserErrors_ADD_LIBRARY_with_no_package_init=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Must call TRIBITS_PACKAGE[(][)] before TRIBITS_ADD_LIBRARY[(][)]"
@@ -3122,9 +3121,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
       -DTribitsExProj_ENABLE_TESTS=ON
-      -DPkgWithUserErrors_SKIP_TRIBITS_PACKAGE_INIT=TRUE
-      -DPkgWithUserErrors_ADD_LIBRARY_BEFORE_POST_PROCESS=FALSE
-      -DPkgWithUserErrors_ADD_EXECUTABLE_BEFORE_POST_PROCESS=TRUE
+      -DPkgWithUserErrors_turn_off_passing_call_order=TRUE
+      -DPkgWithUserErrors_ADD_LIBRARY_with_no_package_init=FALSE
+      -DPkgWithUserErrors_ADD_EXECUTABLE_with_no_package_init=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Must call TRIBITS_PACKAGE[(][)] before TRIBITS_ADD_EXECUTABLE[(][)]"
@@ -3141,10 +3140,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
       -DTribitsExProj_ENABLE_TESTS=ON
-      -DPkgWithUserErrors_SKIP_TRIBITS_PACKAGE_INIT=TRUE
-      -DPkgWithUserErrors_ADD_LIBRARY_BEFORE_POST_PROCESS=FALSE
-      -DPkgWithUserErrors_ADD_EXECUTABLE_BEFORE_POST_PROCESS=""
-      -DPkgWithUserErrors_SKIP_PACKAGE_TESTS=TRUE
+      -DPkgWithUserErrors_turn_off_passing_call_order=TRUE
+      -DPkgWithUserErrors_ADD_LIBRARY_with_no_package_init=FALSE
+      -DPkgWithUserErrors_ADD_EXECUTABLE_with_no_package_init=FALSE
+      -DPkgWithUserErrors_POSTPROCESS_with_no_package_init=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Must call TRIBITS_PACKAGE[(][)] before TRIBITS_PACKAGE_POSTPROCESS[(][)]"
@@ -3161,11 +3160,11 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_PACKAGE_INIT
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
       -DTribitsExProj_ENABLE_TESTS=ON
-      -DPkgWithUserErrors_SKIP_TRIBITS_PACKAGE_INIT=FALSE
-      -DPkgWithUserErrors_DOUBLE_PACKAGE_INIT=TRUE
-      -DPkgWithUserErrors_ADD_LIBRARY_BEFORE_POST_PROCESS=FALSE
-      -DPkgWithUserErrors_ADD_EXECUTABLE_BEFORE_POST_PROCESS=FALSE
-      -DPkgWithUserErrors_SKIP_PACKAGE_TESTS=TRUE
+      -DPkgWithUserErrors_turn_off_passing_call_order=TRUE
+      -DPkgWithUserErrors_ADD_LIBRARY_with_no_package_init=FALSE
+      -DPkgWithUserErrors_ADD_EXECUTABLE_with_no_package_init=FALSE
+      -DPkgWithUserErrors_POSTPROCESS_with_no_package_init=FALSE
+      -DPkgWithUserErrors_multiple_calls_to_PACKAGE=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Package .* declared more than once!"
@@ -3199,8 +3198,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_AFTER_POSTPRO
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
       -DTribitsExProj_ENABLE_TESTS=ON
-      -DPkgWithUserErrors_ADD_LIBRARY_BEFORE_POST_PROCESS=FALSE
-      -DPkgWithUserErrors_ADD_LIBRARY_AFTER_POST_PROCESS=TRUE
+      -DPkgWithUserErrors_turn_off_passing_call_order=TRUE
+      -DPkgWithUserErrors_ADD_LIBRARY_after_POSTPROCESS=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Must call TRIBITS_ADD_LIBRARY[(][)] before TRIBITS_PACKAGE_POSTPROCESS[(][)] in"
@@ -3217,8 +3216,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_AFTER_POSTPRO
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
       -DTribitsExProj_ENABLE_TESTS=ON
-      -DPkgWithUserErrors_ADD_LIBRARY_AFTER_POST_PROCESS=FALSE
-      -DPkgWithUserErrors_ADD_EXECUTABLE_AFTER_POST_PROCESS=TRUE
+      -DPkgWithUserErrors_turn_off_passing_call_order=TRUE
+      -DPkgWithUserErrors_ADD_LIBRARY_after_POSTPROCESS=FALSE
+      -DPkgWithUserErrors_ADD_EXECUTABLE_after_POSTPROCESS=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Must call TRIBITS_ADD_EXECUTABLE[(][)] before TRIBITS_PACKAGE_POSTPROCESS[(][)] in"
@@ -3235,9 +3235,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_AFTER_POSTPRO
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
       -DTribitsExProj_ENABLE_TESTS=ON
-      -DPkgWithUserErrors_ADD_LIBRARY_AFTER_POST_PROCESS=FALSE
-      -DPkgWithUserErrors_ADD_EXECUTABLE_AFTER_POST_PROCESS=FALSE
-      -DPkgWithUserErrors_DOUBLE_PACKAGE_POSTPROCESS=TRUE
+      -DPkgWithUserErrors_turn_off_passing_call_order=TRUE
+      -DPkgWithUserErrors_ADD_LIBRARY_after_POSTPROCESS=FALSE
+      -DPkgWithUserErrors_ADD_EXECUTABLE_after_POSTPROCESS=FALSE
+      -DPkgWithUserErrors_multiple_calls_to_POSTPROCESS=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "TRIBITS_PACKAGE_POSTPROCESS[(][)] has been called more than once in"
@@ -3292,6 +3293,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
       -DPkgWithUserErrors_UNPARSED_ARGS_DEFINE_DEPENDENCIES=OFF
+      -DPkgWithUserErrors_turn_off_passing_call_order=TRUE
       -DPkgWithUserErrors_UNPARSED_ARGS_ADD_LIBRARY=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       TribitsExampleProject
@@ -3313,6 +3315,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithUserErrors_UNPARSED_ARGS
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithUserErrors=ON
       -DPkgWithUserErrors_UNPARSED_ARGS_DEFINE_DEPENDENCIES=OFF
+      -DPkgWithUserErrors_turn_off_passing_call_order=TRUE
       -DPkgWithUserErrors_UNPARSED_ARGS_ADD_LIBRARY=OFF
       -DPkgWithUserErrors_UNPARSED_ARGS_ADD_EXECUTABLE=ON
       -DTribitsExProj_ENABLE_TESTS=ON
