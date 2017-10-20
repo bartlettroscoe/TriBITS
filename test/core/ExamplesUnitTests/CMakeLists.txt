@@ -3351,7 +3351,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PR
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithSubpkgsWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithSubpkgsWithUserErrors=ON
       -DTribitsExProj_ENABLE_TESTS=ON
-      -DPkgWithSubpkgsWithUserErrors_TURN_OFF_PACKAGE_DECL=TRUE
+      -DPkgWithSubpkgsWithUserErrors_TURN_OFF_PASSING_CALL_ORDER=TRUE
+      -DPkgWithSubpkgsWithUserErrors_no_PACKAGE_DECL_before_PROCESS_SUBPACKAGES=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Must call TRIBITS_PACKAGE[(][)] before TRIBITS_PROCESS_SUBPACKAGES[(][)]"
@@ -3368,8 +3369,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PR
       -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithSubpkgsWithUserErrors
       -DTribitsExProj_ENABLE_PkgWithSubpkgsWithUserErrors=ON
       -DTribitsExProj_ENABLE_TESTS=ON
-      -DPkgWithSubpkgsWithUserErrors_TURN_OFF_PACKAGE_DECL=FALSE
-      -DPkgWithSubpkgsWithUserErrors_POSTPROCESS_BEFRORE_SUBPACKAGES=TRUE
+      -DPkgWithSubpkgsWithUserErrors_TURN_OFF_PASSING_CALL_ORDER=TRUE
+      -DPkgWithSubpkgsWithUserErrors_no_PACKAGE_DECL_before_PROCESS_SUBPACKAGES=FALSE
+      -DPkgWithSubpkgsWithUserErrors_POSTPROCESS_before_SUBPACKAGES=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Must call TRIBITS_PROCESS_SUBPACKAGES[(][)] before"
