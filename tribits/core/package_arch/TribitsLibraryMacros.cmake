@@ -470,7 +470,7 @@ ENDFUNCTION()
 FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
 
   #
-  # Confirm that package and subpackage macros/functions have been called inteh correct order
+  # Confirm that package and subpackage macros/functions have been called in the correct order
   #
 
   IF (CURRENTY_PROCESSING_SUBPACKAGE STREQUAL SUBPACKAGE_FULLNAME)

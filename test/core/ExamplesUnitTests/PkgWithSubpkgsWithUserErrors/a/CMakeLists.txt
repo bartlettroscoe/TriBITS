@@ -118,3 +118,25 @@ ENDIF()
 IF(subPackageA_no_SUBPACKAGE_before_POSTPROCESS)
   TRIBITS_SUBPACKAGE_POSTPROCESS()
 ENDIF()
+
+
+###############################################################
+# call PACKAGE from a subpackage file
+###############################################################
+IF(subPackageA_call_PACKAGE)
+  TRIBITS_PACKAGE(A)
+ENDIF()
+
+###############################################################
+# call PACKAGE_DECL from a subpackage file
+###############################################################
+IF(subPackageA_call_PACKAGE_DECL)
+  TRIBITS_PACKAGE_DECL(A)
+ENDIF()
+
+###############################################################
+# call PACKAGE_DEF from a subpackage file
+###############################################################
+IF(subPackageA_call_PACKAGE_DEF)
+  TRIBITS_PACKAGE_DEF(A)
+ENDIF()
