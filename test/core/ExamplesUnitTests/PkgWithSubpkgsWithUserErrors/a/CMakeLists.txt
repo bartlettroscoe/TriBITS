@@ -140,3 +140,31 @@ ENDIF()
 IF(subPackageA_call_PACKAGE_DEF)
   TRIBITS_PACKAGE_DEF(A)
 ENDIF()
+
+
+###############################################################
+# call PACKAGE_POSTPROCESS from a subpackage file
+###############################################################
+IF(subPackageA_call_PACKAGE_POSTPROCESS)
+  TRIBITS_SUBPACKAGE(A)
+
+  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+  TRIBITS_ADD_LIBRARY(pwswue_a
+    SOURCES A.cpp
+    HEADERS A.hpp
+    NOINSTALLHEADERS 
+  )
+
+  TRIBITS_ADD_TEST_DIRECTORIES(tests)
+  TRIBITS_PACKAGE_POSTPROCESS()
+ENDIF()
+
+
+###############################################################
+# call PROCESS_SUBPACKAGES from a subpackage file
+###############################################################
+IF(subPackageA_call_PROCESS_SUBPACKAGES)
+  TRIBITS_SUBPACKAGE(A)
+  TRIBITS_PROCESS_SUBPACKAGES()
+  TRIBITS_PACKAGE_POSTPROCESS()
+ENDIF()
