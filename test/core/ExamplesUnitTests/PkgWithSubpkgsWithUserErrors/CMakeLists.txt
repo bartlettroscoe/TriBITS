@@ -45,3 +45,13 @@ IF(${PACKAGE_NAME}_POSTPROCESS_before_SUBPACKAGES)
   TRIBITS_PACKAGE_POSTPROCESS()
   TRIBITS_PROCESS_SUBPACKAGES()
 ENDIF()
+
+###############################################################
+# PACKAGE_DEF before PROCESS_SUBPACKAGES
+###############################################################
+IF(${PACKAGE_NAME}_PACKAGE_DEF_before_SUBPACKAGES)
+  TRIBITS_PACKAGE_DECL(PkgWithSubpkgsWithUserErrors)
+  TRIBITS_PACKAGE_DEF()
+  TRIBITS_PROCESS_SUBPACKAGES()
+  TRIBITS_PACKAGE_POSTPROCESS()
+ENDIF()
