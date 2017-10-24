@@ -55,3 +55,27 @@ IF(${PACKAGE_NAME}_PACKAGE_DEF_before_SUBPACKAGES)
   TRIBITS_PROCESS_SUBPACKAGES()
   TRIBITS_PACKAGE_POSTPROCESS()
 ENDIF()
+
+###############################################################
+# multiple calls to PACKAGE_DECL
+###############################################################
+IF(${PACKAGE_NAME}_multiple_calls_to_PACKAGE_DECL)
+  TRIBITS_PACKAGE_DECL(PkgWithSubpkgsWithUserErrors)
+  TRIBITS_PACKAGE_DECL(PkgWithSubpkgsWithUserErrors)
+  TRIBITS_ADD_DEBUG_OPTION()
+  TRIBITS_PROCESS_SUBPACKAGES()
+  TRIBITS_PACKAGE_DEF()
+  TRIBITS_PACKAGE_POSTPROCESS()
+ENDIF()
+
+###############################################################
+# multiple calls to PACKAGE_DEF
+###############################################################
+IF(${PACKAGE_NAME}_multiple_calls_to_PACKAGE_DEF)
+  TRIBITS_PACKAGE_DECL(PkgWithSubpkgsWithUserErrors)
+  TRIBITS_ADD_DEBUG_OPTION()
+  TRIBITS_PROCESS_SUBPACKAGES()
+  TRIBITS_PACKAGE_DEF()
+  TRIBITS_PACKAGE_DEF()
+  TRIBITS_PACKAGE_POSTPROCESS()
+ENDIF()
