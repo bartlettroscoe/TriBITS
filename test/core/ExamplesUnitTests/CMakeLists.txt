@@ -3562,7 +3562,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PR
       -DTribitsExProj_ENABLE_PkgWithSubpkgsWithUserErrors=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DsubpackageA_turn_off_passing_call_order=TRUE
-      -DsubPackageA_ADD_LIBRARY_AFTER_POST_PROCESS=FALSE
       -DsubPackageA_ADD_EXECUTABLE_AFTER_POST_PROCESS=FALSE
       -DsubPackageA_add_lib_no_PREPROCESS=TRUE
       TribitsExampleProject
@@ -3582,13 +3581,89 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PR
       -DTribitsExProj_ENABLE_PkgWithSubpkgsWithUserErrors=ON
       -DTribitsExProj_ENABLE_TESTS=ON
       -DsubpackageA_turn_off_passing_call_order=TRUE
-      -DsubPackageA_ADD_LIBRARY_AFTER_POST_PROCESS=FALSE
-      -DsubPackageA_ADD_EXECUTABLE_AFTER_POST_PROCESS=FALSE
       -DsubPackageA_add_lib_no_PREPROCESS=FALSE
       -DsubPackageA_add_exe_no_PREPROCESS=TRUE
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Must call TRIBITS_SUBPACKAGE[(][)] before TRIBITS_ADD_EXECUTABLE[(][)]"
+      "Configuring incomplete, errors occurred!"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  TEST_6
+    MESSAGE "Configure PkgWithSubpkgsWithUserErrors exec with no preprocess"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithSubpkgsWithUserErrors
+      -DTribitsExProj_ENABLE_PkgWithSubpkgsWithUserErrors=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DsubpackageA_turn_off_passing_call_order=TRUE
+      -DsubPackageA_add_exe_no_PREPROCESS=FALSE
+      -DsubPackageA_call_ADD_TEST_DIRECTORY_without_SUBPACKAGE=TRUE
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Must call TRIBITS_SUBPACKAGE[(][)] before TRIBITS_ADD_TEST_DIRECTORIES[(][)]"
+      "Configuring incomplete, errors occurred!"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  TEST_7
+    MESSAGE "Configure PkgWithSubpkgsWithUserErrors exec with no preprocess"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithSubpkgsWithUserErrors
+      -DTribitsExProj_ENABLE_PkgWithSubpkgsWithUserErrors=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DsubpackageA_turn_off_passing_call_order=TRUE
+      -DsubPackageA_call_ADD_TEST_DIRECTORY_without_SUBPACKAGE=FALSE
+      -DsubPackageA_call_ADD_TEST_DIRECTORY_after_POSTPROCESS=TRUE
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Must call TRIBITS_ADD_TEST_DIRECTORIES[(][)] before"
+      "TRIBITS_SUBPACKAGE_POSTPROCESS[(][)]"
+      "Configuring incomplete, errors occurred!"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  TEST_8
+    MESSAGE "Configure PkgWithSubpkgsWithUserErrors exec with no preprocess"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithSubpkgsWithUserErrors
+      -DTribitsExProj_ENABLE_PkgWithSubpkgsWithUserErrors=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DsubpackageA_turn_off_passing_call_order=TRUE
+      -DsubPackageA_call_ADD_TEST_DIRECTORY_after_POSTPROCESS=FALSE
+      -DsubPackageA_call_ADD_EXAMPLE_DIRECTORY_without_SUBPACKAGE=TRUE
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Must call TRIBITS_SUBPACKAGE[(][)] before TRIBITS_ADD_EXAMPLE_DIRECTORIES[(][)]"
+      "Configuring incomplete, errors occurred!"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  TEST_9
+    MESSAGE "Configure PkgWithSubpkgsWithUserErrors exec with no preprocess"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithSubpkgsWithUserErrors
+      -DTribitsExProj_ENABLE_PkgWithSubpkgsWithUserErrors=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DsubpackageA_turn_off_passing_call_order=TRUE
+      -DsubPackageA_call_ADD_EXAMPLE_DIRECTORY_without_SUBPACKAGE=FALSE
+      -DsubPackageA_call_ADD_EXAMPLE_DIRECTORY_after_POSTPROCESS=TRUE
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Must call TRIBITS_ADD_EXAMPLE_DIRECTORIES[(][)] before"
+      "TRIBITS_SUBPACKAGE_POSTPROCESS[(][)]"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
 

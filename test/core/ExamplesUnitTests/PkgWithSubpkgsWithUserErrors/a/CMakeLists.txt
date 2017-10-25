@@ -159,3 +159,37 @@ IF(subPackageA_call_PROCESS_SUBPACKAGES)
   TRIBITS_PROCESS_SUBPACKAGES()
   TRIBITS_SUBPACKAGE_POSTPROCESS()
 ENDIF()
+
+###############################################################
+# ADD_TEST_DIRECTORIES without SUBPACKAGE call
+###############################################################
+IF(subPackageA_call_ADD_TEST_DIRECTORY_without_SUBPACKAGE)
+  TRIBITS_ADD_TEST_DIRECTORIES(tests)
+  TRIBITS_SUBPACKAGE_POSTPROCESS()
+ENDIF()
+
+###############################################################
+# ADD_TEST_DIRECTORIES after POSTPROCESS
+###############################################################
+IF(subPackageA_call_ADD_TEST_DIRECTORY_after_POSTPROCESS)
+  TRIBITS_SUBPACKAGE(A)
+  TRIBITS_SUBPACKAGE_POSTPROCESS()
+  TRIBITS_ADD_TEST_DIRECTORIES(tests)
+ENDIF()
+
+###############################################################
+# ADD_EXAMPLE_DIRECTORIES without SUBPACKAGE call
+###############################################################
+IF(subPackageA_call_ADD_EXAMPLE_DIRECTORY_without_SUBPACKAGE)
+  TRIBITS_ADD_EXAMPLE_DIRECTORIES(tests)
+  TRIBITS_SUBPACKAGE_POSTPROCESS()
+ENDIF()
+
+###############################################################
+# ADD_EXAMPLE_DIRECTORIES after POSTPROCESS
+###############################################################
+IF(subPackageA_call_ADD_EXAMPLE_DIRECTORY_after_POSTPROCESS)
+  TRIBITS_SUBPACKAGE(A)
+  TRIBITS_SUBPACKAGE_POSTPROCESS()
+  TRIBITS_ADD_EXAMPLE_DIRECTORIES(tests)
+ENDIF()
