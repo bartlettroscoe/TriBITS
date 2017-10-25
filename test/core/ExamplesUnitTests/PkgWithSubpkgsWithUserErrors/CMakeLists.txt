@@ -3,6 +3,9 @@
 # off when you turn on one of the other sections
 ###############################################################
 IF(NOT ${PACKAGE_NAME}_TURN_OFF_PASSING_CALL_ORDER)
+  
+  PRINT_VAR(${PACKAGE_NAME}_SUBPACKAGES)
+
   #
   # A) Forward declare the package so that certain options are also defined for
   # subpackages
@@ -80,4 +83,12 @@ IF(${PACKAGE_NAME}_multiple_calls_to_PACKAGE_DEF)
   TRIBITS_PACKAGE_POSTPROCESS()
 ENDIF()
 
+###############################################################
+# call PACKAGE() from package with subpackages
+###############################################################
+IF(${PACKAGE_NAME}_call_PACKAGE_from_package_with_subpackages)
+  TRIBITS_PACKAGE(PkgWithSubpkgsWithUserErrors)
+  TRIBITS_PROCESS_SUBPACKAGES()
+  TRIBITS_PACKAGE_POSTPROCESS()
+ENDIF()
 
