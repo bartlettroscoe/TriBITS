@@ -3859,21 +3859,50 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_pa
     ALWAYS_FAIL_ON_ZERO_RETURN
 
   TEST_6
-    MESSAGE "Configure PkgWithSubpkgsWithUserErrors"
     CMND ${CMAKE_COMMAND}
     ARGS
-      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
-      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
-      -DTribitsExProj_ENABLE_Fortran=OFF
-      -DTribitsExProj_EXTRA_REPOSITORIES=PkgWithSubpkgsWithUserErrors
-      -DTribitsExProj_ENABLE_PkgWithSubpkgsWithUserErrors=ON
-      -DTribitsExProj_ENABLE_TESTS=ON
-      -DsubpackageA_turn_off_passing_call_order=TRUE
       -DsubPackageA_call_PACKAGE_POSTPROCESS=TRUE
       -DsubPackageA_call_PROCESS_SUBPACKAGES=FALSE
-      TribitsExampleProject
+      .
     PASS_REGULAR_EXPRESSION_ALL
       "Cannot call TRIBITS_PACKAGE_POSTPROCESS[(][)] in a subpackage"
       "Configuring incomplete, errors occurred!"
     ALWAYS_FAIL_ON_ZERO_RETURN
-)
+
+  TEST_7
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      -DPkgWithSubpkgsWithUserErrors_TURN_OFF_PASSING_CALL_ORDER=TRUE
+      -DsubPackageA_call_PACKAGE_POSTPROCESS=FALSE
+      -DPkgWithSubpkgsWithUserErrors_call_SUBPACKAGE_POSTPROCESS=TRUE
+      .
+    PASS_REGULAR_EXPRESSION_ALL
+      "DUMMY NO MATCH"
+      "Configuring incomplete, errors occurred!"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  TEST_8
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      -DPkgWithSubpkgsWithUserErrors_TURN_OFF_PASSING_CALL_ORDER=TRUE
+      -DPkgWithSubpkgsWithUserErrors_call_SUBPACKAGE_POSTPROCESS=FALSE
+      -DPkgWithSubpkgsWithUserErrors_call_PACKAGE_after_PROCESS_SUBPACKAGES=TRUE
+      .
+    PASS_REGULAR_EXPRESSION_ALL
+      "DUMMY NO MATCH"
+      "Configuring incomplete, errors occurred!"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  TEST_9
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      -DPkgWithSubpkgsWithUserErrors_TURN_OFF_PASSING_CALL_ORDER=TRUE
+      -DPkgWithSubpkgsWithUserErrors_call_PACKAGE_after_PROCESS_SUBPACKAGES=FALSE
+      -DPkgWithSubpkgsWithUserErrors_call_everthing_except_PROCESS_SUBPACKAGES=TRUE
+      .
+    PASS_REGULAR_EXPRESSION_ALL
+      "DUMMY NO MATCH"
+      "Configuring incomplete, errors occurred!"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  )

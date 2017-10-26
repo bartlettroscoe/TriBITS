@@ -2,7 +2,7 @@
 # test a passing call order, will be run by default turn this 
 # off when you turn on one of the other sections
 ###############################################################
-IF(NOT ${PACKAGE_NAME}_TURN_OFF_PASSING_CALL_ORDER)
+IF (NOT ${PACKAGE_NAME}_TURN_OFF_PASSING_CALL_ORDER)
   
   PRINT_VAR(${PACKAGE_NAME}_SUBPACKAGES)
 
@@ -89,6 +89,37 @@ ENDIF()
 IF(${PACKAGE_NAME}_call_PACKAGE_from_package_with_subpackages)
   TRIBITS_PACKAGE(PkgWithSubpkgsWithUserErrors)
   TRIBITS_PROCESS_SUBPACKAGES()
+  TRIBITS_PACKAGE_POSTPROCESS()
+ENDIF()
+
+IF(${PACKAGE_NAME}_call_PACKAGE_DECL_only_from_package_with_subpackages)
+  TRIBITS_PACKAGE_DECL(PkgWithSubpkgsWithUserErrors)
+ENDIF()
+
+IF(${PACKAGE_NAME}_call_SUBPACKAGE_from_package_with_subpackages)
+  TRIBITS_SUBPACKAGE(PkgWithSubpkgsWithUserErrors)
+ENDIF()
+
+IF(${PACKAGE_NAME}_call_SUBPACKAGE_POSTPROCESS)
+  MESSAGE("Unit test ${PACKAGE_NAME}_call_SUBPACKAGE_POSTPROCESS_from_package_with_subpackages")
+  TRIBITS_PACKAGE_DECL(PkgWithSubpkgsWithUserErrors)
+  TRIBITS_PROCESS_SUBPACKAGES()
+  TRIBITS_PACKAGE_DEF()
+  TRIBITS_SUBPACKAGE_POSTPROCESS()
+ENDIF()
+
+IF(${PACKAGE_NAME}_call_PACKAGE_after_PROCESS_SUBPACKAGES)
+  MESSAGE("Unit test ${PACKAGE_NAME}_call_PACKAGE_after_PROCESS_SUBPACKAGES")
+  TRIBITS_PACKAGE_DECL(PkgWithSubpkgsWithUserErrors)
+  TRIBITS_PROCESS_SUBPACKAGES()
+  TRIBITS_PACKAGE(PkgWithSubpkgsWithUserErrors)
+  TRIBITS_SUBPACKAGE_POSTPROCESS()
+ENDIF()
+
+IF(${PACKAGE_NAME}_call_everthing_except_PROCESS_SUBPACKAGES)
+  MESSAGE("Unit test ${PACKAGE_NAME}_call_everthing_except_PROCESS_SUBPACKAGES")
+  TRIBITS_PACKAGE_DECL(PkgWithSubpkgsWithUserErrors)
+  TRIBITS_PACKAGE_DEF()
   TRIBITS_PACKAGE_POSTPROCESS()
 ENDIF()
 
