@@ -339,7 +339,7 @@ FUNCTION(TRIBITS_ADD_EXECUTABLE EXE_NAME)
   # Confirm that package and subpackage macros/functions have been called inteh correct order
   #
   
-  IF (CURRENTLY_PROCESSING_SUBPACKAGE STREQUAL SUBPACKAGE_FULLNAME)
+  IF (CURRENTLY_PROCESSING_SUBPACKAGE)
 
     # This is a subpackage being processed
 

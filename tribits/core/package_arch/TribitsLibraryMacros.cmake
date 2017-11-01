@@ -473,7 +473,7 @@ FUNCTION(TRIBITS_ADD_LIBRARY LIBRARY_NAME_IN)
   # Confirm that package and subpackage macros/functions have been called in the correct order
   #
 
-  IF (CURRENTLY_PROCESSING_SUBPACKAGE STREQUAL SUBPACKAGE_FULLNAME)
+  IF (CURRENTLY_PROCESSING_SUBPACKAGE)
 
     # This is a subpackage being processed
 

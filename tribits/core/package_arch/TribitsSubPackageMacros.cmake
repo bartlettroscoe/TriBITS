@@ -78,7 +78,7 @@ MACRO(TRIBITS_SUBPACKAGE SUBPACKAGE_NAME_IN)
   ENDIF()
 
   # check that this is not being called from a package
-  IF (NOT (CURRENTLY_PROCESSING_SUBPACKAGE STREQUAL SUBPACKAGE_FULLNAME))
+  IF (NOT CURRENTLY_PROCESSING_SUBPACKAGE)
   # we are in a package
 
     MESSAGE(FATAL_ERROR "Cannot call TRIBITS_SUBPACKAGE() from a package."
@@ -143,7 +143,7 @@ ENDMACRO()
 MACRO(TRIBITS_SUBPACKAGE_POSTPROCESS)
 
   # check that this is not being called from a package
-  IF (NOT (CURRENTLY_PROCESSING_SUBPACKAGE STREQUAL SUBPACKAGE_FULLNAME))
+  IF (NOT CURRENTLY_PROCESSING_SUBPACKAGE)
 
   # This is being called from a package
 
