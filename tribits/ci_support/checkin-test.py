@@ -798,6 +798,28 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
     default=False )
 
   clp.add_option(
+    "--compare-to", dest="compareTo", type="string", default="",
+    help="Specifies repo repos and branches to compare to when determining what set"\
+    +" of package should be enabled and tested."\
+    +" The format of this argument is:" \
+    +" '...,<local-repoi>:<remote-repoi>:<remote-branchi>,...' where each entry" \
+    +" block gives the name (not the directory) of the local repo <local-repoi>" \
+    +", the remote repo name <remote-repoi>, and branch in the remote repo" \
+    +" <remote-branchi>.  If only two semicolons ':' are given then the field takes" \
+    +" the form '...,<remote-repo>:<remote-branch>,...' where the remote <remote-name>" \
+    +" must be defined in all the repos and the branch <remote-branch> must exist" \
+    +" in all the remote repos.  If the <remote-repoi> is empty such as with" \
+    +" '...,:<remote-repoi>:<remote-branchi>,...' then this matches the base git repo." \
+    +" If no entry matches a given repo, then then the tracking branch for that repo" \
+    +" is used instead.  The result is that the command:"\
+    +" 'git diff --name-status HEAD ^<remote-repo>/<remote-branch>' is used to"\
+    +" instead of 'git diff --name-status HEAD ^@{u}` in matching repos in"\
+    +" order to detemrine the set of files that have changed and therefore"\
+    +" detemine what to enable to get tested." \
+    +"  NOTE: This argument has no affect if --enable-packages=<pgk>,... and" \
+    +" --enable-all-packages=[off|on] is set.  [default empty ""]" )
+
+  clp.add_option(
     "--enable-packages", dest="enablePackages", type="string", default="",
     help="List of comma separated packages to test changes for" \
     +" (example, 'Teuchos,Epetra').  If this list of packages is empty, then" \
@@ -1143,6 +1165,7 @@ def runProjectTestsWithCommandLineArgs(commandLineArgs, configuration = {}):
     print "  --require-extra-repos-exist \\"
   if options.skipDepsUpdate:
     print "  --skip-deps-update \\"
+  print "  --compare-to='"+options.compareTo+"' \\"
   print "  --enable-packages='"+options.enablePackages+"' \\"
   print "  --enable-extra-packages='"+options.enableExtraPackages+"' \\"
   print "  --disable-packages='"+options.disablePackages+"' \\"

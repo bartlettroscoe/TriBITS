@@ -2304,8 +2304,6 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
       print("\n3.c) Pull extra updates for --extra-pull-from='" +
             inOptions.extraPullFrom + "' ...")
       #
-
-      timings.pull = 0
       
       if inOptions.extraPullFrom and pullPassed:
         repoExtraRemotePullsList = \
@@ -2337,8 +2335,25 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
           repoIdx += 1
       else:
         print("\nSkipping extra pull from '" + inOptions.extraPullFrom + "'!\n")
+  
+      #
+      print("\n3.d) Fetch updates from remotes for --compare-to='" +
+            inOptions.compareTo + "' ...")
+      #
 
-    # Given overall status of the pulls and determine if to abort gracefully
+      if inOptions.compareTo:
+        # NOTE: We will fetch these compare-to repos reguardless if the above
+        # pulls passed.  But we don't bother fetching the remote repos if not
+        # doing an initial pull because no push would occur.  So in that case
+        # one would just use the remote tracking branch in some previous fetch
+        # of the remote compare-to repo for a local build, for example.
+        raise Exception("ToDo: Implement!")
+      else:
+        print("\nSkipping fetting extra repos since '" + inOptions.compareTo + "' == ''!\n")
+
+    # End doing pull or fetches
+
+    # Given overall status of the pulls determine if to abort gracefully
     if pulledSomeChanges:
       print("\nThere where at least some changes pulled!")
     else:
@@ -2350,7 +2365,7 @@ def checkinTest(tribitsDir, inOptions, configuration={}):
             "again ...\n")
       if getReposStats(inOptions, tribitsGitRepos):
         hasChangesToPush = True
- 
+
     #
     print("\nDetermine overall pull pass/fail ...\n")
     #
