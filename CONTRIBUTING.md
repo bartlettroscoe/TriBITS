@@ -55,10 +55,10 @@ With those definitions in place, the recommended/preferred process for contribut
 
 <a name="process_create_pull_request"/>
 
-2. **Create Pull-Request:** After the proposed change is approved in the GitHub Issue by the TriBITS Maintainer, then the TriBITS Developer (who might be the Issue Reporter or the TriBITS Maintainer) should create a Pull-Request performing the following steps:
-    * **create a topic/feature branch** in their forked TriBITS repo (use descriptive branch name with issue ID, e.g. `123-some-great-feature`) ,
-    * **create commits with logs referencing the Issue ID** (e.g. `fix that thing (#123)`),
-    * **issue a [pull-request](https://help.github.com/articles/using-pull-requests/) (i.e. PR)**.
+2. **Create Pull-Request:** After the proposed change is approved in the GitHub Issue by the TriBITS Maintainer, then the TriBITS Developer should create a Pull-Request performing the following steps:
+    * **Create a topic/feature branch** in their forked TriBITS repo (use descriptive branch name with issue ID, e.g. `123-some-great-feature`) ,
+    * **Create commits with logs referencing the Issue ID** (e.g. `fix that thing (#123)`),
+    * **Issue a [pull-request](https://help.github.com/articles/using-pull-requests/) (i.e. PR)**.
     * The changes in the PR will automatically be tested using [Travis CI](https://travis-ci.org/TriBITSPub/TriBITS).  Also, the PR allows for a well managed code review (comments for each line of the change, for example).  The pull request should then reference the original GitHub Issue in a comment to link the PR to the original Issue.  (NOTE: A partial set of changes is just fine in the PR, just enough to start the code review process.)
     * NOTE: The TriBITS Maintainers should be given push access to the topic-branch used to create the PR.  That way, the contributors, TriBITS Developers and the TriBITS Maintainer can all push new commits to that branch in a more collaborative way and have the PR Issue get updated automatically.
 
