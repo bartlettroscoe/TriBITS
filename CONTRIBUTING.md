@@ -23,6 +23,8 @@ Contributions to TriBITS are welcomed.  However, there are some [requirements](#
    * `TribitsDevelopersGuide.rst` document (under `tribits/doc/developers_guide/`)
    * `TribitsBuildReferenceBody.rst` document (under `tribits/doc/build_ref/`)
 
+**NOTE**: All of these tasks may not need to be done by a external contributor.  It is just that *someone* will need to do all of this before a contibution can be merged into the 'master' branch of the TriBITS repo.
+
 <a name="process">
 
 ## Preferred process for suggesting and making changes to TriBITS
