@@ -43,7 +43,7 @@ The details are given in the next section.
 ### Process Details
 
 The following roles are mentioned on the process descriptions:
-* **TriBITS Maintainer**: Individual with push rights to the main TriBITS repo (i.e. @bartlettroscoe).  Must review all issues and suggested changes and accept pull-requests.
+* **TriBITS Maintainer**: Individual with push rights to the main TriBITS repo (i.e. [@bartlettroscoe](https://github.com/bartlettroscoe)).  Must review all issues and suggested changes and accept pull-requests.
 * **TriBITS Developer**: Someone who knows how to built TriBITS as a project with its tests, add tests, make acceptable changes, create pull-requests, etc. but can't directly push to the main TriBITS github 'master' branch (see the role of [TriBITS System Developer](https://tribits.org/doc/TribitsDevelopersGuide.html#tribits-developer-and-user-roles)).  This might be the Issue Reporter.
 * **Issue Reporter**: A person who first reports an issue with TriBITS and would like some type of change to happen (i.e. to fix a defect, implement a new feature, etc.).  This might be a TriBITS Developer.
 
