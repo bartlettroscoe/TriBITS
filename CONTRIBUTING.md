@@ -43,7 +43,7 @@ The details are given in the next section.
 ### Process Details
 
 The following roles are mentioned on the process descriptions:
-* **TriBITS Maintainer**: Individual with push rights to the main TriBITS repo (i.e. Ross Bartlett).  Must review all issues and suggested changes and accept pull-requests.
+* **TriBITS Maintainer**: Individual with push rights to the main TriBITS repo (i.e. @bartlettroscoe).  Must review all issues and suggested changes and accept pull-requests.
 * **TriBITS Developer**: Someone who knows how to built TriBITS as a project with its tests, add tests, make acceptable changes, create pull-requests, etc. but can't directly push to the main TriBITS github 'master' branch (see the role of [TriBITS System Developer](https://tribits.org/doc/TribitsDevelopersGuide.html#tribits-developer-and-user-roles)).  This might be the Issue Reporter.
 * **Issue Reporter**: A person who first reports an issue with TriBITS and would like some type of change to happen (i.e. to fix a defect, implement a new feature, etc.).  This might be a TriBITS Developer.
 
@@ -56,7 +56,7 @@ With those definitions in place, the recommended/preferred process for contribut
 <a name="process_create_pull_request"/>
 
 2. **Create Pull-Request:** After the proposed change is approved in the GitHub Issue by the TriBITS Maintainer, then the TriBITS Developer (who might be the Issue Reporter or the TriBITS Maintainer) should create a Pull-Request performing the following steps:
-    * **create a topic/feature branch** in their forked TriBITS repo (use descriptive branch name with issue ID, e.g. `some-great-feature-123`) ,
+    * **create a topic/feature branch** in their forked TriBITS repo (use descriptive branch name with issue ID, e.g. `123-some-great-feature`) ,
     * **create commits with logs referencing the Issue ID** (e.g. `fix that thing (#123)`),
     * **issue a [pull-request](https://help.github.com/articles/using-pull-requests/) (i.e. PR)**.
     * The changes in the PR will automatically be tested using [Travis CI](https://travis-ci.org/TriBITSPub/TriBITS).  Also, the PR allows for a well managed code review (comments for each line of the change, for example).  The pull request should then reference the original GitHub Issue in a comment to link the PR to the original Issue.  (NOTE: A partial set of changes is just fine in the PR, just enough to start the code review process.)
