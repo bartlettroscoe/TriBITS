@@ -58,7 +58,7 @@ With those definitions in place, the recommended/preferred process for contribut
 <a name="process_create_pull_request"/>
 
 2. **Create Pull-Request:** After the proposed change is approved in the GitHub Issue by the TriBITS Maintainer, then the TriBITS Developer should create a Pull-Request performing the following steps:
-    * **Create a topic/feature branch** using a descriptive  name with GitHub issue ID (e.g. `123-some-great-feature`),
+    * **Create a topic/feature branch** using a descriptive name containing the Issue ID (e.g. `123-some-great-feature`),
     * **Create commits with logs messages referencing the Issue ID** (e.g. `fix that thing (#123)`),
     * **Issue a pull-request (PR)** by [pushing the topic branch to your fork](https://help.github.com/articles/pushing-to-a-remote/) and then [creating the pull request](https://help.github.com/articles/creating-a-pull-request/).
     * The **changes in the PR will automatically be tested** using [Travis CI](https://travis-ci.org/TriBITSPub/TriBITS).  Also, the PR allows for a well managed code review (comments for each line of the change, for example).  The pull request should then reference the original GitHub Issue in a comment to link the PR to the original Issue.  (NOTE: A partial set of changes is just fine in the PR, just enough to start the code review process.)
