@@ -1,0 +1,112 @@
+
+**************************************************************************
+analyze_and_report_cdash_results.py \
+  --date='2018-10-28' \
+  --cdash-project-name='ProjectName' \
+  --build-set-name='ProjectName Nightly Builds' \
+  --cdash-site-url='https://something.com/cdash' \
+  --cdash-builds-filters='builds_filters' \
+  --cdash-nonpassed-tests-filters='nonpasssing_tests_filters' \
+  --expected-builds-file='expectedBuilds.csv' \
+  --tests-with-issue-trackers-file='testsWithIssueTrackers.csv' \
+  --cdash-queries-cache-dir='/home/jfrye/TrilinosATDMStatus/TriBITS/analyze_and_report_cdash_results/twoif_12_twif_9_with_duplicate_nonpasing_testids' \
+  --cdash-base-cache-files-prefix='ProjectName_Nightly_Builds_' \
+  --use-cached-cdash-data='on' \
+  --limit-test-history-days='expectedBuilds.csv' \
+  --limit-table-rows='10' \
+  --print-details='off' \
+  --write-email-to-file='htmlFile.html' \
+  --email-from-address='' \
+  --send-email-to='' \
+
+***
+*** Query and analyze CDash results for ProjectName Nightly Builds for testing day 2018-10-28
+***
+
+Num expected builds = 6
+
+Num tests with issue trackers = 9
+
+CDash builds browser URL:
+
+  https://something.com/cdash/index.php?project=ProjectName&date=2018-10-28&builds_filters
+
+  Using cached data from file:
+    https://something.com/cdash/api/v1/index.php?project=ProjectName&date=2018-10-28&builds_filters
+
+Num builds = 6
+
+Getting list of nonpassing tests from CDash ...
+
+
+CDash nonpassing tests browser URL:
+
+  https://something.com/cdash/queryTests.php?project=ProjectName&date=2018-10-28&nonpasssing_tests_filters
+
+  Using cached data from file:
+    https://something.com/cdash/api/v1/queryTests.php?project=ProjectName&date=2018-10-28&nonpasssing_tests_filters
+
+Num nonpassing tests direct from CDash query = 22
+Num nonpassing tests after removing duplicate tests = 21
+Num nonpassing tests without issue trackers = 12
+Num nonpassing tests with issue trackers = 9
+Num nonpassing tests without issue trackers Failed = 12
+Num nonpassing tests without issue trackers Not Run = 0
+Num nonpassing tests with issue trackers Failed = 9
+Num nonpassing tests with issue trackers Not Run = 0
+Num tests with issue trackers gross passing or missing = 0
+
+Search for any missing expected builds ...
+
+Builds Missing: bm=0
+
+Search for any builds with configure failures ...
+
+Builds with Configure Failures: cf=0
+
+Search for any builds with compilation (build) failures ...
+
+Builds with Build Failures: bf=0
+
+Num tests with issue trackers passing or missing matching posted builds = 0
+
+Tests with issue trackers missing that match missing expected builds: num=0
+
+Num tests with issue trackers Passed = 0
+Num tests with issue trackers Missing = 0
+
+Tests without issue trackers Failed: twoif=12
+Getting 30 days of history for Anasazi_Epetra_BKS_norestart_test_MPI_4 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file
+Getting 30 days of history for Belos_gcrodr_hb_MPI_4 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file
+Getting 30 days of history for Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file
+Getting 30 days of history for KokkosKernels_blas_serial_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file
+Getting 30 days of history for KokkosKernels_common_serial_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file
+Getting 30 days of history for KokkosKernels_graph_serial_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file
+Getting 30 days of history for KokkosKernels_sparse_serial_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file
+Getting 30 days of history for MueLu_ConvergenceTpetra_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file
+Getting 30 days of history for MueLu_ConvergenceTpetra_MPI_4 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file
+Getting 30 days of history for Sacado_tradoptest_55_EQA_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file
+
+Tests without issue trackers Not Run: twoinr=0
+
+Tests with issue trackers Passed: twip=0
+
+Tests with issue trackers Missing: twim=0
+
+Tests with issue trackers Failed: twif=9
+Getting 30 days of history for MueLu_UnitTestsBlockedEpetra_MPI_1 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file
+Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file
+Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial on cee-rhel6 from cache file
+Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2 in the build Trilinos-atdm-cee-rhel6-intel-opt-serial on cee-rhel6 from cache file
+Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file
+Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial on cee-rhel6 from cache file
+Getting 30 days of history for PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3 in the build Trilinos-atdm-cee-rhel6-intel-opt-serial on cee-rhel6 from cache file
+Getting 30 days of history for Stratimikos_test_single_belos_thyra_solver_driver_nos1_nrhs8_MPI_1 in the build Trilinos-atdm-mutrino-intel-opt-openmp-KNL on mutrino from cache file
+Getting 30 days of history for Teko_ModALPreconditioner_MPI_1 in the build Trilinos-atdm-cee-rhel6-clang-opt-serial on cee-rhel6 from cache file
+
+Tests with issue trackers Not Run: twinr=0
+
+Writing HTML file 'htmlFile.html' ...
+
+FAILED (twoif=12, twif=9): ProjectName Nightly Builds on 2018-10-28
+

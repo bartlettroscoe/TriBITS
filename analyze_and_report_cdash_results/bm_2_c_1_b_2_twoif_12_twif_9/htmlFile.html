@@ -1,0 +1,432 @@
+<html>
+<head>
+<style>
+h1 {
+  font-size: 40px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+p {
+  font-size: 18px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>FAILED (bm=2, cf=1, bf=2, twoif=12, twif=9): Project Specialized Builds on 2018-10-28</h2>
+
+<h2>Build and Test results for Project Specialized Builds on 2018-10-28</h2>
+
+<p>
+<a href="https://something.com/cdash/index.php?project=ProjectName&date=2018-10-28&builds_filters">Builds on CDash</a> (num=6)<br>
+<a href="https://something.com/cdash/queryTests.php?project=ProjectName&date=2018-10-28&nonpasssing_tests_filters">Non-passing Tests on CDash</a> (num=21)<br>
+</p>
+
+<p>
+<font color="red">Builds Missing: bm=2</font><br>
+<font color="red">Builds with Configure Failures: cf=1</font><br>
+<font color="red">Builds with Build Failures: bf=2</font><br>
+<font color="red">Tests without issue trackers Failed: twoif=12</font><br>
+Tests with issue trackers Failed: twif=9<br>
+</p>
+
+<style>table, th, td {
+  padding: 5px;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+tr:nth-child(even) {background-color: #eee;}
+tr:nth-child(odd) {background-color: #fff;}
+</style>
+<h3>Builds Missing: bm=2</h3>
+<table style="width:100%" boarder="1">
+
+<tr>
+<th>Group</th>
+<th>Site</th>
+<th>Build Name</th>
+<th>Missing Status</th>
+</tr>
+
+<tr>
+<td align="left">Specialized</td>
+<td align="left">missing_&shy;site</td>
+<td align="left">Trilinos-atdm-waterman-gnu-release-debug-openmp</td>
+<td align="left">Build not found on CDash</td>
+</tr>
+
+<tr>
+<td align="left">Specialized</td>
+<td align="left">waterman</td>
+<td align="left">Trilinos-atdm-waterman-missing-build</td>
+<td align="left">Build not found on CDash</td>
+</tr>
+
+</table>
+
+<style>table, th, td {
+  padding: 5px;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+tr:nth-child(even) {background-color: #eee;}
+tr:nth-child(odd) {background-color: #fff;}
+</style>
+<h3>Builds with Configure Failures (limited to 15): cf=1</h3>
+<table style="width:100%" boarder="1">
+
+<tr>
+<th>Group</th>
+<th>Site</th>
+<th>Build Name</th>
+</tr>
+
+<tr>
+<td align="left">Specialized</td>
+<td align="left">cee-rhel6</td>
+<td align="left">Trilinos-atdm-cee-rhel6-clang-opt-serial</td>
+</tr>
+
+</table>
+
+<style>table, th, td {
+  padding: 5px;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+tr:nth-child(even) {background-color: #eee;}
+tr:nth-child(odd) {background-color: #fff;}
+</style>
+<h3>Builds with Build Failures (limited to 15): bf=2</h3>
+<table style="width:100%" boarder="1">
+
+<tr>
+<th>Group</th>
+<th>Site</th>
+<th>Build Name</th>
+</tr>
+
+<tr>
+<td align="left">Specialized</td>
+<td align="left">cee-rhel6</td>
+<td align="left">Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial</td>
+</tr>
+
+<tr>
+<td align="left">Specialized</td>
+<td align="left">cee-rhel6</td>
+<td align="left">Trilinos-atdm-cee-rhel6-intel-opt-serial</td>
+</tr>
+
+</table>
+
+<style>table, th, td {
+  padding: 5px;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+tr:nth-child(even) {background-color: #eee;}
+tr:nth-child(odd) {background-color: #fff;}
+</style>
+<h3><font color="red">Tests without issue trackers Failed (limited to 15): twoif=12</font></h3>
+<table style="width:100%" boarder="1">
+
+<tr>
+<th>Site</th>
+<th>Build Name</th>
+<th>Test Name</th>
+<th>Status</th>
+<th>Details</th>
+<th>Consec&shy;utive Non-pass Days</th>
+<th>Non-pass Last 30 Days</th>
+<th>Pass Last 30 Days</th>
+<th>Tracker</th>
+</tr>
+
+<tr>
+<td align="left">mutrino</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57860629&build=4107240">Anasazi_&shy;Epetra_&shy;BKS_&shy;norestart_&shy;test_&shy;MPI_&shy;4</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57860629&build=4107240"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Anasazi_Epetra_BKS_norestart_test_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">30</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Anasazi_Epetra_BKS_norestart_test_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">30</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Anasazi_Epetra_BKS_norestart_test_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">0</font></a></td>
+<td align="right"></td>
+</tr>
+
+<tr>
+<td align="left">mutrino</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57860535&build=4107241">Belos_&shy;gcrodr_&shy;hb_&shy;MPI_&shy;4</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57860535&build=4107241"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Belos_gcrodr_hb_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">30</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Belos_gcrodr_hb_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">30</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Belos_gcrodr_hb_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">0</font></a></td>
+<td align="right"></td>
+</tr>
+
+<tr>
+<td align="left">mutrino</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57859582&build=4107243">Intrepid2_&shy;unit-test_&shy;Discretization_&shy;Basis_&shy;HCURL_&shy;TRI_&shy;In_&shy;FEM_&shy;Serial_&shy;Test_&shy;01_&shy;SLFadDouble_&shy;MPI_&shy;1</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57859582&build=4107243"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">1</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">1</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Intrepid2_unit-test_Discretization_Basis_HCURL_TRI_In_FEM_Serial_Test_01_SLFadDouble_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">29</font></a></td>
+<td align="right"></td>
+</tr>
+
+<tr>
+<td align="left">mutrino</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57859101&build=4107245">KokkosKernels_&shy;blas_&shy;serial_&shy;MPI_&shy;1</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57859101&build=4107245"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Timeout)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=KokkosKernels_blas_serial_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">1</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=KokkosKernels_blas_serial_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">22</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=KokkosKernels_blas_serial_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">8</font></a></td>
+<td align="right"></td>
+</tr>
+
+<tr>
+<td align="left">mutrino</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57859104&build=4107245">KokkosKernels_&shy;common_&shy;serial_&shy;MPI_&shy;1</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57859104&build=4107245"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Timeout)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=KokkosKernels_common_serial_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">1</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=KokkosKernels_common_serial_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">9</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=KokkosKernels_common_serial_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">21</font></a></td>
+<td align="right"></td>
+</tr>
+
+<tr>
+<td align="left">mutrino</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57859103&build=4107245">KokkosKernels_&shy;graph_&shy;serial_&shy;MPI_&shy;1</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57859103&build=4107245"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Timeout)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=KokkosKernels_graph_serial_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">2</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=KokkosKernels_graph_serial_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">15</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=KokkosKernels_graph_serial_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">15</font></a></td>
+<td align="right"></td>
+</tr>
+
+<tr>
+<td align="left">mutrino</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57859102&build=4107245">KokkosKernels_&shy;sparse_&shy;serial_&shy;MPI_&shy;1</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57859102&build=4107245"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Timeout)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=KokkosKernels_sparse_serial_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">1</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=KokkosKernels_sparse_serial_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">14</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=KokkosKernels_sparse_serial_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">16</font></a></td>
+<td align="right"></td>
+</tr>
+
+<tr>
+<td align="left">mutrino</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57859885&build=4107246">MueLu_&shy;ConvergenceTpetra_&shy;MPI_&shy;1</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57859885&build=4107246"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=MueLu_ConvergenceTpetra_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">30</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=MueLu_ConvergenceTpetra_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">30</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=MueLu_ConvergenceTpetra_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">0</font></a></td>
+<td align="right"></td>
+</tr>
+
+<tr>
+<td align="left">mutrino</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57860801&build=4107246">MueLu_&shy;ConvergenceTpetra_&shy;MPI_&shy;4</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57860801&build=4107246"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=MueLu_ConvergenceTpetra_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">30</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=MueLu_ConvergenceTpetra_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">30</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=MueLu_ConvergenceTpetra_MPI_4&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">0</font></a></td>
+<td align="right"></td>
+</tr>
+
+<tr>
+<td align="left">mutrino</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57859328&build=4107254">Sacado_&shy;tradoptest_&shy;55_&shy;EQA_&shy;MPI_&shy;1</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57859328&build=4107254"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Sacado_tradoptest_55_EQA_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">1</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Sacado_tradoptest_55_EQA_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">1</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Sacado_tradoptest_55_EQA_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">29</font></a></td>
+<td align="right"></td>
+</tr>
+
+<tr>
+<td align="left">waterman</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-waterman-cuda-9.2-release-debug&field2=site&compare2=61&value2=waterman&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-waterman-cuda-9.2-release-debug</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57833323&build=4107537">Teko_&shy;testdriver_&shy;tpetra_&shy;MPI_&shy;1</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57833323&build=4107537"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-waterman-cuda-9.2-release-debug&field2=testname&compare2=61&value2=Teko_testdriver_tpetra_MPI_1&field3=site&compare3=61&value3=waterman&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">1</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-waterman-cuda-9.2-release-debug&field2=testname&compare2=61&value2=Teko_testdriver_tpetra_MPI_1&field3=site&compare3=61&value3=waterman&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">1</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-waterman-cuda-9.2-release-debug&field2=testname&compare2=61&value2=Teko_testdriver_tpetra_MPI_1&field3=site&compare3=61&value3=waterman&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">8</font></a></td>
+<td align="right"></td>
+</tr>
+
+<tr>
+<td align="left">waterman</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-waterman-cuda-9.2-release-debug&field2=site&compare2=61&value2=waterman&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-waterman-cuda-9.2-release-debug</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57834490&build=4107537">Teko_&shy;testdriver_&shy;tpetra_&shy;MPI_&shy;4</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57834490&build=4107537"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-waterman-cuda-9.2-release-debug&field2=testname&compare2=61&value2=Teko_testdriver_tpetra_MPI_4&field3=site&compare3=61&value3=waterman&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">1</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-waterman-cuda-9.2-release-debug&field2=testname&compare2=61&value2=Teko_testdriver_tpetra_MPI_4&field3=site&compare3=61&value3=waterman&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">1</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-waterman-cuda-9.2-release-debug&field2=testname&compare2=61&value2=Teko_testdriver_tpetra_MPI_4&field3=site&compare3=61&value3=waterman&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">8</font></a></td>
+<td align="right"></td>
+</tr>
+
+</table>
+
+<style>table, th, td {
+  padding: 5px;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+tr:nth-child(even) {background-color: #eee;}
+tr:nth-child(odd) {background-color: #fff;}
+</style>
+<h3>Tests with issue trackers Failed: twif=9</h3>
+<table style="width:100%" boarder="1">
+
+<tr>
+<th>Site</th>
+<th>Build Name</th>
+<th>Test Name</th>
+<th>Status</th>
+<th>Details</th>
+<th>Consec&shy;utive Non-pass Days</th>
+<th>Non-pass Last 30 Days</th>
+<th>Pass Last 30 Days</th>
+<th>Tracker</th>
+</tr>
+
+<tr>
+<td align="left">cee-rhel6</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=site&compare2=61&value2=cee-rhel6&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57816429&build=4107319">MueLu_&shy;UnitTestsBlockedEpetra_&shy;MPI_&shy;1</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57816429&build=4107319"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=testname&compare2=61&value2=MueLu_UnitTestsBlockedEpetra_MPI_1&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">15</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=testname&compare2=61&value2=MueLu_UnitTestsBlockedEpetra_MPI_1&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">15</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=testname&compare2=61&value2=MueLu_UnitTestsBlockedEpetra_MPI_1&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">0</font></a></td>
+<td align="right"><a href="https://github.com/trilinos/Trilinos/issues/3640">#3640</a></td>
+</tr>
+
+<tr>
+<td align="left">cee-rhel6</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=site&compare2=61&value2=cee-rhel6&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57816756&build=4107321">PanzerAdaptersIOSS_&shy;tIOSSConnManager2_&shy;MPI_&shy;2</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57816756&build=4107321"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">15</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">15</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">0</font></a></td>
+<td align="right"><a href="https://github.com/trilinos/Trilinos/issues/3632">#3632</a></td>
+</tr>
+
+<tr>
+<td align="left">cee-rhel6</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial&field2=site&compare2=61&value2=cee-rhel6&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57824636&build=4107733">PanzerAdaptersIOSS_&shy;tIOSSConnManager2_&shy;MPI_&shy;2</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57824636&build=4107733"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">1</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">1</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">0</font></a></td>
+<td align="right"><a href="https://github.com/trilinos/Trilinos/issues/3632">#3632</a></td>
+</tr>
+
+<tr>
+<td align="left">cee-rhel6</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-intel-opt-serial&field2=site&compare2=61&value2=cee-rhel6&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-cee-rhel6-intel-opt-serial</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57862531&build=4108567">PanzerAdaptersIOSS_&shy;tIOSSConnManager2_&shy;MPI_&shy;2</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57862531&build=4108567"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-intel-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">16</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-intel-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">16</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-intel-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">0</font></a></td>
+<td align="right"><a href="https://github.com/trilinos/Trilinos/issues/3632">#3632</a></td>
+</tr>
+
+<tr>
+<td align="left">cee-rhel6</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=site&compare2=61&value2=cee-rhel6&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57816757&build=4107321">PanzerAdaptersIOSS_&shy;tIOSSConnManager3_&shy;MPI_&shy;3</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57816757&build=4107321"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">15</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">15</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">0</font></a></td>
+<td align="right"><a href="https://github.com/trilinos/Trilinos/issues/3632">#3632</a></td>
+</tr>
+
+<tr>
+<td align="left">cee-rhel6</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial&field2=site&compare2=61&value2=cee-rhel6&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57825126&build=4107733">PanzerAdaptersIOSS_&shy;tIOSSConnManager3_&shy;MPI_&shy;3</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57825126&build=4107733"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">1</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">1</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">0</font></a></td>
+<td align="right"><a href="https://github.com/trilinos/Trilinos/issues/3632">#3632</a></td>
+</tr>
+
+<tr>
+<td align="left">cee-rhel6</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-intel-opt-serial&field2=site&compare2=61&value2=cee-rhel6&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-cee-rhel6-intel-opt-serial</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57862532&build=4108567">PanzerAdaptersIOSS_&shy;tIOSSConnManager3_&shy;MPI_&shy;3</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57862532&build=4108567"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-intel-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">16</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-intel-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">16</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-intel-opt-serial&field2=testname&compare2=61&value2=PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">0</font></a></td>
+<td align="right"><a href="https://github.com/trilinos/Trilinos/issues/3632">#3632</a></td>
+</tr>
+
+<tr>
+<td align="left">mutrino</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=site&compare2=61&value2=mutrino&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-mutrino-intel-opt-openmp-KNL</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57859513&build=4107255">Stratimikos_&shy;test_&shy;single_&shy;belos_&shy;thyra_&shy;solver_&shy;driver_&shy;nos1_&shy;nrhs8_&shy;MPI_&shy;1</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57859513&build=4107255"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Stratimikos_test_single_belos_thyra_solver_driver_nos1_nrhs8_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">30</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Stratimikos_test_single_belos_thyra_solver_driver_nos1_nrhs8_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">30</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-mutrino-intel-opt-openmp-KNL&field2=testname&compare2=61&value2=Stratimikos_test_single_belos_thyra_solver_driver_nos1_nrhs8_MPI_1&field3=site&compare3=61&value3=mutrino&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">0</font></a></td>
+<td align="right"><a href="https://github.com/trilinos/Trilinos/issues/3632">#3632</a></td>
+</tr>
+
+<tr>
+<td align="left">cee-rhel6</td>
+<td align="left"><a href="https://something.com/cdash/index.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=4&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=site&compare2=61&value2=cee-rhel6&field3=buildstarttime&compare3=84&value3=2018-10-29T00:00:00&field4=buildstarttime&compare4=83&value4=2018-09-29T00:00:00">Trilinos-atdm-cee-rhel6-clang-opt-serial</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57816373&build=4107331">Teko_&shy;ModALPreconditioner_&shy;MPI_&shy;1</a></td>
+<td align="left"><a href="https://something.com/cdash/testDetails.php?test=57816373&build=4107331"><font color="red">Failed</font></a></td>
+<td align="left">Completed (Failed)</td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=testname&compare2=61&value2=Teko_ModALPreconditioner_MPI_1&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">15</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=testname&compare2=61&value2=Teko_ModALPreconditioner_MPI_1&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="red">15</font></a></td>
+<td align="right"><a href="https://something.com/cdash/queryTests.php?project=ProjectName&filtercombine=and&filtercombine=&filtercount=5&showfilters=1&filtercombine=and&field1=buildname&compare1=61&value1=Trilinos-atdm-cee-rhel6-clang-opt-serial&field2=testname&compare2=61&value2=Teko_ModALPreconditioner_MPI_1&field3=site&compare3=61&value3=cee-rhel6&field4=buildstarttime&compare4=84&value4=2018-10-29T00:00:00&field5=buildstarttime&compare5=83&value5=2018-09-29T00:00:00"><font color="green">0</font></a></td>
+<td align="right"><a href="https://github.com/trilinos/Trilinos/issues/3638">#3638</a></td>
+</tr>
+
+</table>
+
+
+</body>
+</html>

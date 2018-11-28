@@ -1,0 +1,93 @@
+
+**************************************************************************
+analyze_and_report_cdash_results.py \
+  --date='2018-10-28' \
+  --cdash-project-name='ProjectName' \
+  --build-set-name='Project Specialized Builds' \
+  --cdash-site-url='https://something.com/cdash' \
+  --cdash-builds-filters='builds_filters' \
+  --cdash-nonpassed-tests-filters='nonpasssing_tests_filters' \
+  --expected-builds-file='expectedBuilds.csv' \
+  --tests-with-issue-trackers-file='testsWithIssueTrackers.csv' \
+  --cdash-queries-cache-dir='/home/jfrye/TrilinosATDMStatus/TriBITS/analyze_and_report_cdash_results/passed_clean' \
+  --cdash-base-cache-files-prefix='Project_Specialized_Builds_' \
+  --use-cached-cdash-data='on' \
+  --limit-test-history-days='expectedBuilds.csv' \
+  --limit-table-rows='10' \
+  --print-details='off' \
+  --write-email-to-file='htmlFile.html' \
+  --email-from-address='' \
+  --send-email-to='' \
+
+***
+*** Query and analyze CDash results for Project Specialized Builds for testing day 2018-10-28
+***
+
+Num expected builds = 6
+
+Num tests with issue trackers = 0
+
+CDash builds browser URL:
+
+  https://something.com/cdash/index.php?project=ProjectName&date=2018-10-28&builds_filters
+
+  Using cached data from file:
+    https://something.com/cdash/api/v1/index.php?project=ProjectName&date=2018-10-28&builds_filters
+
+Num builds = 6
+
+Getting list of nonpassing tests from CDash ...
+
+
+CDash nonpassing tests browser URL:
+
+  https://something.com/cdash/queryTests.php?project=ProjectName&date=2018-10-28&nonpasssing_tests_filters
+
+  Using cached data from file:
+    https://something.com/cdash/api/v1/queryTests.php?project=ProjectName&date=2018-10-28&nonpasssing_tests_filters
+
+Num nonpassing tests direct from CDash query = 0
+Num nonpassing tests after removing duplicate tests = 0
+Num nonpassing tests without issue trackers = 0
+Num nonpassing tests with issue trackers = 0
+Num nonpassing tests without issue trackers Failed = 0
+Num nonpassing tests without issue trackers Not Run = 0
+Num nonpassing tests with issue trackers Failed = 0
+Num nonpassing tests with issue trackers Not Run = 0
+Num tests with issue trackers gross passing or missing = 0
+
+Search for any missing expected builds ...
+
+Builds Missing: bm=0
+
+Search for any builds with configure failures ...
+
+Builds with Configure Failures: cf=0
+
+Search for any builds with compilation (build) failures ...
+
+Builds with Build Failures: bf=0
+
+Num tests with issue trackers passing or missing matching posted builds = 0
+
+Tests with issue trackers missing that match missing expected builds: num=0
+
+Num tests with issue trackers Passed = 0
+Num tests with issue trackers Missing = 0
+
+Tests without issue trackers Failed: twoif=0
+
+Tests without issue trackers Not Run: twoinr=0
+
+Tests with issue trackers Passed: twip=0
+
+Tests with issue trackers Missing: twim=0
+
+Tests with issue trackers Failed: twif=0
+
+Tests with issue trackers Not Run: twinr=0
+
+Writing HTML file 'htmlFile.html' ...
+
+PASSED: Project Specialized Builds on 2018-10-28
+

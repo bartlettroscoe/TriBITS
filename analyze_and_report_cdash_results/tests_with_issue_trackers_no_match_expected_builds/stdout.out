@@ -1,0 +1,42 @@
+
+**************************************************************************
+analyze_and_report_cdash_results.py \
+  --date='2018-10-28' \
+  --cdash-project-name='ProjectName' \
+  --build-set-name='ProjectName Nightly Builds' \
+  --cdash-site-url='https://something.com/cdash' \
+  --cdash-builds-filters='builds_filters' \
+  --cdash-nonpassed-tests-filters='nonpasssing_tests_filters' \
+  --expected-builds-file='expectedBuilds.csv' \
+  --tests-with-issue-trackers-file='testsWithIssueTrackers.csv' \
+  --cdash-queries-cache-dir='/home/jfrye/TrilinosATDMStatus/TriBITS/analyze_and_report_cdash_results/tests_with_issue_trackers_no_match_expected_builds' \
+  --cdash-base-cache-files-prefix='ProjectName_Nightly_Builds_' \
+  --use-cached-cdash-data='on' \
+  --limit-test-history-days='expectedBuilds.csv' \
+  --limit-table-rows='10' \
+  --print-details='off' \
+  --write-email-to-file='htmlFile.html' \
+  --email-from-address='' \
+  --send-email-to='' \
+
+***
+*** Query and analyze CDash results for ProjectName Nightly Builds for testing day 2018-10-28
+***
+
+Num expected builds = 6
+
+Num tests with issue trackers = 10
+
+Traceback (most recent call last):
+  File "/home/jfrye/TrilinosATDMStatus/TriBITS/tribits/ci_support/analyze_and_report_cdash_results.py", line 478, in <module>
+    raise Exception(errMsg)
+Exception: Error: The following tests with issue trackers did not match 'site' and 'buildName' in one of the expected builds:
+  {'site'='othersite', 'buildName'=otherbuild', 'testname'=Teko_ModALPreconditioner_MPI_1'}
+
+
+Error, could not compute the analysis due to above error so return failed!
+
+Writing HTML file 'htmlFile.html' ...
+
+FAILED (SCRIPT CRASHED): ProjectName Nightly Builds on 2018-10-28
+
