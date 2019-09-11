@@ -294,7 +294,7 @@ INCLUDE(PrintVar)
 #   ``DISABLED <messageWhyDisabled>``
 #
 #     If ``<messageWhyDisabled>`` is non-empty, then the test will be added by
-#     ctest but the ``DISABLED` test property will be set (see
+#     ctest but the ``DISABLED`` test property will be set (see
 #     `TRIBITS_ADD_TEST()`_).
 #
 #   ``ENVIRONMENT <var1>=<value1> <var2>=<value2> ..``.
