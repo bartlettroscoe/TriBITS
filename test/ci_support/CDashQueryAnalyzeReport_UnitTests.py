@@ -446,6 +446,45 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
     for i in range(len(listOfDicts_expected)):
       self.assertEqual(listOfDicts[i], listOfDicts_expected[i])
 
+
+
+
+
+
+
+
+
+  def test_col_3_row_2_required_and_optional_cols_1_pass(self):
+    csvFileStr=\
+        "col_0, col_1, col_2, opt_2\n"+\
+        "val_00, val_01, val_02, val_03\n"+\
+        "val_10, val_11, val_12, val_13\n"
+    csvFileName = "readCsvFileIntoListOfDicts_col_3_row_2_required_and_optional_cols_1_pass.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    listOfDicts = readCsvFileIntoListOfDicts(csvFileName,
+      ['col_0', 'col_1', 'col_2'],
+      ['opt_1', 'opt_2'] )
+    listOfDicts_expected = \
+      [
+        { 'col_0' : 'val_00', 'col_1' : 'val_01', 'col_2' : 'val_02' },
+        { 'col_0' : 'val_10', 'col_1' : 'val_11', 'col_2' : 'val_12' },
+        ]
+    self.assertEqual(len(listOfDicts), 2)
+    for i in range(len(listOfDicts_expected)):
+      self.assertEqual(listOfDicts[i], listOfDicts_expected[i])
+
+
+
+
+
+
+
+
+
+
+
+
   def test_too_few_required_headers_fail(self):
     csvFileStr=\
         "wrong col, col_1, col_2\n"+\
