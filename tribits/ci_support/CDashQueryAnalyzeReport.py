@@ -299,7 +299,9 @@ def extractCDashApiQueryData(cdashApiQueryUrl):
 #
 # But the requiredColumnHeadersList argument is optional.
 #
-def readCsvFileIntoListOfDicts(csvFileName, requiredColumnHeadersList=None):
+def readCsvFileIntoListOfDicts(csvFileName, requiredColumnHeadersList=None,
+  optionalColumnHeadersList=None,
+  ):
   listOfDicts = []
   with open(csvFileName, 'r') as csvFile:
     csvReader = csv.reader(csvFile)
