@@ -602,9 +602,29 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
     if not threwException:
       self.assertFalse("ERROR: Did not thown an excpetion")
 
-  # ToDo: Add test for reading a CSV file with no rows
+  def test_col_3_row_0_required_cols_pass(self):
+    csvFileStr=\
+        "col_0, col_1, col_2\n"
+    csvFileName = "readCsvFileIntoListOfDicts_col_3_row_0_required_cols_pass.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1', 'col_2'])
+    self.assertEqual(len(listOfDicts), 0)
 
-  # ToDo: Add test for reading an empty CSV file (no column headers)
+  def test_empty_csv_file_with_required_fields_fail(self):
+    csvFileStr=""
+    csvFileName = "readCsvFileIntoListOfDicts_empty_csv_file_with_required_fields_fail.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    threwException = True
+    try:
+      listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0'])
+      threwException = False
+    except Exception, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, CSV file '"+csvFileName+"' is empty which is not allowed!" )
+    if not threwException:
+      self.assertFalse("ERROR: Did not thown an excpetion")
 
 
 #############################################################################

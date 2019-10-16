@@ -319,8 +319,7 @@ def readCsvFileIntoListOfDicts(csvFileName, requiredColumnHeadersList=[],
   with open(csvFileName, 'r') as csvFile:
     csvReader = csv.reader(csvFile)
     # Get the list of column headers
-    columnHeadersList = csvReader.next()
-    stripWhiltespaceFromStrList(columnHeadersList)
+    columnHeadersList = getColumnHeadersFromCsvFileReader(csvFileName, csvReader)
     assertExpectedColumnHeadersFromCsvFile(csvFileName, requiredColumnHeadersList,
       optionalColumnHeadersList, columnHeadersList)
     # Read the rows of the CSV file into dicts
@@ -339,6 +338,17 @@ def readCsvFileIntoListOfDicts(csvFileName, requiredColumnHeadersList=[],
       dataRow += 1
   # Return the constructed object
   return listOfDicts
+
+
+def getColumnHeadersFromCsvFileReader(csvFileName, csvReader):
+  try:
+    columnHeadersList = csvReader.next()
+    stripWhiltespaceFromStrList(columnHeadersList)
+    return columnHeadersList
+  except StopIteration:
+    raise Exception(
+      "Error, CSV file '"+csvFileName+"' is empty which is not allowed!"
+      )
 
 
 def assertExpectedColumnHeadersFromCsvFile(csvFileName, requiredColumnHeadersList,
