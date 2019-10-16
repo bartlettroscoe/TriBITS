@@ -313,12 +313,7 @@ def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
     dataRow = 0
     for lineList in csvReader:
       if not lineList: continue # Ingore blank line
-      # Assert that the row has the right number of entries
-      if len(lineList) != len(columnHeadersList):
-        raise Exception(
-          "Error, data row "+str(dataRow)+" "+str(lineList)+" has"+\
-          " "+str(len(lineList))+" entries which does not macth"+\
-          " the number of column headers "+str(len(columnHeadersList))+"!")
+      assertExpectedNumRowsFromCsvFile(dataRow, lineList, columnHeadersList)
       # Read the row entries into a new dict
       rowDict = {}
       for j in range(len(columnHeadersList)):
@@ -328,7 +323,6 @@ def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
       dataRow += 1
   # Return the constructed object
   return listOfDicts
-
 
 
 def assertExpectedColumnHeadersListFromCsvFile(csvFileName, expectedColumnHeadersList,
@@ -348,6 +342,15 @@ def assertExpectedColumnHeadersListFromCsvFile(csvFileName, expectedColumnHeader
         raise Exception(
           "Error, column header "+str(i)+" '"+columnHeadersList[i]+"' does"+\
           " not match expected column header '"+expectedColumnHeadersList[i]+"'!")
+
+
+def assertExpectedNumRowsFromCsvFile(dataRow, lineList, columnHeadersList):
+  if len(lineList) != len(columnHeadersList):
+    raise Exception(
+      "Error, data row "+str(dataRow)+" "+str(lineList)+" has"+\
+      " "+str(len(lineList))+" entries which does not macth"+\
+      " the number of column headers "+str(len(columnHeadersList))+"!")
+
 
 # Get list of expected builds from CSV file
 def getExpectedBuildsListfromCsvFile(expectedBuildsFileName):
