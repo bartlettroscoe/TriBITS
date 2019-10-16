@@ -590,8 +590,17 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
     csvFileName = "readCsvFileIntoListOfDicts_col_3_row_2_bad_row_len_fail.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
-    #listOfDicts = readCsvFileIntoListOfDicts(csvFileName)
-    self.assertRaises(Exception, readCsvFileIntoListOfDicts, csvFileName)
+    threwException = True
+    try:
+      listOfDicts = readCsvFileIntoListOfDicts(csvFileName)
+      threwException = False
+    except Exception, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, for CSV file '"+csvFileName+"' the data row 1"+\
+        " ['val_10', ' val_11', ' val_12', ' extra'] has 4 entries"+\
+        " which does not macth the number of column headers 3!" )
+    if not threwException:
+      self.assertFalse("ERROR: Did not thown an excpetion")
 
   # ToDo: Add test for reading a CSV file with no rows
 

@@ -328,7 +328,8 @@ def readCsvFileIntoListOfDicts(csvFileName, requiredColumnHeadersList=[],
     dataRow = 0
     for lineList in csvReader:
       if not lineList: continue # Ingore blank line
-      assertExpectedNumRowsFromCsvFile(dataRow, lineList, columnHeadersList)
+      assertExpectedNumRowsFromCsvFile(csvFileName, dataRow, lineList,
+        columnHeadersList)
       # Read the row entries into a new dict
       rowDict = {}
       for j in range(len(columnHeadersList)):
@@ -373,10 +374,13 @@ def assertExpectedColumnHeadersFromCsvFile(csvFileName, requiredColumnHeadersLis
         )
 
 
-def assertExpectedNumRowsFromCsvFile(dataRow, lineList, columnHeadersList):
+def assertExpectedNumRowsFromCsvFile(csvFileName, dataRow, lineList,
+  columnHeadersList,
+  ):
   if len(lineList) != len(columnHeadersList):
     raise Exception(
-      "Error, data row "+str(dataRow)+" "+str(lineList)+" has"+\
+      "Error, for CSV file '"+csvFileName+"' the data row"+\
+      " "+str(dataRow)+" "+str(lineList)+" has"+\
       " "+str(len(lineList))+" entries which does not macth"+\
       " the number of column headers "+str(len(columnHeadersList))+"!")
 
