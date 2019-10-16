@@ -295,9 +295,18 @@ def extractCDashApiQueryData(cdashApiQueryUrl):
 #
 # and the expected list of column headers would be:
 #
+# This function can also allow the user to assert that the included columns
+# match a set of required and optional headers.  For example, that above cSV file would match:
+#
 #   requiredColumnHeadersList = [ 'col_0', 'col_1', 'col_2' ]
 #
-# But the requiredColumnHeadersList argument is optional.
+# or:
+#
+#   requiredColumnHeadersList = [ 'col_0', 'col_1', 'col_2' ]
+#   optionalColumnHeadersList = [ 'col_2', 'col_3', ]
+#
+# But the requiredColumnHeadersList and optionalColumnHeadersList argument
+# lists are optional.
 #
 def readCsvFileIntoListOfDicts(csvFileName, requiredColumnHeadersList=[],
   optionalColumnHeadersList=[],
