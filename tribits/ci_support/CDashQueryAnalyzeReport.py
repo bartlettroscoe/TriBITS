@@ -50,6 +50,7 @@ import json
 import datetime
 import copy
 import pprint
+import csv
 
 from FindGeneralScriptSupport import *
 from GeneralScriptSupport import *
@@ -301,12 +302,17 @@ def extractCDashApiQueryData(cdashApiQueryUrl):
 def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
   listOfDicts = []
   with open(csvFileName, 'r') as csvFile:
+    csvReader = csv.reader(csvFile)
     # Get the list of column headers
-    columnHeadersLineStr = csvFile.readline().strip()
-    columnHeadersRawStrList = columnHeadersLineStr.split(',')
-    columnHeadersList = []
-    for headerRawStr in columnHeadersRawStrList:
-      columnHeadersList.append(headerRawStr.strip())
+#    columnHeadersLineStr = csvFile.readline().strip()
+#    columnHeadersRawStrList = columnHeadersLineStr.split(',')
+#    columnHeadersList = []
+#    for headerRawStr in columnHeadersRawStrList:
+#      columnHeadersList.append(headerRawStr.strip())
+    columnHeadersList = csvReader.next()
+    for i in range(len(columnHeadersList)):
+      columnHeadersList[i] = columnHeadersList[i].strip() 
+    #print("columnHeadersList = "+str(columnHeadersList))
     if expectedColumnHeadersList:
       if len(columnHeadersList) != len(expectedColumnHeadersList):
         raise Exception(
@@ -322,15 +328,17 @@ def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
             " not match expected column header '"+expectedColumnHeadersList[i]+"'!")
     # Read the rows of the CSV file into dicts
     dataRow = 0
-    line = csvFile.readline().strip()
-    while line:
+    #line = csvFile.readline().strip()
+    #while line:
+    for lineList in csvReader:
       #print("\ndataRow = "+str(dataRow))
-      lineList = line.split(',')
+      #lineList = line.split(',')
       #print(lineList)
+      if not lineList: continue
       # Assert that the row has the right number of entries
       if len(lineList) != len(columnHeadersList):
         raise Exception(
-          "Error, data row "+str(dataRow)+" '"+line+"' has"+\
+          "Error, data row "+str(dataRow)+" "+str(lineList)+" has"+\
           " "+str(len(lineList))+" entries which does not macth"+\
           " the number of column headers "+str(len(columnHeadersList))+"!")
       # Read the row entries into a new dict
@@ -340,7 +348,7 @@ def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
       #print(rowDict)
       listOfDicts.append(rowDict)
       # Update for next row
-      line = csvFile.readline().strip()
+      #line = csvFile.readline().strip()
       dataRow += 1
   # Return the constructed object
   return listOfDicts
