@@ -304,15 +304,9 @@ def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
   with open(csvFileName, 'r') as csvFile:
     csvReader = csv.reader(csvFile)
     # Get the list of column headers
-#    columnHeadersLineStr = csvFile.readline().strip()
-#    columnHeadersRawStrList = columnHeadersLineStr.split(',')
-#    columnHeadersList = []
-#    for headerRawStr in columnHeadersRawStrList:
-#      columnHeadersList.append(headerRawStr.strip())
     columnHeadersList = csvReader.next()
     for i in range(len(columnHeadersList)):
       columnHeadersList[i] = columnHeadersList[i].strip() 
-    #print("columnHeadersList = "+str(columnHeadersList))
     if expectedColumnHeadersList:
       if len(columnHeadersList) != len(expectedColumnHeadersList):
         raise Exception(
@@ -328,13 +322,8 @@ def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
             " not match expected column header '"+expectedColumnHeadersList[i]+"'!")
     # Read the rows of the CSV file into dicts
     dataRow = 0
-    #line = csvFile.readline().strip()
-    #while line:
     for lineList in csvReader:
-      #print("\ndataRow = "+str(dataRow))
-      #lineList = line.split(',')
-      #print(lineList)
-      if not lineList: continue
+      if not lineList: continue # Ingore blank line
       # Assert that the row has the right number of entries
       if len(lineList) != len(columnHeadersList):
         raise Exception(
@@ -345,10 +334,8 @@ def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
       rowDict = {}
       for j in range(len(columnHeadersList)):
         rowDict.update( { columnHeadersList[j] : lineList[j].strip() } )
-      #print(rowDict)
       listOfDicts.append(rowDict)
       # Update for next row
-      #line = csvFile.readline().strip()
       dataRow += 1
   # Return the constructed object
   return listOfDicts
