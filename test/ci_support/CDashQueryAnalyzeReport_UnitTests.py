@@ -390,7 +390,7 @@ class test_removeElementsFromListGivenIndexes(unittest.TestCase):
 
 class test_readCsvFileIntoListOfDicts(unittest.TestCase):
 
-  def test_col_3_row_2_required_cols__pass(self):
+  def test_col_3_row_2_required_cols_pass(self):
     csvFileStr=\
         "col_0, col_1, col_2\n"+\
         "val_00, val_01, val_02\n"+\
@@ -412,7 +412,7 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
     csvFileStr=\
         "col_0, col_1, col_2\n"+\
         "val_00, val_01, val_02\n"+\
-        "val_10, val_11, val_12\n\n\n"  # Add extra blanks line for extra test!
+        "val_10, val_11, val_12\n"
     csvFileName = "readCsvFileIntoListOfDicts_test_col_3_row_2_required_cols_tuple_pass.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
@@ -527,21 +527,38 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
     csvFileName = "readCsvFileIntoListOfDicts_too_few_required_headers_fail.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
-    #listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1'])
-    self.assertRaises(Exception, readCsvFileIntoListOfDicts,
-      csvFileName, ['col_0', 'col_1'])
+    threwException = True
+    try:
+      listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1'])
+      threwException = False
+    except Exception, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, for CSV file '"+csvFileName+"' the column header 'wrong col'"+\
+        " is not in the set of required column headers '['col_0', 'col_1']'"+\
+        " or optional column headers '[]'!"
+        )
+    if not threwException:
+      self.assertFalse("ERROR: Did not thown an excpetion")
 
   def test_too_many_required_headers_fail(self):
     csvFileStr=\
-        "wrong col, col_1, col_2\n"+\
+        "col_0, col_1, col_2\n"+\
         "val_00, val_01, val_02\n"
     csvFileName = "readCsvFileIntoListOfDicts_too_many_required_headers_fail.csv"
     with open(csvFileName, 'w') as csvFileToWrite:
       csvFileToWrite.write(csvFileStr)
-    #listOfDicts = readCsvFileIntoListOfDicts(csvFileName,
-    #  ['col_0', 'col_1', 'col_2', 'col3'])
-    self.assertRaises(Exception, readCsvFileIntoListOfDicts,
-      csvFileName, ['col_0', 'col_1', 'col_2', 'col3'])
+    threwException = True
+    try:
+      listOfDicts = readCsvFileIntoListOfDicts(csvFileName,
+        ['col_0', 'col_1', 'col_2', 'col_3'])
+      threwException = False
+    except Exception, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, for CSV file '"+csvFileName+"' the required header"+\
+        " 'col_3' is missing from the set of included column headers"+\
+        " '['col_0', 'col_1', 'col_2']'!" )
+    if not threwException:
+      self.assertFalse("ERROR: Did not thown an excpetion")
 
   def test_wrong_required_col_0_fail(self):
     csvFileStr=\

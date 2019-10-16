@@ -308,6 +308,10 @@ def extractCDashApiQueryData(cdashApiQueryUrl):
 # But the requiredColumnHeadersList and optionalColumnHeadersList argument
 # lists are optional.
 #
+# Also, the columns can be appear in any order as long as they match all of
+# the required headers and don't contain any headers not in the list of
+# expected headers.
+#
 def readCsvFileIntoListOfDicts(csvFileName, requiredColumnHeadersList=[],
   optionalColumnHeadersList=[],
   ):
@@ -318,7 +322,7 @@ def readCsvFileIntoListOfDicts(csvFileName, requiredColumnHeadersList=[],
     columnHeadersList = csvReader.next()
     for i in range(len(columnHeadersList)):
       columnHeadersList[i] = columnHeadersList[i].strip() 
-    assertExpectedColumnHeadersListFromCsvFile(csvFileName, requiredColumnHeadersList,
+    assertExpectedColumnHeadersFromCsvFile(csvFileName, requiredColumnHeadersList,
       optionalColumnHeadersList, columnHeadersList)
     # Read the rows of the CSV file into dicts
     dataRow = 0
@@ -336,30 +340,37 @@ def readCsvFileIntoListOfDicts(csvFileName, requiredColumnHeadersList=[],
   return listOfDicts
 
 
-def assertExpectedColumnHeadersListFromCsvFile(csvFileName, requiredColumnHeadersList,
+def assertExpectedColumnHeadersFromCsvFile(csvFileName, requiredColumnHeadersList,
   optionalColumnHeadersList, columnHeadersList,
   ):
+
   if not requiredColumnHeadersList and not optionalColumnHeadersList:
-    return  # No expected columns
-  requiredHeadersSet = set(requiredColumnHeadersList)
+    return  # No expected column headers to assert against!
+
   requiredAndOptionalHeadersSet = set(requiredColumnHeadersList)
   requiredAndOptionalHeadersSet.update(optionalColumnHeadersList)
   columnHeadersSet = set(columnHeadersList)
-  if not columnHeadersSet.issubset(requiredAndOptionalHeadersSet):
-    raise Exception(
-      "Error, for CSV file '"+csvFileName+"' the"+\
-      " column headers '"+str(columnHeadersList)+"' is not in the list"+\
-      " of required column headers '"+str(requiredColumnHeadersList)+"'"+\
-      " or optional column headers '"+str(optionalColumnHeadersList)+"'"+\
-      ""
-      )
-  if not requiredHeadersSet.issubset(columnHeadersSet):
-    raise Exception(
-      "Error, for CSV file '"+csvFileName+"' the"+\
-      " column headers '"+str(columnHeadersList)+"' do not contain all of the"+\
-      " required column headers '"+str(requiredColumnHeadersList)+"'"+\
-      ""
-      )
+
+  # Assert that each column header is expected
+  for colHeader in columnHeadersList:
+    if not colHeader in requiredAndOptionalHeadersSet:
+      raise Exception(
+        "Error, for CSV file '"+csvFileName+"' the"+\
+        " column header '"+str(colHeader)+"' is not in the set"+\
+        " of required column headers '"+str(requiredColumnHeadersList)+"'"+\
+        " or optional column headers '"+str(optionalColumnHeadersList)+"'!"+\
+        ""
+        )
+
+  # Assert that all of the required headers are present
+  for requiredHeader in requiredColumnHeadersList:
+    if not requiredHeader in columnHeadersSet:
+      raise Exception(
+        "Error, for CSV file '"+csvFileName+"' the"+\
+        " required header '"+str(requiredHeader)+"' is missing from the"+\
+        " set of included column headers '"+str(columnHeadersList)+"'!"+\
+        ""
+        )
 
 
 def assertExpectedNumRowsFromCsvFile(dataRow, lineList, columnHeadersList):
