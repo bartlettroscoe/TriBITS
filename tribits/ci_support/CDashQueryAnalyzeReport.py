@@ -306,12 +306,6 @@ def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
     columnHeadersList = csvReader.next()
     for i in range(len(columnHeadersList)):
       columnHeadersList[i] = columnHeadersList[i].strip() 
-#    # Get the list of column headers
-#    columnHeadersLineStr = csvFile.readline().strip()
-#    columnHeadersRawStrList = columnHeadersLineStr.split(',')
-#    columnHeadersList = []
-#    for headerRawStr in columnHeadersRawStrList:
-#      columnHeadersList.append(headerRawStr.strip())
     #print("columnHeadersList = "+str(columnHeadersList))
     if expectedColumnHeadersList:
       if len(columnHeadersList) != len(expectedColumnHeadersList):
@@ -328,11 +322,8 @@ def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
             " not match expected column header '"+expectedColumnHeadersList[i]+"'!")
     # Read the rows of the CSV file into dicts
     dataRow = 0
-#    line = csvFile.readline().strip()
-#    while line:
     for lineList in csvReader:
       #print("\ndataRow = "+str(dataRow))
-#      lineList = line.split(',')
       #print(lineList)
       if not lineList:
         continue
@@ -349,7 +340,6 @@ def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
       #print(rowDict)
       listOfDicts.append(rowDict)
       # Update for next row
-#      line = csvFile.readline().strip()
       dataRow += 1
   # Return the constructed object
   return listOfDicts
