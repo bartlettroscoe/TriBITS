@@ -597,7 +597,7 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
     except Exception, errMsg:
       self.assertEqual( str(errMsg),
         "Error, for CSV file '"+csvFileName+"' the data row 1"+\
-        " ['val_10', ' val_11', ' val_12', ' extra'] has 4 entries"+\
+        " ['val_10', 'val_11', 'val_12', 'extra'] has 4 entries"+\
         " which does not macth the number of column headers 3!" )
     if not threwException:
       self.assertFalse("ERROR: Did not thown an excpetion")

@@ -320,20 +320,20 @@ def readCsvFileIntoListOfDicts(csvFileName, requiredColumnHeadersList=[],
     csvReader = csv.reader(csvFile)
     # Get the list of column headers
     columnHeadersList = csvReader.next()
-    for i in range(len(columnHeadersList)):
-      columnHeadersList[i] = columnHeadersList[i].strip() 
+    stripWhiltespaceFromStrList(columnHeadersList)
     assertExpectedColumnHeadersFromCsvFile(csvFileName, requiredColumnHeadersList,
       optionalColumnHeadersList, columnHeadersList)
     # Read the rows of the CSV file into dicts
     dataRow = 0
     for lineList in csvReader:
       if not lineList: continue # Ingore blank line
+      stripWhiltespaceFromStrList(lineList)
       assertExpectedNumRowsFromCsvFile(csvFileName, dataRow, lineList,
         columnHeadersList)
       # Read the row entries into a new dict
       rowDict = {}
       for j in range(len(columnHeadersList)):
-        rowDict.update( { columnHeadersList[j] : lineList[j].strip() } )
+        rowDict.update( { columnHeadersList[j] : lineList[j] } )
       listOfDicts.append(rowDict)
       # Update for next row
       dataRow += 1
@@ -383,6 +383,10 @@ def assertExpectedNumRowsFromCsvFile(csvFileName, dataRow, lineList,
       " "+str(dataRow)+" "+str(lineList)+" has"+\
       " "+str(len(lineList))+" entries which does not macth"+\
       " the number of column headers "+str(len(columnHeadersList))+"!")
+
+
+def stripWhiltespaceFromStrList(strListInOut):
+  for i in range(len(strListInOut)): strListInOut[i] = strListInOut[i].strip()
 
 
 # Get list of expected builds from CSV file
