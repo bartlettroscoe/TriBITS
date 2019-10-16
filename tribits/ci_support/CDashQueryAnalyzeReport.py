@@ -307,19 +307,8 @@ def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
     columnHeadersList = csvReader.next()
     for i in range(len(columnHeadersList)):
       columnHeadersList[i] = columnHeadersList[i].strip() 
-    if expectedColumnHeadersList:
-      if len(columnHeadersList) != len(expectedColumnHeadersList):
-        raise Exception(
-          "Error, for CSV file '"+csvFileName+"' the"+\
-          " column headers '"+str(columnHeadersList)+"' has"+\
-          " "+str(len(columnHeadersList))+" items but the expected"+\
-          " set of column headers '"+str(expectedColumnHeadersList)+"'"+\
-          " has "+str(len(expectedColumnHeadersList))+" items!")
-      for i in range(len(columnHeadersList)):
-        if columnHeadersList[i] != expectedColumnHeadersList[i]:
-          raise Exception(
-            "Error, column header "+str(i)+" '"+columnHeadersList[i]+"' does"+\
-            " not match expected column header '"+expectedColumnHeadersList[i]+"'!")
+    assertExpectedColumnHeadersListFromCsvFile(csvFileName, expectedColumnHeadersList,
+      columnHeadersList)
     # Read the rows of the CSV file into dicts
     dataRow = 0
     for lineList in csvReader:
@@ -340,6 +329,25 @@ def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
   # Return the constructed object
   return listOfDicts
 
+
+
+def assertExpectedColumnHeadersListFromCsvFile(csvFileName, expectedColumnHeadersList,
+  columnHeadersList,
+  ):
+  if expectedColumnHeadersList:
+    if len(columnHeadersList) != len(expectedColumnHeadersList):
+      raise Exception(
+        "Error, for CSV file '"+csvFileName+"' the"+\
+        " column headers '"+str(columnHeadersList)+"' has"+\
+        " "+str(len(columnHeadersList))+" items but the expected"+\
+        " set of column headers '"+str(expectedColumnHeadersList)+"'"+\
+        " has "+str(len(expectedColumnHeadersList))+" items!")
+    for i in range(len(columnHeadersList)):
+      if columnHeadersList[i] != expectedColumnHeadersList[i]:
+        None
+        raise Exception(
+          "Error, column header "+str(i)+" '"+columnHeadersList[i]+"' does"+\
+          " not match expected column header '"+expectedColumnHeadersList[i]+"'!")
 
 # Get list of expected builds from CSV file
 def getExpectedBuildsListfromCsvFile(expectedBuildsFileName):
