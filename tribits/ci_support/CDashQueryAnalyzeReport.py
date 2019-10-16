@@ -295,11 +295,11 @@ def extractCDashApiQueryData(cdashApiQueryUrl):
 #
 # and the expected list of column headers would be:
 #
-#   expectedColumnHeadersList = [ 'col_0', 'col_1', 'col_2' ]
+#   requiredColumnHeadersList = [ 'col_0', 'col_1', 'col_2' ]
 #
-# But the expectedColumnHeadersList argument is optional.
+# But the requiredColumnHeadersList argument is optional.
 #
-def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
+def readCsvFileIntoListOfDicts(csvFileName, requiredColumnHeadersList=None):
   listOfDicts = []
   with open(csvFileName, 'r') as csvFile:
     csvReader = csv.reader(csvFile)
@@ -307,7 +307,7 @@ def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
     columnHeadersList = csvReader.next()
     for i in range(len(columnHeadersList)):
       columnHeadersList[i] = columnHeadersList[i].strip() 
-    assertExpectedColumnHeadersListFromCsvFile(csvFileName, expectedColumnHeadersList,
+    assertExpectedColumnHeadersListFromCsvFile(csvFileName, requiredColumnHeadersList,
       columnHeadersList)
     # Read the rows of the CSV file into dicts
     dataRow = 0
@@ -325,23 +325,23 @@ def readCsvFileIntoListOfDicts(csvFileName, expectedColumnHeadersList=None):
   return listOfDicts
 
 
-def assertExpectedColumnHeadersListFromCsvFile(csvFileName, expectedColumnHeadersList,
+def assertExpectedColumnHeadersListFromCsvFile(csvFileName, requiredColumnHeadersList,
   columnHeadersList,
   ):
-  if expectedColumnHeadersList:
-    if len(columnHeadersList) != len(expectedColumnHeadersList):
+  if requiredColumnHeadersList:
+    if len(columnHeadersList) != len(requiredColumnHeadersList):
       raise Exception(
         "Error, for CSV file '"+csvFileName+"' the"+\
         " column headers '"+str(columnHeadersList)+"' has"+\
         " "+str(len(columnHeadersList))+" items but the expected"+\
-        " set of column headers '"+str(expectedColumnHeadersList)+"'"+\
-        " has "+str(len(expectedColumnHeadersList))+" items!")
+        " set of column headers '"+str(requiredColumnHeadersList)+"'"+\
+        " has "+str(len(requiredColumnHeadersList))+" items!")
     for i in range(len(columnHeadersList)):
-      if columnHeadersList[i] != expectedColumnHeadersList[i]:
+      if columnHeadersList[i] != requiredColumnHeadersList[i]:
         None
         raise Exception(
           "Error, column header "+str(i)+" '"+columnHeadersList[i]+"' does"+\
-          " not match expected column header '"+expectedColumnHeadersList[i]+"'!")
+          " not match expected column header '"+requiredColumnHeadersList[i]+"'!")
 
 
 def assertExpectedNumRowsFromCsvFile(dataRow, lineList, columnHeadersList):
