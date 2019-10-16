@@ -482,6 +482,25 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
     for i in range(len(listOfDicts_required)):
       self.assertEqual(listOfDicts[i], listOfDicts_required[i])
 
+  def test_col_3_row_2_optional_only_pass(self):
+    csvFileStr=\
+        "col_0, col_1, col_2, opt_1\n"+\
+        "val_00, val_01, val_02, val_03\n"+\
+        "val_10, val_11, val_12, val_13\n"
+    csvFileName = "readCsvFileIntoListOfDicts_col_3_row_2_optional_only_pass.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    listOfDicts = readCsvFileIntoListOfDicts(csvFileName,
+      (), ['opt_0', 'opt_1', 'col_0', 'col_1', 'col_2'])
+    listOfDicts_required = \
+      [
+        { 'col_0':'val_00', 'col_1':'val_01', 'col_2':'val_02', 'opt_1':'val_03' },
+        { 'col_0':'val_10', 'col_1':'val_11', 'col_2':'val_12', 'opt_1':'val_13' },
+        ]
+    self.assertEqual(len(listOfDicts), 2)
+    for i in range(len(listOfDicts_required)):
+      self.assertEqual(listOfDicts[i], listOfDicts_required[i])
+
   def test_col_3_row_2_required_3_optional_2_col_opt_1_mixed_order_pass(self):
     csvFileStr=\
         "col_2, opt_1, col_1, col_0\n"+\
