@@ -408,6 +408,26 @@ class test_readCsvFileIntoListOfDicts(unittest.TestCase):
     for i in range(len(listOfDicts_required)):
       self.assertEqual(listOfDicts[i], listOfDicts_required[i])
 
+  def test_col_3_row_2_w_blanks_required_cols_pass(self):
+    csvFileStr=\
+        "col_0, col_1, col_2\n"+\
+        "\n\n"+\
+        "val_00, val_01, val_02\n"+\
+        "\n"+\
+        "val_10, val_11, val_12\n\n\n"
+    csvFileName = "readCsvFileIntoListOfDicts_col_3_row_2_w_blanks_required_cols_pass.csv"
+    with open(csvFileName, 'w') as csvFileToWrite:
+      csvFileToWrite.write(csvFileStr)
+    listOfDicts = readCsvFileIntoListOfDicts(csvFileName, ['col_0', 'col_1', 'col_2'])
+    listOfDicts_required = \
+      [
+        { 'col_0' : 'val_00', 'col_1' : 'val_01', 'col_2' : 'val_02' },
+        { 'col_0' : 'val_10', 'col_1' : 'val_11', 'col_2' : 'val_12' },
+        ]
+    self.assertEqual(len(listOfDicts), 2)
+    for i in range(len(listOfDicts_required)):
+      self.assertEqual(listOfDicts[i], listOfDicts_required[i])
+
   def test_col_3_row_2_required_cols_tuple_pass(self):
     csvFileStr=\
         "col_0, col_1, col_2\n"+\
