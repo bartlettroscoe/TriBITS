@@ -37,9 +37,9 @@ variable::
   ${PROJECT_NAME}_SE_PACKAGES
 
 That list is created from the information in the
-`<repoDir>/PackagesList.cmake`_ and `<packageDir>>/Dependencies.cmake`_ files
-and the Dependencies.cmake files for the top-level packages must be read in
-order to define that variable.
+`<repoDir>/PackagesList.cmake`_ and `<packageDir>/cmake/Dependencies.cmake`_
+files and the Dependencies.cmake files for the top-level packages must be read
+in order to define that variable.
 
 The full list of defined TPLs is stored in the variable::
 
