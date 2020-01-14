@@ -701,7 +701,8 @@ MACRO(TRIBITS_READ_SUBPACKAGE_DEPENDENCIES  PACKAGE_NAME  PACKAGE_DIR
   SET(SUBPACKAGE_FULLNAME ${PACKAGE_NAME}${SUBPACKAGE_NAME})
 
   #
-  # A) Get ready to read in the contents of this this subpakages's Dependencies.cmake file
+  # A) Get ready to read in the contents of this this subpakages's
+  # Dependencies.cmake file
   #
 
   SET(${SUBPACKAGE_FULLNAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES "")
