@@ -8,8 +8,57 @@ the TriBITS system itself and should not need to be know by TriBITS Project
 maintainers.
 
 
-A) Top-level user cache variables
-+++++++++++++++++++++++++++++++++
+List of all defined packages and TPLs
++++++++++++++++++++++++++++++++++++++
+
+The full list of defined top-level parent packages is stored in the variable::
+
+  ${PROJECT_NAME}_PACKAGES
+
+This list does **not** include any subpackages.  This gets created from the
+`<repoDir>/PackagesList.cmake`_ file from each processed TriBITS repository.
+
+This full number of defined packages is given in the variable::
+
+  ${PROJECT_NAME}_NUM_PACKAGES
+
+and the 0-based index of the last package in the array
+``${PROJECT_NAME}_PACKAGES`` is given in::
+
+  ${PROJECT_NAME}_LAST_PACKAGE_IDX
+
+This data gets set in functions in the file::
+
+  TribitsProcessPackagesAndDirsLists.cmake
+
+The full list of all of the defined packages and subpackages is stored in the
+variable::
+
+  ${PROJECT_NAME}_SE_PACKAGES
+
+That list is created from the information in the
+`<repoDir>/PackagesList.cmake`_ and `<packageDir>>/Dependencies.cmake`_ files
+and the Dependencies.cmake files for the top-level packages must be read in
+order to define that variable.
+
+The full list of defined TPLs is stored in the variable::
+
+  ${PROJECT_NAME}_TPLS
+
+This list is created from the `<repoDir>/TPLsList.cmake` files from each
+defined TriBITS Repository.  Along with this, the following variables for each
+of these TriBITS TPLs are defined::
+
+* `${TPL_NAME}_FINDMOD`_
+* `${TPL_NAME}_TESTGROUP`_
+
+This data gets set in functions in the file::
+
+  TribitsProcessTplsLists.cmake  
+
+
+Top-level user cache variables
+++++++++++++++++++++++++++++++
 
 The following variables are set by the user to determine what packages get
 enabled or disabled::
@@ -45,8 +94,9 @@ this functionality in the directory::
 
   tribits/package_arch/UntiTests/
 
-B) Top-level internal non-cache variables defining direct package dependencies
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Top-level internal non-cache variables defining direct package dependencies
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The following top-level non-cache variables are defined after reading in each
 SE package's Dependencies.cmake file and they are used to define the basic
@@ -84,7 +134,9 @@ package and TPL dependencies::
     ${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES.  These should not include
     indirect dependencies but it is harmless to list these also.
 
-Given the above variables, the following derived variables are then set::
+Given the above variables, the following derived variables are then set which
+provide navigation from a package to its downstream/forward dependent
+packages::
 
   ${PACKAGE_NAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES
   
@@ -110,6 +162,25 @@ Given the above variables, the following derived variables are then set::
     forward SE packages that list this SE package in their
     ${FORWARD_PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES variables.
 
+Some subset of these packages will turn out to be external packages
+(e.g. TPLs).  If a package can be built internally, it will have::
+
+  ${PACKAGE_NAME}_SOURCE_DIR != ""
+
+set which means that it could be built internally.  However, even packages
+that could be built internally may be chosen to be treated as TPLs by
+setting::
+
+  -D TPL_ENABLE_<ExternalPackage>=ON
+
+Therefore, the final status if a listed dependency is an internal packages or
+an external package is provided by the variable::
+
+  ${PACKAGE_NAME}_PACKAGE_STATUS=[INTERNAL|EXTERNAL]
+
+Even other package upstream from an <ExternalPackage> must therefore be
+treated as an external package automatically.
+
 The primary TriBITS file that processes and defines these variables is:
 
   TribitsAdjustPackageEnables.cmake
@@ -120,8 +191,18 @@ this functionality in the directory:
   tribits/package_arch/UntiTests/
 
 
-C) Top-level internal cache variables defining header and library dependencies
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+External Package/TPL Dependencies
++++++++++++++++++++++++++++++++++
+
+ToDo: Document how dependencies between external packages/TPLs are determined
+in FindTPL<ExternalPackage>Dependencies.cmake files and
+<ExternalPackage>_LIB_REQUIRED_DEP_PACKAGES_OVERRIDE and
+<ExternalPackage>_LIB_OPTIONAL_DEP_PACKAGES_OVERRIDE variables that can be
+overridden in the cache.
+
+
+Top-level internal cache variables defining header and library dependencies
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The following global internal cache variables are used to communicate
 the required header directory paths and libraries needed to build and
@@ -203,8 +284,8 @@ link against a given package's capabilities::
     variable defined for them.
 
 
-D) Notes on dependency logic
-++++++++++++++++++++++++++++
+Notes on dependency logic
++++++++++++++++++++++++++
 
 The logic used to define the intra-package linkage variables is complex due to
 a number of factors:
