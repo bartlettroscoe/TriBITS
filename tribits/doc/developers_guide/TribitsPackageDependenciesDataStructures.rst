@@ -1,21 +1,18 @@
-################################################################################
-#
-#                         TriBITS Package Dependencies 
-#
-################################################################################
+TriBITS Package Dependencies Data Structures
+--------------------------------------------
 
-Last updated 2014/09/30
-
-Here we describe how package dependencies are set up and managed in this the
-TriBITS CMake build system.
+This section describes the global CMake variables that make up the
+data-structures that define the TriBITS package system.  This defines a graph
+of package and TPL dependencies.  This information is meant for maintainers of
+the TriBITS system itself and should not need to be know by TriBITS Project
+maintainers.
 
 
---------------------------------------------------------------------------------
 A) Top-level user cache variables
---------------------------------------------------------------------------------
++++++++++++++++++++++++++++++++++
 
-See the TribitsDevelopersGuide.rst document for the definition of the
-variables:
+The following variables are set by the user to determine what packages get
+enabled or disabled::
 
   ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME}:BOOL
   
@@ -35,33 +32,28 @@ variables:
   
   ${PROJECT_NAME}_ENABLE_EXAMPLES:BOOL
 
-These variables are defined in the file:
+These variables are defined in the file::
 
    TribitsGlobalMacros.cmake
 
-The way that packages are enabled depending on the above user cache varaibles
-is described in the TribitsDevelopersGuide.rst document.
-
-This dependency logic is executed in the TriBITS file:
+This dependency logic is executed in the TriBITS file::
 
     TribitsAdjustPackageEnables.cmake
 
 There are pretty good unit and regression tests to demonstrate and protect
-this functionality in the directory:
+this functionality in the directory::
 
   tribits/package_arch/UntiTests/
 
-
---------------------------------------------------------------------------------
 B) Top-level internal non-cache variables defining direct package dependencies
---------------------------------------------------------------------------------
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The following top-level non-cache variables are defined by each SE package's
-Dependencies.cmake file and they are used to define the basic dependencies
-that exist between ${PROJECT_NAME} SE packages to support the SE package
-enable and disable logic described above.  These variables taken together
-constitute a bidirectionally navigateable tree data-structure for SE package
-and TPL dependencies.
+The following top-level non-cache variables are defined after reading in each
+SE package's Dependencies.cmake file and they are used to define the basic
+dependencies that exist between ${PROJECT_NAME} SE packages to support the SE
+package enable and disable logic described above.  These variables taken
+together constitute a bidirectionally navigate-able tree data-structure for SE
+package and TPL dependencies::
 
   ${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES
   
@@ -92,7 +84,7 @@ and TPL dependencies.
     ${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES.  These should not include
     indirect dependencies but it is harmless to list these also.
 
-Given the above variables, the following derived variables are then set:
+Given the above variables, the following derived variables are then set::
 
   ${PACKAGE_NAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES
   
@@ -128,13 +120,12 @@ this functionality in the directory:
   tribits/package_arch/UntiTests/
 
 
---------------------------------------------------------------------------------
 C) Top-level internal cache variables defining header and library dependencies
---------------------------------------------------------------------------------
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The following global internal cache variables are used to communicate
 the required header directory paths and libraries needed to build and
-link against a given package's capabilities.
+link against a given package's capabilities::
 
   ${PACKAGE_NAME}_INCLUDE_DIRS
 
@@ -142,7 +133,14 @@ link against a given package's capabilities.
     to compile client code against this (sub)packages sources and it's
     upstream packages and TPL sources.  This variable is used whenever
     building downstream code including downstream libraries or executables in
-    the same package, or libraries or executables in downstream packages.
+    the same package, or libraries or executables in downstream packages.  It
+    is also used to list out in ${PACKAGE_NAME}Config.cmake and
+    Makefile.export.${PACKAGE_NAME} files.
+
+    ToDo: Look to eliminate this variable and just add it to the package's
+    library targets with target_include_directories().
+
+    ToDo: Split off ${PACKAGE_NAME}_TPL_INCLUDE_DIRS
   
   ${PACKAGE_NAME}_LIBRARY_DIRS
   
@@ -150,12 +148,12 @@ link against a given package's capabilities.
     libraries for this packages and it's upstream packages and TPLs.  Adding
     these library directories to the CMake link line is unnecessary and would
     cause link-line too long errors on some systems.  Instead, this list of
-    library directories is used when creating the ${PACKAGE_NAME}Config.cmake
-    files.
+    library directories is used when creating ${PACKAGE_NAME}Config.cmake and
+    Makefile.export.${PACKAGE_NAME} files.
   
   ${PACKAGE_NAME}_LIBRARIES
   
-    Defines as list of *only* the libraries associated with the given
+    Defines list of *only* the libraries associated with the given
     (sub)package and does *not* list libraries in upstream packages.  Linkages
     to upstream packages is taken care of with calls to
     TARGET_LINK_LIBRARIES(...) and the dependency management system in CMake
@@ -183,7 +181,7 @@ link against a given package's capabilities.
     ${PROJECT_NAME}_GENERATE_EXPORT_FILE_DEPENDENCIES=ON.  This is needed to
     generate the export makefile Makefile.export.${PACKAGE_NAME}.  NOTE: This
     list does *not* include the package itself.  This list is created after
-    all of the enable/disable logic is applied..
+    all of the enable/disable logic is applied.
  
   ${PARENT_PACKAGE_NAME}_LIB_TARGETS
  
@@ -205,9 +203,8 @@ link against a given package's capabilities.
     variable defined for them.
 
 
---------------------------------------------------------------------------------
 D) Notes on dependency logic
---------------------------------------------------------------------------------
+++++++++++++++++++++++++++++
 
 The logic used to define the intra-package linkage variables is complex due to
 a number of factors:
@@ -224,7 +221,7 @@ the system except to say that they are excluded from the package's exported
 library dependencies.
 
 The management and usage of the intra-package linkage variables is spread
-across a number of TriBITS *.cmake files but the primary ones are:
+across a number of TriBITS ``*.cmake`` files but the primary ones are::
 
   TribitsPackageMacros.cmake
   TribitsSubPackageMacros.cmake
@@ -236,7 +233,7 @@ are the key files.  The CMake code in these files all work together in
 coordination to set up and use these variables in a way that allows for smooth
 compiling and linking of source code for users of the TriBITS system.
 
-Another file with complex dependency logic related to these variables is:
+Another file with complex dependency logic related to these variables is::
 
    TribitsWriteClientExportFiles.cmake
 
@@ -248,4 +245,6 @@ say the least.  Also, currently, there is essentially no unit or regression
 testing in place for the CMake code in these files that manipulate these
 intra-package dependency variables.  Because this logic is tied in with
 actually building and linking code, there has not been a way set up yet to
-allow it to be efficiently tested outside of the actual build.
+allow it to be efficiently tested outside of the actual build.  But there are
+a number of example projects that are part of the automated TriBITS test suite
+that do test much of the logic used in these variables.
