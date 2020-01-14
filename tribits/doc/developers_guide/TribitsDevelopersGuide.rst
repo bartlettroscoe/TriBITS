@@ -9173,7 +9173,7 @@ is contained.  This information is meant to make it easier to understand and
 manipulate the internal implementation of TriBITS.
 
 
-.. include:: TribitsPackageDependenciesDataStructures.rst
+.. include:: ../../core/package_arch/TribitsPackageDependenciesDataStructures.rst
 
 
 .. include:: TribitsSystemMacroFunctionDoc.rst
