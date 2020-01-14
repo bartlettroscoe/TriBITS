@@ -9176,6 +9176,10 @@ manipulate the internal implementation of TriBITS.
 .. include:: TribitsPackageDependenciesDataStructures.rst
 
 
+.. include:: TribitsSystemMacroFunctionDoc.rst
+
+
+
 .. ***
 .. *** Common references
 .. **
