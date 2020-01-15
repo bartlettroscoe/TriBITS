@@ -1785,6 +1785,8 @@ Once all of the TriBITS SE package's ``Dependencies.cmake`` files have been
 processed, the following *TriBITS Package Top-Level Local Variables* are
 defined:
 
+  .. _${PACKAGE_NAME}_SOURCE_DIR:
+
   ``${PACKAGE_NAME}_SOURCE_DIR``
 
     The absolute path to the package's base source directory.  CMake code, for
@@ -1794,6 +1796,8 @@ defined:
     defined for all declared packages that exist, independent of whether they
     are enabled or not.  This variable is set as soon as it is known if the
     given package exists or not.
+
+  .. _${PACKAGE_NAME}_BINARY_DIR:
 
   ``${PACKAGE_NAME}_BINARY_DIR``
 
@@ -2219,6 +2223,8 @@ TriBITS TPL`_.
 
 Once the `<repoDir>/TPLsList.cmake`_ files are all processed, then each
 defined TPL ``TPL_NAME`` is assigned the following global non-cache variables:
+
+  .. _${PACKAGE_NAME}_FINDMOD:
 
   .. _${TPL_NAME}_FINDMOD:
 

@@ -43,22 +43,43 @@ more details.
 
 ToDo: Deal with old data-structures below after the refactoring is complete.
 
-
-
 The full list of defined top-level parent packages is stored in the
-project-level non-cache variable array::
+project-level non-cache list variable::
 
   ${PROJECT_NAME}_PACKAGES
 
 This list does **not** include any subpackages.  This gets created from the
 `<repoDir>/PackagesList.cmake`_ file from each processed TriBITS repository.
 
-This full number of defined packages is given in the variable::
+The list of paths for each of these top-level packages, relative to the base
+project's soruce directory ``${PROJECT_SOURCE_DIR}`` (or
+``${${PROJECT_NAME}_SOURCE_DIR}``) is given in the project-level non-cache
+list variable::
+
+  ${PROJECT_NAME}_PACKAGE_DIRS
+
+This list also does **not** include any subpackages.  This list also gets
+created from the `<repoDir>/PackagesList.cmake`_ file from each processed
+TriBITS repository.
+
+This list of directories is kept seprate from the seamingly redundant
+``${PACKAGE_NAME}_SOURCE_DIR`` varaibles because
+``${PACKAGE_NAME}_SOURCE_DIR`` is the **absolute path** to the pacakges's
+source tree while the directory path listed in
+``${PROJECT_NAME}_PACKAGE_DIRS`` is realtive the the base project.  It turns
+out that there are times it is more convenient to use the absolute path
+(i.e. when one package refers to the source tree of another package) and other
+times when it is more convenient to have a list of relative paths (like
+looking up a package based on its path).
+
+This full number of defined top-level parent packages (i.e. the number of
+items in the array ``${PROJECT_NAME}_PACKAGES``) is given in the variable::
 
   ${PROJECT_NAME}_NUM_PACKAGES
 
 and the 0-based index of the last package in the array
-``${PROJECT_NAME}_PACKAGES`` is given in::
+``${PROJECT_NAME}_PACKAGES`` (i.e. ``${PROJECT_NAME}_NUM_PACKAGES - 1``) is
+given in::
 
   ${PROJECT_NAME}_LAST_PACKAGE_IDX
 
@@ -74,7 +95,10 @@ variable::
 That list is created from the information in the
 `<repoDir>/PackagesList.cmake`_ and `<packageDir>/cmake/Dependencies.cmake`_
 files and the Dependencies.cmake files for the top-level packages must be read
-in order to define that variable.
+in order to define that variable and those files are read and processed in the
+macro `TRIBITS_READ_ALL_PACKAGE_DEPENDENCIES()`_ using macros in the file::
+
+  TribitsAdjustPackageEnables.cmake
 
 The full list of defined TPLs is stored in the variable::
 
