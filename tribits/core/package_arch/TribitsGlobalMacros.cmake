@@ -2481,15 +2481,12 @@ MACRO(TRIBITS_CONFIGURE_ENABLED_PACKAGES)
   # other even downstream packages (which is pretty messed up really).
   #
 
-  SET(PACKAGE_IDX 0)
   FOREACH(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
 
     # Get all the package sources independent of whether they are enabled or not.
     # There are some messed up packages that grab parts out of unrelated
     # downstream packages that might not even be enabled.  To support this,
     # allow this.
-    LIST(GET ${PROJECT_NAME}_PACKAGE_DIRS ${PACKAGE_IDX} PACKAGE_DIR)
-    #PRINT_VAR(${TRIBITS_PACKAGE}_SOURCE_DIR)
 
     TRIBITS_DETERMINE_IF_PROCESS_PACKAGE(${TRIBITS_PACKAGE}
        PROCESS_PACKAGE  PACKAGE_ENABLE_STR)
@@ -2507,15 +2504,14 @@ MACRO(TRIBITS_CONFIGURE_ENABLED_PACKAGES)
             ${CMAKE_CURRENT_BINARY_DIR}/${${TRIBITS_PACKAGE}_SPECIFIED_BINARY_DIR})
         ENDIF()
       ELSE()
-        SET(${TRIBITS_PACKAGE}_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_DIR})
+        SET(${TRIBITS_PACKAGE}_BINARY_DIR
+	  ${CMAKE_CURRENT_BINARY_DIR}/${${TRIBITS_PACKAGE}_REL_SOURCE_DIR})
       ENDIF()
       IF (${PROJECT_NAME}_VERBOSE_CONFIGURE)
         PRINT_VAR(${TRIBITS_PACKAGE}_BINARY_DIR)
       ENDIF()
 
     ENDIF()
-
-    MATH(EXPR PACKAGE_IDX "${PACKAGE_IDX}+1")
 
   ENDFOREACH()
 
