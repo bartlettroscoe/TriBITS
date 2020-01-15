@@ -2755,10 +2755,6 @@ MACRO(TRIBITS_SETUP_PACKAGING_AND_DISTRIBUTION)
 
     IF (NOT TRIBITS_PACKAGE_DONT_IGNORE)
 
-      LIST(FIND _SE_OR_FULL_PACKAGES ${TRIBITS_PACKAGE} PACKAGE_IDX)
-      LIST(GET _SE_OR_FULL_PACKAGE_DIRS ${PACKAGE_IDX} PACKAGE_DIR)
-      # ToDo: Repalce the above O(N) LIST(FIND ...) with a O(1) lookup ...
-
       # Checking if we have a relative path to the package's files. Since the
       # exclude is a regular expression any "../" will be interpretted as <any
       # char><any char>/ which would never match the package's actual
@@ -2768,14 +2764,17 @@ MACRO(TRIBITS_SETUP_PACKAGING_AND_DISTRIBUTION)
       # find_path for the CMakeLists.txt file for the package. Since the
       # package has to have this file to work correctly it should be
       # guaranteed to be there.
-      STRING(REGEX MATCH "[.][.]/" IS_RELATIVE_PATH ${PACKAGE_DIR})
-      IF("${IS_RELATIVE_PATH}" STREQUAL "")
-        SET(CPACK_SOURCE_IGNORE_FILES "${PROJECT_SOURCE_DIR}/${PACKAGE_DIR}/"
+      STRING(REGEX MATCH "[.][.]/" RELATIVE_PATH_CHARS_MATCH
+	${${TRIBITS_PACKAGE}_REL_SOURCE_DIR})
+      IF ("${RELATIVE_PATH_CHARS_MATCH}" STREQUAL "")
+        SET(CPACK_SOURCE_IGNORE_FILES
+	  "${PROJECT_SOURCE_DIR}/${${TRIBITS_PACKAGE}_REL_SOURCE_DIR}/"
           ${CPACK_SOURCE_IGNORE_FILES})
       ELSE()
         FIND_PATH(ABSOLUTE_PATH  CMakeLists.txt  PATHS
-          ${PROJECT_SOURCE_DIR}/${PACKAGE_DIR} NO_DEFAULT_PATH)
-        IF("${ABSOLUTE_PATH}" STREQUAL "ABSOLUTE_PATH-NOTFOUND")
+          "${PROJECT_SOURCE_DIR}/${${TRIBITS_PACKAGE}_REL_SOURCE_DIR}"
+	  NO_DEFAULT_PATH)
+        IF ("${ABSOLUTE_PATH}" STREQUAL "ABSOLUTE_PATH-NOTFOUND")
           MESSAGE(AUTHOR_WARNING "Relative path found for disabled package"
             " ${TRIBITS_PACKAGE} but package was missing a CMakeLists.txt file."
             " This disabled package will likely not be excluded from a source release")
