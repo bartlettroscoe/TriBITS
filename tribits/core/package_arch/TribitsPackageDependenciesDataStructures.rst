@@ -8,10 +8,45 @@ the TriBITS system itself and should not need to be know by TriBITS Project
 maintainers.
 
 
-List of all defined packages and TPLs
-+++++++++++++++++++++++++++++++++++++
+List of all defined internal (TriBITS) and external (TPL) packages
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The full list of defined top-level parent packages is stored in the variable::
+The full list of defined external packages (TPLs) and top-level internal
+packages (TriBITS packages) is storied in the project-level non-cache list
+variable::
+
+  ${PROJECT_NAME}_ALL_PACKAGES_REF63
+
+The first set of elements in this list are the defined external packages
+(TPLs) that are read in from the `<repoDir>/TPLsList.cmake`_ files from each
+processed TriBITS repository, in order.  This is followed by the set of
+internal packages (TriBITS packages) that are defined in the
+`<repoDir>/PackagesList.cmake`_ files from each processed TriBITS repository,
+read in order.
+
+An internal package will have a non-empty `${PACKAGE_NAME}_SOURCE_DIR`_
+varaible set while an external package (TPL) in this list will have a
+non-empty `${PACKAGE_NAME}_FINDMOD`_ varaible set.  However, the final
+decision if a package is treated as an internal or external package is
+determiend by the variable::
+
+  ${PACKAGE_NAME}_PACKAGE_STATUS=[INTERNAL|EXTERNAL]
+
+For example, a package that has a non-empty ``${PACKAGE_NAME}_SOURCE_DIR`` can
+have ``${PACKAGE_NAME}_PACKAGE_STATUS=EXTERNAL`` in a number of different use
+cases (such as setting ``TPL_ENABLE_${PACKAGE_NAME}=ON``.
+
+NOTE: The same external package (TPL) can be duplicated in multiple
+``TPLsList.cmake`` files.  This has the affect of allowing overrides of the
+``FindTPL<TPLName>.cmake`` module.  See the discussion in `TriBITS TPL`_ for
+more details.
+
+ToDo: Deal with old data-structures below after the refactoring is complete.
+
+
+
+The full list of defined top-level parent packages is stored in the
+project-level non-cache variable array::
 
   ${PROJECT_NAME}_PACKAGES
 
