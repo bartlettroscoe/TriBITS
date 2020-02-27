@@ -711,7 +711,28 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     # correct.
 
     # Read the written file 'test_data.json' and verify that it is correct
-    raise Exception("ToDo: Implement this check!")
+    testDataLOD = eval(open(testOutputDir+"/test_data.json", 'r').read())
+    self.assertEqual(len(testDataLOD), 9)
+    # Make sure an entry from 'twif' exists!
+    testIdx = getIdxOfTestInTestLOD(testDataLOD, 'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-clang-opt-serial',
+      'MueLu_UnitTestsBlockedEpetra_MPI_1')
+    testDict = testDataLOD[testIdx]
+    self.assertEqual(testDict['site'], 'cee-rhel6')
+    self.assertEqual(testDict['buildName'], 'Trilinos-atdm-cee-rhel6-clang-opt-serial')
+    self.assertEqual(testDict['testname'], 'MueLu_UnitTestsBlockedEpetra_MPI_1')
+    self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
+      '2018-10-28T06:10:33 UTC')
+    # Make sure an entry from 'twinr' exists!
+    testIdx = getIdxOfTestInTestLOD(testDataLOD, 'cee-rhel6',
+      'Trilinos-atdm-cee-rhel6-clang-opt-serial',
+      'Teko_ModALPreconditioner_MPI_1')
+    testDict = testDataLOD[testIdx]
+    self.assertEqual(testDict['site'], 'cee-rhel6')
+    self.assertEqual(testDict['buildName'], 'Trilinos-atdm-cee-rhel6-clang-opt-serial')
+    self.assertEqual(testDict['testname'], 'Teko_ModALPreconditioner_MPI_1')
+    self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
+      '2018-10-28T06:10:33 UTC')
 
 
   # Test with some duplicate tests from CDash query (this happens in real life

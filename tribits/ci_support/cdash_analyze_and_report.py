@@ -979,7 +979,7 @@ if __name__ == '__main__':
 
     if inOptions.writeTestDataToFile:
       testDataFileName = inOptions.writeTestDataToFile
-      print("\nWriting out gathered test dta to file "+testDataFileName+" ...")
+      print("\nWriting out gathered test data to file "+testDataFileName+" ...")
       testDataLOD = twipLOD + twimLOD + twifLOD + twinrLOD
       # ToDo: Add the first inOptions.limitTableRows elements of twiofLOD and twoinrLOD ...
       CDQAR.pprintPythonDataToFile(testDataLOD, testDataFileName)
