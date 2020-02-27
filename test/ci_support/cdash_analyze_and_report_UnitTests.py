@@ -559,7 +559,8 @@ class test_cdash_analyze_and_report(unittest.TestCase):
       testCaseName,
       [
         "--limit-test-history-days=30",   # Test that you can set this as int
-        "--write-failing-tests-without-issue-trackers-to-file=twoif.csv"
+        "--write-failing-tests-without-issue-trackers-to-file=twoif.csv",
+        "--write-test-data-to-file=test_data.json"
         ],
       1,
       "FAILED (twoif=10, twoinr=2, twif=8, twinr=1): ProjectName Nightly Builds on 2018-10-28",
@@ -708,6 +709,9 @@ class test_cdash_analyze_and_report(unittest.TestCase):
     # tests for the guts of what is being called.  Just want to macke sure the
     # right number of tests are being written and the first and last are
     # correct.
+
+    # Read the written file 'test_data.json' and verify that it is correct
+    raise Exception("ToDo: Implement this check!")
 
 
   # Test with some duplicate tests from CDash query (this happens in real life
