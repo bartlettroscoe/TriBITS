@@ -969,12 +969,20 @@ if __name__ == '__main__':
     #
 
     if inOptions.writeFailingTestsWithoutIssueTrackersToFile:
-
       twoifCsvFileName = inOptions.writeFailingTestsWithoutIssueTrackersToFile
-
       print("\nWriting list of 'twiof' to file "+twoifCsvFileName+" ...")
-
       CDQAR.writeTestsLODToCsvFile(twoifLOD, twoifCsvFileName)
+
+    #
+    # D.7) Write out test data to CSV file
+    #
+
+    if inOptions.writeTestDataToFile:
+      testDataFileName = inOptions.writeTestDataToFile
+      print("\nWriting out gathered test dta to file "+testDataFileName+" ...")
+      testDataLOD = twipLOD + twimLOD + twifLOD + twinrLOD
+      # ToDo: Add the first inOptions.limitTableRows elements of twiofLOD and twoinrLOD ...
+      CDQAR.pprintPythonDataToFile(testDataLOD, testDataFileName)
 
   except Exception:
     # Traceback!
