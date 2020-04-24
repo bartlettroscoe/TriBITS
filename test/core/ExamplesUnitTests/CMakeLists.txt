@@ -1326,109 +1326,95 @@ IF (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
       OUTPUT_VARIABLE  TribitsExProj_INSTALL_OWNING_GROUP)
   ENDIF()
 
-  TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms
-    OVERALL_WORKING_DIRECTORY TEST_NAME
-    OVERALL_NUM_MPI_PROCS 1
-    EXCLUDE_IF_NOT_TRUE CMAKE_SUPPORTS_CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS
-
-    TEST_0
-      MESSAGE "Copy TribitsExampleProject so we can change the source permissions"
-      CMND cp
-      ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
-
-    TEST_1
-      MESSAGE "Make TribitsExampleProject source dir user rwX only!"
-      CMND chmod
-      ARGS g-rwx,o-rwx -R TribitsExampleProject
-
-    TEST_2
-      MESSAGE "Do initial configure with just libs not tests with default install settings"
-      CMND ${CMAKE_COMMAND}
-      ARGS
-        ${TribitsExampleProject_COMMON_CONFIG_ARGS}
-        -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
-        -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
-        -DTribitsExProj_ENABLE_WithSubpackages=ON
-        -DCMAKE_INSTALL_PREFIX=install_base/install
-        -DTribitsExProj_MAKE_INSTALL_WORLD_READABLE=TRUE
-        -DTribitsExProj_MAKE_INSTALL_GROUP_WRITABLE=TRUE
-        -DTribitsExProj_MAKE_INSTALL_GROUP=${TribitsExProj_INSTALL_OWNING_GROUP}
-        -DTribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=install_base/install
-        TribitsExampleProject
-      PASS_REGULAR_EXPRESSION_ALL
-        "Configuring done"
-      ALWAYS_FAIL_ON_NONZERO_RETURN
-
-    TEST_3
-      MESSAGE "Do make to build everything"
-      CMND make ARGS ${CTEST_BUILD_FLAGS}
-      ALWAYS_FAIL_ON_NONZERO_RETURN
-
-    TEST_4
-      MESSAGE "Make install with fixup of permissions"
-      CMND make ARGS ${CTEST_BUILD_FLAGS} install
-      PASS_REGULAR_EXPRESSION_ALL
-        ".*/install_base/install/include/wsp_c/C.hpp"
-        ".*/install_base/install/lib/libpws_c.a"
-      ALWAYS_FAIL_ON_NONZERO_RETURN
-
-    TEST_5
-      MESSAGE "Check some installed directory permissions and the owning group"
-      CMND ls ARGS -ld
-        install_base
-        install_base/install
-        install_base/install/include
-        install_base/install/lib
-        install_base/install/bin
-      PASS_REGULAR_EXPRESSION_ALL
-        "drwxrwxr-x .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install"
-        "drwxrwxr-x .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install"
-        "drwxrwxr-x .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/bin"
-        "drwxrwxr-x .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/include"
-        "drwxrwxr-x .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/lib"
-        "drwxrwxr-x .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/share/WithSubpackagesC/scripts"
-      ALWAYS_FAIL_ON_NONZERO_RETURN
-
-    TEST_6
-      MESSAGE "Check some installed file permissions"
-      CMND ls ARGS -l
-        install_base/install
-        install_base/install/include
-        install_base/install/lib
-        install_base/install/bin
-      PASS_REGULAR_EXPRESSION_ALL
-        "[-]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* hello_world.exe"
-        "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* Makefile.export.HelloWorld"
-        "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* libhello_world_lib.a"
-        "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/share/WithSubpackagesC/scripts/regular_file.txt"
-        "[-]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/share/WithSubpackagesC/scripts/exec_script.sh"
-      ALWAYS_FAIL_ON_NONZERO_RETURN
-
-    # ToDo: Run an installed script that must have the execute permissions!
-
-
-    )
-
 ENDIF()
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Windows
+  TEST_0
+    MESSAGE "Copy TribitsExampleProject so we can change the source permissions"
+    CMND cp
+    ARGS -r ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject .
+
+  TEST_1
+    MESSAGE "Make TribitsExampleProject source dir user rwX only!"
+    CMND chmod
+    ARGS g-rwx,o-rwx -R TribitsExampleProject
+
+  TEST_2
+    MESSAGE "Do initial configure with just libs not tests with default install settings"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
+      -DTribitsExProj_ENABLE_WithSubpackages=ON
+      -DCMAKE_INSTALL_PREFIX=install_base/install
+      -DTribitsExProj_MAKE_INSTALL_WORLD_READABLE=TRUE
+      -DTribitsExProj_MAKE_INSTALL_GROUP_WRITABLE=TRUE
+      -DTribitsExProj_MAKE_INSTALL_GROUP=${TribitsExProj_INSTALL_OWNING_GROUP}
+      -DTribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=install_base/install
+      TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_3
+    MESSAGE "Do make to build everything"
+    CMND make ARGS ${CTEST_BUILD_FLAGS}
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_4
+    MESSAGE "Make install with fixup of permissions"
+    CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    PASS_REGULAR_EXPRESSION_ALL
+      ".*/install_base/install/include/wsp_c/C.hpp"
+      ".*/install_base/install/lib/libpws_c.a"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_5
+    MESSAGE "Check some installed directory permissions and the owning group"
+    CMND ls ARGS -ld
+      install_base
+      install_base/install
+      install_base/install/bin
+      install_base/install/include
+      install_base/install/lib
+      install_base/install/share/WithSubpackagesC/stuff
+    PASS_REGULAR_EXPRESSION_ALL
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/bin"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/include"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/lib"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/share/WithSubpackagesC/stuff"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_6
+    MESSAGE "Check some installed file permissions"
+    CMND ls ARGS -l
+      install_base/install
+      install_base/install/include
+      install_base/install/include/wsp_c
+      install_base/install/lib
+      install_base/install/bin
+      install_base/install/share/WithSubpackagesC/stuff
+    PASS_REGULAR_EXPRESSION_ALL
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp"
+      "[d]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* wsp_c"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* C.hpp"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* Makefile.export.WithSubpackagesC"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* libpws_c.a"
+      "[-]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* exec_script.sh"
+      "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* regular_file.txt"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  # ToDo: Run an installed script that must have the execute permissions!
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  )
 
 
 
