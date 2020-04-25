@@ -1304,16 +1304,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran
   )
 
 
-
-
-
-
-
-
-
-
-
-
 IF (NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
 
   EXECUTE_PROCESS(COMMAND whoami
@@ -1417,22 +1407,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms
     # this final script set_installed_group_and_permissions.cmake must be
     # getting called at the very end.
 
-  # ToDo: Run an installed script that must have the execute permissions!
-
+  TEST_7
+    MESSAGE "Make sure that exec_script.sh is exectuable"
+    CMND ./install_base/install/share/WithSubpackagesC/stuff/exec_script.sh
+    PASS_REGULAR_EXPRESSION
+      "exec_script.sh executed and returned this string"
 
   )
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perms
@@ -1519,28 +1500,13 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perm
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* regular_file.txt"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
-  # ToDo: Run an installed script that must have the execute permissions!
-
+  TEST_7
+    MESSAGE "Make sure that exec_script.sh is exectuable"
+    CMND ./install_base/install/share/WithSubpackagesC/stuff/exec_script.sh
+    PASS_REGULAR_EXPRESSION
+      "exec_script.sh executed and returned this string"
 
   )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_enable_installation_testing
