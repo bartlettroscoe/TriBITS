@@ -12,6 +12,7 @@ execute_process(
   RESULT_VARIABLE global_install_rtn)
 
 if (NOT global_install_rtn EQUAL 0)
+
   message(
     "\n"
     "***\n"
@@ -19,21 +20,23 @@ if (NOT global_install_rtn EQUAL 0)
     "***\n"
     "\n"
     )
+
   foreach (pkg_binary_dir ${TRIBITS_ENABLED_PACKAGES_BINARY_DIRS})
     execute_process(COMMAND @CMAKE_COMMAND@ -P cmake_install.cmake
       WORKING_DIRECTORY ${pkg_binary_dir}
       RESULT_VARIABLE global_install_rtn)
   endforeach()
   message(SEND_ERROR "Error, full install failed!")
-endif()
 
-set(set_installed_group_and_permissions_file
-  "${PROJECT_BINARY_DIR}/set_installed_group_and_permissions.cmake")
-if (EXISTS "${set_installed_group_and_permissions_file}")
-  execute_process(
-    COMMAND @CMAKE_COMMAND@ -P "${set_installed_group_and_permissions_file}"
-    RESULT_VARIABLE set_installed_rtn)
-  if (NOT global_install_rtn EQUAL 0)
-    message(SEND_ERROR "ERROR: Fixup of group and permissions filed!")
+  set(set_installed_group_and_permissions_file
+    "${PROJECT_BINARY_DIR}/set_installed_group_and_permissions.cmake")
+  if (EXISTS "${set_installed_group_and_permissions_file}")
+    execute_process(
+      COMMAND @CMAKE_COMMAND@ -P "${set_installed_group_and_permissions_file}"
+      RESULT_VARIABLE set_installed_rtn)
+    if (NOT global_install_rtn EQUAL 0)
+      message(SEND_ERROR "ERROR: Fixup of group and permissions filed!")
+    endif()
   endif()
+
 endif()
