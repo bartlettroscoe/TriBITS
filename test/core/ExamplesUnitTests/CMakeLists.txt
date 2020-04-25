@@ -1372,6 +1372,8 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms
     PASS_REGULAR_EXPRESSION_ALL
       ".*/install_base/install/include/wsp_c/C.hpp"
       ".*/install_base/install/lib/libpws_c.a"
+      "Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} -R .*/TriBITS_TribitsExampleProject_install_perms/install_base"
+      "Running: chmod g[+]rwX,o[+]rX -R .*/TriBITS_TribitsExampleProject_install_perms/install_base"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_5
@@ -1410,6 +1412,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms
       "[-]rwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* exec_script.sh"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* regular_file.txt"
     ALWAYS_FAIL_ON_NONZERO_RETURN
+    # NOTE: Above, the file Makefile.export.WithSubpackagesC seems to be the
+    # last file installed and therefore if it has the right permissions, then
+    # this final script set_installed_group_and_permissions.cmake must be
+    # getting called at the very end.
 
   # ToDo: Run an installed script that must have the execute permissions!
 

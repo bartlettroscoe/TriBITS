@@ -2944,7 +2944,8 @@ MACRO(TRIBITS_SETUP_FOR_INSTALLATION)
 
   # Set up for fixing group and permissions after the install
 
-  TRIBITS_ADD_INSTALL_GROUP_AND_PERMS_FIXUPS()
+  ADD_SUBDIRECTORY("${${PROJECT_NAME}_TRIBITS_DIR}/core/dummy_install_subdir"
+    dummy_install_subdir)
 
   # Create custom 'install/package_by_package' target
 
