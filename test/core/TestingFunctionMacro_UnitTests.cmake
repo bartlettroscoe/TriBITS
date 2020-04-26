@@ -56,6 +56,7 @@ INCLUDE(TribitsETISupport)
 INCLUDE(TribitsFindPythonInterp)
 INCLUDE(TribitsStripQuotesFromStr)
 INCLUDE(TribitsStandardizePaths)
+INCLUDE(TribitsFilepathHelpers)
 INCLUDE(TribitsGetVersionDate)
 INCLUDE(TribitsTplFindIncludeDirsAndLibraries)
 INCLUDE(TribitsReportInvalidTribitsUsage)
@@ -202,6 +203,37 @@ FUNCTION(UNITEST_TRIBITS_STANDARDIZE_ABS_PATHS)
     )
   UNITTEST_COMPARE_CONST(STANDARDIZED_ABS_PATHS
     "/okay/abs/path;/abs/other/path;/final/okay/path")
+
+ENDFUNCTION()
+
+
+FUNCTION(TRIBITS_DIR_IS_BASEDIR_TEST_CASE  absBaseDir  absFullDir  expectedIsBaseDir)
+  MESSAGE("\nTRIBITS_DIR_IS_BASEDIR(\"${absBaseDir}\" \"${absFullDir}\" isBaseDir)")
+  TRIBITS_DIR_IS_BASEDIR("${absBaseDir}" "${absFullDir}" isBaseDir)
+  UNITTEST_COMPARE_CONST(isBaseDir ${expectedIsBaseDir})
+ENDFUNCTION()
+
+
+FUNCTION(UNITEST_TRIBITS_DIR_IS_BASEDIR)
+
+  MESSAGE("\n***")
+  MESSAGE("*** Testing TRIBITS_DIR_IS_BASEDIR()")
+  MESSAGE("***\n")
+
+  TRIBITS_DIR_IS_BASEDIR_TEST_CASE(
+    "/some/base/path" "/some/base/path" TRUE)
+
+  TRIBITS_DIR_IS_BASEDIR_TEST_CASE(
+    "/some/base/path" "/some/base/path/more" TRUE)
+
+  TRIBITS_DIR_IS_BASEDIR_TEST_CASE(
+    "/some/base/path" "/some/base/pathes" FALSE)
+
+  TRIBITS_DIR_IS_BASEDIR_TEST_CASE(
+    "/some/base/path/more" "/some/base/path" FALSE)
+
+  TRIBITS_DIR_IS_BASEDIR_TEST_CASE(
+    "/some/base/path" "/some/other/path" FALSE)
 
 ENDFUNCTION()
 
@@ -3799,6 +3831,7 @@ MESSAGE("***\n")
 UNITTEST_APPEND_STRING_VAR()
 UNITTEST_TRIBITS_FIND_PYTHON_INTERP()
 UNITEST_TRIBITS_STANDARDIZE_ABS_PATHS()
+UNITEST_TRIBITS_DIR_IS_BASEDIR()
 UNITEST_TRIBITS_MISC()
 UNITEST_TRIBITS_STRIP_QUOTES_FROM_STR()
 UNITEST_TRIBITS_GET_VERSION_DATE_FROM_RAW_GIT_COMMIT_UTC_TIME()
@@ -3856,4 +3889,4 @@ MESSAGE("*** Determine final result of all unit tests")
 MESSAGE("***\n")
 
 # Pass in the number of expected tests that must pass!
-UNITTEST_FINAL_RESULT(590)
+UNITTEST_FINAL_RESULT(595)
