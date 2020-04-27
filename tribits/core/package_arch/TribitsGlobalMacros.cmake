@@ -52,7 +52,6 @@ INCLUDE(TribitsProcessEnabledTpl)
 INCLUDE(TribitsInstallHeaders)
 INCLUDE(TribitsGetVersionDate)
 INCLUDE(TribitsReportInvalidTribitsUsage)
-INCLUDE(TribitsAddInstallGroupAndPermsFixups)
 
 # Standard TriBITS utilities includes
 INCLUDE(TribitsAddOptionAndDefine)
@@ -2949,13 +2948,13 @@ ENDMACRO()
 # Setup for installation
 #
 
-MACRO(TRIBITS_SETUP_FOR_INSTALLATION)
+
+# Set up to install <Package>Config.cmake, <Project>Config.cmake, and export
+# makefiles.
+FUNCTION(TRIBITS_ADD_PROJECT_EXPORT_FILE_INSTALL_TARGETS)
 
   SET(tribits_install_src
     "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}")
-
-  # Set up to install <Package>Config.cmake, <Project>Config.cmake, and export
-  # makefiles.
 
   IF((${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES
       OR ${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES)
@@ -2983,17 +2982,19 @@ MACRO(TRIBITS_SETUP_FOR_INSTALLATION)
 
   ENDIF()
 
-  # Set up for fixing group and permissions after the install
+ENDFUNCTION()
 
-  ADD_SUBDIRECTORY("${${PROJECT_NAME}_TRIBITS_DIR}/core/dummy_install_subdir"
-    dummy_install_subdir)
 
-  # Create custom 'install/package_by_package' target
+# Create custom 'install_package_by_package' target
+FUNCTION(TRIBITS_ADD_INSTALL_PACKAGE_BY_PACKAGE_TARGET)
 
   SET(TRIBITS_ENABLED_PACKAGES_BINARY_DIRS)
   FOREACH(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
     LIST(APPEND TRIBITS_ENABLED_PACKAGES_BINARY_DIRS "${${TRIBITS_PACKAGE}_BINARY_DIR}")
   ENDFOREACH()
+
+  SET(tribits_install_src
+    "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}")
 
   CONFIGURE_FILE(
     "${tribits_install_src}/cmake_pbp_install.cmake.in"
@@ -3008,6 +3009,22 @@ MACRO(TRIBITS_SETUP_FOR_INSTALLATION)
     ${CMAKE_COMMAND} -P cmake_pbp_install.cmake
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     )
+
+ENDFUNCTION()
+
+
+MACRO(TRIBITS_SETUP_FOR_INSTALLATION)
+
+  # Set up to install <Package>Config.cmake, <Project>Config.cmake, and export
+  # makefiles.
+  TRIBITS_ADD_PROJECT_EXPORT_FILE_INSTALL_TARGETS()
+
+  # Set up for fixing group and permissions after the install
+  ADD_SUBDIRECTORY("${${PROJECT_NAME}_TRIBITS_DIR}/core/add_install_group_and_perms_fixups"
+    add_install_group_and_perms_fixups)
+
+  # Create custom 'install_package_by_package' target
+  TRIBITS_ADD_INSTALL_PACKAGE_BY_PACKAGE_TARGET()
 
 ENDMACRO()
 

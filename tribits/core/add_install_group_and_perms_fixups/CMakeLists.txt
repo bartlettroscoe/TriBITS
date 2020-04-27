@@ -1,3 +1,5 @@
+INCLUDE(TribitsAddInstallGroupAndPermsFixups)
+
 TRIBITS_ADD_INSTALL_GROUP_AND_PERMS_FIXUPS()
 
 # NOTE: This is a workaround for a problem with an issue with CMake where you
