@@ -6519,6 +6519,12 @@ ready to compile code.  All of the major variables set as part of this process
 are printed to the ``cmake`` stdout when the project is configured.
 
 
+Installation permsisions
+------------------------
+
+ToDo: Finish this!
+
+
 RPATH Handling
 --------------
 
@@ -8091,6 +8097,7 @@ a given TriBITS project are:
 * `${PROJECT_NAME}_GENERATE_REPO_VERSION_FILE`_
 * `${PROJECT_NAME}_INSTALL_LIBRARIES_AND_HEADERS`_
 * `${PROJECT_NAME}_MAKE_INSTALL_GROUP_READABLE`_
+* `${PROJECT_NAME}_MAKE_INSTALL_GROUP_WRITABLE`_
 * `${PROJECT_NAME}_MAKE_INSTALL_WORLD_READABLE`_
 * `${PROJECT_NAME}_MUST_FIND_ALL_TPL_LIBS`_
 * `${PROJECT_NAME}_REQUIRES_PYTHON`_
@@ -8546,29 +8553,39 @@ These options are described below.
 
 .. _${PROJECT_NAME}_MAKE_INSTALL_GROUP_READABLE:
 
+.. _${PROJECT_NAME}_MAKE_INSTALL_GROUP_WRITABLE:
+
 .. _${PROJECT_NAME}_MAKE_INSTALL_WORLD_READABLE:
 
 **${PROJECT_NAME}_MAKE_INSTALL_GROUP_READABLE**
+**${PROJECT_NAME}_MAKE_INSTALL_GROUP_WRITABLE**
 **${PROJECT_NAME}_MAKE_INSTALL_WORLD_READABLE**
 
-  Determines the permissions for directories created during the execution of
-  the of the ``install`` target.  The default permissions are those for the
-  user running the ``install`` target.  For CMake versions 3.11.0+, the user
-  can change these permissions explicitly by setting the CMake vars
-  ``${PROJECT_NAME}_MAKE_INSTALL_GROUP_READABLE`` and/or
-  ``${PROJECT_NAME}_MAKE_INSTALL_WORLD_READABLE``.
-
-  To make the created directories by world readable for the project by
-  default, set::
-
-    SET(${PROJECT_NAME}_MAKE_INSTALL_WORLD_READABLE_DEFAULT TRUE)
+  Determines the permissions for directories and files created during the
+  execution of the of the ``install`` and ``isntall_package_by_package``
+  targets.
 
   To make the created directories by only group readable for the project by
   default, set::
 
     SET(${PROJECT_NAME}_MAKE_INSTALL_WORLD_READABLE_DEFAULT TRUE)
 
-  These can be set in the `<projectDir>/ProjectName.cmake`_ file.
+  To make the created directories by only group writable (and readable) for
+  the project by default, set::
+
+    SET(${PROJECT_NAME}_MAKE_INSTALL_WORLD_WRITABLE_DEFAULT TRUE)
+
+  To make the created directories by world readable for the project by
+  default, set::
+
+    SET(${PROJECT_NAME}_MAKE_INSTALL_WORLD_READABLE_DEFAULT TRUE)
+
+  On non-Windoes systems, these set permissions for all files and directories
+  from the the user-set base directory
+  ``${PROJECT_NAME}_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR`` on down.
+  For more details see `Installation permsisions`_.
+
+  These defaults can be set in the `<projectDir>/ProjectName.cmake`_ file.
 
 .. _${PROJECT_NAME}_MUST_FIND_ALL_TPL_LIBS:
 
