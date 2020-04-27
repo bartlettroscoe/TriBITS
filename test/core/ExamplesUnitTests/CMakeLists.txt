@@ -1538,7 +1538,31 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perm
   # is a package install failure.  The other packages that did build correctly
   # will get installed and all of the files and directories that did install
   # will have the correct group and permissions.
- 
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR_not_base_dir
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  XHOSTTYPE Windows
+
+  TEST_0
+    MESSAGE "Configure with TribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR not a base dir of CMAKE_INSTALL_PREFIX "
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DCMAKE_INSTALL_PREFIX=install_base/install
+      -DTribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=non_base_dir
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "ERROR in TribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR"
+      "TribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=.*/TriBITS_TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR_not_base_dir/non_base_dir"
+      "is not a strict base dir of"
+      "CMAKE_INSTALL_PREFIX=.*/TriBITS_TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR_not_base_dir/install_base/install"
+    ALWAYS_FAIL_ON_ZERO_RETURN
+
+  )
+
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_ALL_ST_NoFortran_enable_installation_testing
   OVERALL_WORKING_DIRECTORY TEST_NAME

@@ -70,6 +70,7 @@ INCLUDE(RemoveGlobalDuplicates)
 INCLUDE(Split)
 INCLUDE(TimingUtils)
 INCLUDE(SetDefaultAndFromEnv) # Used by some call-back files
+INCLUDE(TribitsFilepathHelpers)
 
 # Standard CMake includes
 INCLUDE(CheckIncludeFileCXX)
@@ -187,6 +188,44 @@ MACRO(TRIBITS_READ_IN_OPTIONS_FROM_FILE)
 
 
 ENDMACRO()
+
+
+#
+# Assert ${PROJECT_NAME}_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR set
+# correctly
+#
+
+FUNCTION(ASSERT_PROJECT_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR)
+
+  IF (
+      (NOT "${CMAKE_INSTALL_PREFIX}" STREQUAL "")
+       AND
+      (NOT "${${PROJECT_NAME}_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR}" STREQUAL "")
+    )
+    TRIBITS_DIR_IS_BASEDIR(
+      "${${PROJECT_NAME}_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR}"
+      "${CMAKE_INSTALL_PREFIX}"
+      isBaseDir)
+    IF (NOT isBaseDir)
+      MESSAGE(FATAL_ERROR
+        "\n"
+        "***\n"
+        "*** ERROR in ${PROJECT_NAME}_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR!\n"
+        "***\n"
+	"\n"
+	"${PROJECT_NAME}_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=${${PROJECT_NAME}_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR}\n"
+        "\n"
+        "is not a strict base dir of:\n"
+	"\n"
+	"CMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}\n"
+        "\n"
+        "Either remove ${PROJECT_NAME}_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR from the cache or set it to be a base dir of CMAKE_INSTALL_PREFIX!\n"
+        "\n"
+        )
+    ENDIF()
+  ENDIF()
+
+ENDFUNCTION()
 
 
 #
@@ -314,6 +353,8 @@ MACRO(TRIBITS_DEFINE_GLOBAL_OPTIONS_AND_DEFINE_EXTRA_REPOS)
     CACHE FILEPATH
     "Set the base path for which a recursive chmod and chgrp will be called to set the group and permissions after the install is complete.  The default directory is give by CMAKE_INSTALL_PREFIX."
     )
+
+  ASSERT_PROJECT_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR()
 
   IF ("${${PROJECT_NAME}_SET_INSTALL_RPATH_DEFAULT}" STREQUAL "")
     SET(${PROJECT_NAME}_SET_INSTALL_RPATH_DEFAULT TRUE)
