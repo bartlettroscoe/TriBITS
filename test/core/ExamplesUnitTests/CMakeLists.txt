@@ -568,6 +568,9 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_perms
   TEST_7
     MESSAGE "Re-install"
     CMND make ARGS ${CTEST_BUILD_FLAGS} install
+    PASS_REGULAR_EXPRESSION_ALL
+      "Installing: .*/TriBITS_TribitsHelloWorld_install_perms/install/bin/hello_world.exe"
+      "0: Running: chmod o[+]rX -R /.*/TriBITS_TribitsHelloWorld_install_perms/install"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_8
@@ -1363,8 +1366,10 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_perms
     PASS_REGULAR_EXPRESSION_ALL
       ".*/install_base/install/include/wsp_c/C.hpp"
       ".*/install_base/install/lib/libpws_c.a"
-      "Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} -R .*/TriBITS_TribitsExampleProject_install_perms/install_base"
-      "Running: chmod g[+]rwX,o[+]rX -R .*/TriBITS_TribitsExampleProject_install_perms/install_base"
+      "0: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} /.*/TriBITS_TribitsExampleProject_install_perms/install_base"
+      "0: Running: chmod g[+]rwX,o[+]rX /.*/TriBITS_TribitsExampleProject_install_perms/install_base"
+      "1: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} -R /.*/TriBITS_TribitsExampleProject_install_perms/install_base/install"
+      "1: Running: chmod g[+]rwX,o[+]rX -R /.*/TriBITS_TribitsExampleProject_install_perms/install_base/install"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_5
@@ -1461,11 +1466,11 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perm
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_SECONDARY_TESTED_CODE=ON
       -DTribitsExProj_ENABLE_WithSubpackages=ON
-      -DCMAKE_INSTALL_PREFIX=install_base/install
+      -DCMAKE_INSTALL_PREFIX=install_base/subdir/install
+      -DTribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=install_base
       -DTribitsExProj_MAKE_INSTALL_WORLD_READABLE=TRUE
       -DTribitsExProj_MAKE_INSTALL_GROUP_WRITABLE=TRUE
       -DTribitsExProj_MAKE_INSTALL_GROUP=${TribitsExProj_INSTALL_OWNING_GROUP}
-      -DTribitsExProj_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=install_base
       TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
       "Configuring done"
@@ -1484,38 +1489,44 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perm
     CMND make ARGS ${CTEST_BUILD_FLAGS} install_package_by_package
     PASS_REGULAR_EXPRESSION_ALL
       "The global install failed so resorting to package-by-package installs"
-      ".*/install_base/install/include/B.hpp"
-      ".*/install_base/install/lib/libpws_b.a"
-      "Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} -R .*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base"
-      "Running: chmod g[+]rwX,o[+]rX -R .*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base"
+      ".*/install_base/subdir/install/include/B.hpp"
+      ".*/install_base/subdir/install/lib/libpws_b.a"
+      "0: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base"
+      "0: Running: chmod g[+]rwX,o[+]rX /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base"
+      "1: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir"
+      "1: Running: chmod g[+]rwX,o[+]rX /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir"
+      "2: Running: chgrp ${TribitsExProj_INSTALL_OWNING_GROUP} -R /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir/install"
+      "2: Running: chmod g[+]rwX,o[+]rX -R /.*/TriBITS_TribitsExampleProject_install_package_by_package_perms/install_base/subdir/install"
     ALWAYS_FAIL_ON_ZERO_RETURN
 
   TEST_6
     MESSAGE "Check some installed directory permissions and the owning group"
     CMND ls ARGS -ld
       install_base
-      install_base/install
-      install_base/install/bin
-      install_base/install/include
-      install_base/install/lib
-      install_base/install/share/WithSubpackagesB/stuff
+      install_base/subdir
+      install_base/subdir/install
+      install_base/subdir/install/bin
+      install_base/subdir/install/include
+      install_base/subdir/install/lib
+      install_base/subdir/install/share/WithSubpackagesB/stuff
     PASS_REGULAR_EXPRESSION_ALL
       "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/bin"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/include"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/lib"
-      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/install/share/WithSubpackagesB/stuff"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/bin"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/include"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/lib"
+      "drwxrwxr-x.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* install_base/subdir/install/share/WithSubpackagesB/stuff"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_7
     MESSAGE "Check some installed file permissions"
     CMND ls ARGS -l
-      install_base/install
-      install_base/install/include
-      install_base/install/lib
-      install_base/install/bin
-      install_base/install/share/WithSubpackagesB/stuff
+      install_base/subdir/install
+      install_base/subdir/install/include
+      install_base/subdir/install/lib
+      install_base/subdir/install/bin
+      install_base/subdir/install/share/WithSubpackagesB/stuff
     PASS_REGULAR_EXPRESSION_ALL
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* MixedLang.hpp"
       "[-]rw-rw-r--.* .* ${TribitsExProj_INSTALL_OWNING_USER} ${TribitsExProj_INSTALL_OWNING_GROUP} .* B.hpp"
@@ -1527,17 +1538,21 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_install_package_by_package_perm
 
   TEST_8
     MESSAGE "Make sure that exec_script.sh is exectuable"
-    CMND ./install_base/install/share/WithSubpackagesB/stuff/exec_script.sh
+    CMND ./install_base/subdir/install/share/WithSubpackagesB/stuff/exec_script.sh
     PASS_REGULAR_EXPRESSION
       "exec_script.sh executed and returned this string"
 
   )
   # NOTE: In addition to the same checks performed by the test
-  # TribitsExampleProject_install_perms described above, this above test also
-  # ensures that owning group and directory permissions get set even if there
-  # is a package install failure.  The other packages that did build correctly
-  # will get installed and all of the files and directories that did install
-  # will have the correct group and permissions.
+  # TribitsExampleProject_install_perms described above, this above test also:
+  #
+  # * Ensures that the non-recursive group and permisions gets set on
+  # * base-dirs.
+  #
+  # * Ensures that owning group and directory permissions get set even if
+  #   there is a package install failure.  The other packages that did build
+  #   correctly will get installed and all of the files and directories that
+  #   did install will have the correct group and permissions.
 
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR_not_base_dir
