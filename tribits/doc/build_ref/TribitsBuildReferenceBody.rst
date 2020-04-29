@@ -3079,17 +3079,19 @@ absolute paths, use the data type ``PATH`` as shown above.
 Setting install ownership and permissions
 -----------------------------------------
 
-By default, when installing with the ``install`` target, any files and
-directories created are given the default permissions for the user that runs
-the install command (just as if they typed ``mkdir <some-dir>`` or ``touch
-<some-fle>``).  On most Unix/Linux systems, one can use ``umask`` to set
-default permissions and set the default group and the group sticky bit to
-control what groups owns created files and directories.  However, some
-computer systems do not support the group sticky bit and there are cases where
-one wants or needs to provide different group ownership and write permissions.
+By default, when installing with the ``install`` (or
+``install_package_by_package``) target, any files and directories created are
+given the default permissions for the user that runs the install command (just
+as if they typed ``mkdir <some-dir>`` or ``touch <some-file>``).  On most
+Unix/Linux systems, one can use ``umask`` to set default permissions and one
+can set the default group and the group sticky bit to control what groups owns
+the newly created files and directories.  However, some computer systems do
+not support the group sticky bit and there are cases where one wants or needs
+to provide different group ownership and write permissions.
 
-To control what group owns the install-created files and directory and define
-the permissions on those, one can set one or more of the following options::
+To control what group owns the install-created files and directories related
+to ``CMAKE_INSTALL_PREFIX`` and define the permissions on those, one can set
+one or more of the following options::
 
   -D <Project>_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=<install-base-dir> \
   -D <Project>_MAKE_INSTALL_GROUP=[<owning-group>] \
@@ -3097,21 +3099,24 @@ the permissions on those, one can set one or more of the following options::
   -D <Project>_MAKE_INSTALL_GROUP_WRITABLE=[TRUE|FALSE] \
   -D <Project>_MAKE_INSTALL_WORLD_READABLE=[TRUE|FALSE] \
 
-This has the impact of both setting the built-in CMake variable
+(where ``<Project>_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR`` must be a
+base directory of ``CMAKE_INSTALL_PREFIX``).  This has the impact of both
+setting the built-in CMake variable
 ``CMAKE_INSTALL_DEFAULT_DIRECTORY_PERMISSIONS`` with the correct permissions
 according to these and also triggers the automatic running of the recursive
 ``chgrp`` and ``chmod`` commands starting from the directory
 ``<install-base-dir>`` on down, after all of the other project files have been
 installed.  The directory set by
-``<Project>_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR`` must be a base
-directory of ``CMAKE_INSTALL_PREFIX`` and that base directory may be created
-by the ``install`` command by CMake (as it may not exist before the install).
-If ``<Project>_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR`` is not given,
-then it is set internally to the same directory as ``CMAKE_INSTALL_PREFIX``.
+``<Project>_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR`` and those below it
+may be created by the ``install`` command by CMake (as it may not exist before
+the install).  If ``<Project>_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR``
+is not given, then it is set internally to the same directory as
+``CMAKE_INSTALL_PREFIX``.
 
 For an example, to configure for an install based on a dated base directory
-where a non-default should group own the installation and has group read/write
-permissions, and others only have read access, one would configure with::
+where a non-default group should own the installation and have group
+read/write permissions, and "others" only have read access, one would
+configure with::
 
   -D CMAKE_INSTALL_PREFIX=$HOME/2020-04-25/my-proj \
   -D <Project>_SET_GROUP_AND_PERMISSIONS_ON_INSTALL_BASE_DIR=$HOME/2020-04-25 \
@@ -3120,8 +3125,8 @@ permissions, and others only have read access, one would configure with::
   -D <Project>_MAKE_INSTALL_WORLD_READABLE=TRUE \
 
 Using these settings, after all of the files and directories have been
-installed in the ``install`` or ``install_package_by_package`` targets, the
-following commands are run at the very end::
+installed using the ``install`` or ``install_package_by_package`` build
+targets, the following commands are automatically run at the very end::
 
   chgrp some-other-group $HOME/2020-04-25
   chmod g+rwX,o+rX $HOME/2020-04-25
@@ -3129,12 +3134,18 @@ following commands are run at the very end::
   chmod g+rwX,o+rX -R $HOME/2020-04-25/my-proj
 
 That allows the owning group ``some-other-group`` to later modify or delete
-the installation and allows all users to use the installation.  (This also
-avoids changing the group or permissions for files and directories sister
-directories of ``CMAKE_INSTALL_PREFIX``)
+the installation and allows all users to use the installation.
 
-NOTE: Setting ``<Project>_MAKE_INSTALL_GROUP_WRITABLE=TRUE`` implies
-``<Project>_MAKE_INSTALL_GROUP_READABLE=TRUE``.
+NOTES:
+
+* Setting ``<Project>_MAKE_INSTALL_GROUP_WRITABLE=TRUE`` implies
+  ``<Project>_MAKE_INSTALL_GROUP_READABLE=TRUE``.
+
+* Non-recursive ``chgrp`` and ``chmod`` commands are run on the directories
+  above ``CMAKE_INSTALL_PREFIX``.  Recursive ``chgrp`` and ``chmod`` commands
+  are only run on the base ``CMAKE_INSTALL_PREFIX`` directory itself.  (This
+  avoids touching any files or directories not directly involved in this
+  install.)
 
 
 Setting install RPATH
