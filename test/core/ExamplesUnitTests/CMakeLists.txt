@@ -2779,17 +2779,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_CONFIGURE_OPTIONS_FILE
   )
 
 
-
-
-
-
-
-
-
-
-
-
-
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Project
   OVERALL_WORKING_DIRECTORY TEST_NAME
   OVERALL_NUM_MPI_PROCS 1
@@ -2818,6 +2807,41 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Project
     MESSAGE "Run all the tests with raw 'ctest'"
     PASS_REGULAR_EXPRESSION_ALL
       "No tests were found"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Whitelist
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do the initial configure with TribitsExProj_SKIP_CTEST_ADD_TEST=ON"
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DSimpleCxx_SKIP_CTEST_ADD_TEST=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
+      "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
+      "SimpleCxx_HelloWorldTests: NOT added test because SimpleCxx_SKIP_CTEST_ADD_TEST='ON'[!]"
+      "SimpleCxx_HelloWorldProg: NOT added test because SimpleCxx_SKIP_CTEST_ADD_TEST='ON'[!]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS}
+    MESSAGE "Build the default 'all' target using raw 'make'"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    MESSAGE "Run all the tests with raw 'ctest'"
+    PASS_REGULAR_EXPRESSION_ALL
+      "1/1 Test #1: WithSubpackagesA_test_of_a .* Passed"
+      "100% tests passed, 0 tests failed out of 1"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )
