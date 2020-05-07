@@ -2791,9 +2791,12 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Project
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_TRACE_ADD_TEST=ON
       -DTribitsExProj_SKIP_CTEST_ADD_TEST=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
+      "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
       "SimpleCxx_HelloWorldTests: NOT added test because SimpleCxx_SKIP_CTEST_ADD_TEST='ON'[!]"
       "SimpleCxx_HelloWorldProg: NOT added test because SimpleCxx_SKIP_CTEST_ADD_TEST='ON'[!]"
       "WithSubpackagesA_test_of_a: NOT added test because WithSubpackages_SKIP_CTEST_ADD_TEST='ON'[!]"
@@ -2824,6 +2827,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Whi
       -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
       -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
       -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_TRACE_ADD_TEST=ON
       -DSimpleCxx_SKIP_CTEST_ADD_TEST=ON
       ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
     PASS_REGULAR_EXPRESSION_ALL
@@ -2831,6 +2835,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Whi
       "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
       "SimpleCxx_HelloWorldTests: NOT added test because SimpleCxx_SKIP_CTEST_ADD_TEST='ON'[!]"
       "SimpleCxx_HelloWorldProg: NOT added test because SimpleCxx_SKIP_CTEST_ADD_TEST='ON'[!]"
+      "WithSubpackagesA_test_of_a: Added test [(]BASIC, NUM_MPI_PROCS=1, PROCESSORS=1[)][!]"
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS}
@@ -2847,30 +2852,43 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Whi
   )
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_SKIP_CTEST_ADD_TEST_Package_Blacklist
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
 
+  TEST_0 CMND ${CMAKE_COMMAND}
+    MESSAGE "Do the initial configure with TribitsExProj_SKIP_CTEST_ADD_TEST=ON"
+    ARGS
+      ${TribitsExampleProject_COMMON_CONFIG_ARGS}
+      -DTribitsExProj_ENABLE_Fortran=OFF
+      -DTribitsExProj_TRIBITS_DIR=${${PROJECT_NAME}_TRIBITS_DIR}
+      -DTribitsExProj_ENABLE_ALL_PACKAGES=ON
+      -DTribitsExProj_ENABLE_TESTS=ON
+      -DTribitsExProj_TRACE_ADD_TEST=ON
+      -DTribitsExProj_SKIP_CTEST_ADD_TEST=ON
+      -DSimpleCxx_SKIP_CTEST_ADD_TEST=OFF
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleProject
+    PASS_REGULAR_EXPRESSION_ALL
+      "Final set of enabled packages:  SimpleCxx WithSubpackages 2"
+      "Final set of enabled SE packages:  SimpleCxx WithSubpackagesA WithSubpackages 3"
+      "SimpleCxx_HelloWorldTests_MPI_1: Added test [(]BASIC, NUM_MPI_PROCS=1, PROCESSORS=1[)][!]"
+      "SimpleCxx_HelloWorldProg_MPI_1: Added test [(]BASIC, NUM_MPI_PROCS=1, PROCESSORS=1[)][!]"
+      "WithSubpackagesA_test_of_a: NOT added test because WithSubpackages_SKIP_CTEST_ADD_TEST='ON'[!]"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
+  TEST_1 CMND make ARGS ${CTEST_BUILD_FLAGS}
+    MESSAGE "Build the default 'all' target using raw 'make'"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
+  TEST_2 CMND ${CMAKE_CTEST_COMMAND} ARGS -VV
+    MESSAGE "Run all the tests with raw 'ctest'"
+    PASS_REGULAR_EXPRESSION_ALL
+      "1/2 Test #1: SimpleCxx_HelloWorldTests_MPI_1 .* Passed"
+      "2/2 Test #2: SimpleCxx_HelloWorldProg_MPI_1 .* Passed"
+      "100% tests passed, 0 tests failed out of 2"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  )
 
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_WrapExternal
