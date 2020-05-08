@@ -1547,6 +1547,9 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   # Do the tests or not (Note: must be true for coverage testing)
   SET_DEFAULT_AND_FROM_ENV( CTEST_DO_TEST TRUE )
 
+  # Pass through
+  SET_DEFAULT_AND_FROM_ENV( ${PROJECT_NAME}_SKIP_CTEST_ADD_TEST FALSE )
+
   # Maximum number of procs an mpi test can request (if more are requested,
   # the test will be skipped).  Value of 0 means no override (determined
   # internally).
