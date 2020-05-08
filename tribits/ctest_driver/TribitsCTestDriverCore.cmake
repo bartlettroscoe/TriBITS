@@ -1548,6 +1548,9 @@ FUNCTION(TRIBITS_CTEST_DRIVER)
   SET_DEFAULT_AND_FROM_ENV( CTEST_DO_TEST TRUE )
 
   # Pass through
+  SET_DEFAULT_AND_FROM_ENV( ${PROJECT_NAME}_INNER_ENABLE_TESTS ON )
+
+  # Pass through
   SET_DEFAULT_AND_FROM_ENV( ${PROJECT_NAME}_SKIP_CTEST_ADD_TEST FALSE )
 
   # Maximum number of procs an mpi test can request (if more are requested,
