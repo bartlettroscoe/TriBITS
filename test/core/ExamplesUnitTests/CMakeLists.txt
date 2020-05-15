@@ -841,6 +841,55 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_install_config_dummy_proj
   #
 
 
+IF (CMAKE_VERSION VERSION_GREATER_EQUAL 3.16)
+  SET(HAS_CTEST_RESOURCE_FILE_SUPPORT TRUE)
+ELSE()
+  SET(HAS_CTEST_RESOURCE_FILE_SUPPORT FALSE)
+ENDIF()
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ctest_resources_file_autogen_2_3
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE HAS_CTEST_RESOURCE_FILE_SUPPORT
+
+  TEST_0
+    MESSAGE "Generate a resoruce file "
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_ENABLE_TESTS=ON
+      -DTribitsHelloWorld_AUTOGENERATE_TEST_RESOURCE_FILE=ON
+      -DTribitsHelloWorld_CUDA_NUM_GPUS=2
+      -DTribitsHelloWorld_CUDA_SLOTS_PER_GPU=3
+      -DTPL_ENABLE_CUDA=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1
+    MESSAGE "Determine that ctest_resources.json is generated correctly"
+    CMND diff
+    ARGS ctest_resources.json
+      "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/ctest_resources.autogen_2_3_.json"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Check that the CTestTestfile.cmake file has the right entries"
+    CMND cat
+    ARGS hello_world/CTestTestfile.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "PROCESSORS .1."
+      "RESOURCE_GROUPS .1,gpus:1."
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+  # NOTE: The above test ensures that the ctest_resources.json file gets
+  # generated correctly and ensures that the RESOURCE_GROUPS test property
+  # gets set correctly.
+
+
 ########################################################################
 # RawAndTribitsHelloWorld
 ########################################################################
@@ -4960,6 +5009,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_PA
     ALWAYS_FAIL_ON_ZERO_RETURN
 
   )
+
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsExampleProject_PkgWithSubpkgsWithUserErrors_SUBPACKAGE_USER_ERRORS
   OVERALL_WORKING_DIRECTORY TEST_NAME
