@@ -904,6 +904,61 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ctest_resources_file_autogen_2_3
   # nvcc_wrapper.
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_other_ctest_resources_file_autogen_on
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE HAS_CTEST_RESOURCE_FILE_SUPPORT
+
+  TEST_0
+    MESSAGE "Copy in pre-created ctest resource file to make sure it is not overwritten"
+    CMND cp
+    ARGS "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/other_ctest_resources.json" .
+
+  TEST_1
+    MESSAGE "Configure pinting to non-default ctest resource file with autogenerate turned on "
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_ENABLE_TESTS=ON
+      -DTribitsHelloWorld_AUTOGENERATE_TEST_RESOURCE_FILE=ON
+      -DTribitsHelloWorld_CUDA_NUM_GPUS=2        # Will not get used!
+      -DTribitsHelloWorld_CUDA_SLOTS_PER_GPU=3   # Will not get used!
+      -DTPL_ENABLE_CUDA=ON
+      -DCTEST_RESOURCE_SPEC_FILE=other_ctest_resources.json
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "NOTE: The test resource file CTEST_RESOURCE_SPEC_FILE='.*/TriBITS_TribitsHelloWorld_set_other_ctest_resources_file_autogen_on/other_ctest_resources[.]json' will not be auto-generated even through TribitsHelloWorld_AUTOGENERATE_TEST_RESOURCE_FILE=ON because its location does not match the default location '.*/TriBITS_TribitsHelloWorld_set_other_ctest_resources_file_autogen_on/ctest_resources[.]json'[.]  If you want to auto-generate this file, please clear CTEST_RESOURCE_SPEC_FILE and reconfigure or create that file on your own and clear TribitsHelloWorld_AUTOGENERATE_TEST_RESOURCE_FILE[.]"
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Check that the pre-existing other_ctest_resources.json file was not overwritten"
+    CMND diff
+    ARGS "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/other_ctest_resources.json"
+      other_ctest_resources.json
+
+  TEST_3
+    MESSAGE "Check that default ctest_resources.json file is not generated"
+    CMND ls
+    ARGS ctest_resources.json
+    WILL_FAIL
+
+  TEST_4
+    MESSAGE "Check that the CTestTestfile.cmake file has the right entries"
+    CMND cat
+    ARGS hello_world/CTestTestfile.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "ENVIRONMENT .CTEST_KOKKOS_DEVICE_TYPE=gpus."
+      "PROCESSORS .1."
+      "RESOURCE_GROUPS .1,gpus:1."
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+  # NOTE: The above test ensures that when CTEST_RESOURCE_SPEC_FILE is set to
+  # the non-default location then the autogenerate feature will not overwrite
+  # the file and will not generate the default file.
+
+
 ########################################################################
 # RawAndTribitsHelloWorld
 ########################################################################
