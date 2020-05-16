@@ -846,6 +846,15 @@ IF (CMAKE_VERSION VERSION_GREATER_EQUAL 3.16)
 ELSE()
   SET(HAS_CTEST_RESOURCE_FILE_SUPPORT FALSE)
 ENDIF()
+# NOTE: In the below tests, we are only testing TirBITS support for generating
+# the ctest_resources.json file and setting the RESOURCES_GROUP and
+# ENVIRONMENT propertiesand testing CMake support for recognising the
+# RESOURCES_GROUP test property and putting it in the CTestTestfile.cmake
+# file.  We are not actaully running ctest or looking for the var
+# CTEST_RESOURCE_SPEC_FILE set in the CTestTestfile.cmake file.  (Support for
+# that will not be in CMake until 3.18 which has not even been released yet as
+# of this writing.  But a patched version of CMake 3.17 does support this so
+# we can use this feature.)
 
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ctest_resources_file_autogen_2_3
@@ -887,7 +896,11 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ctest_resources_file_autogen_2_3
   )
   # NOTE: The above test ensures that the ctest_resources.json file gets
   # generated correctly and ensures that the RESOURCE_GROUPS test property
-  # gets set correctly.
+  # gets set correctly in a real CUDA build of a project.  What is interesting
+  # about the above case is that baare bones TriBITS does not really do
+  # anything special when setting TPL_ENABLE_CUDA=ON.  All of the special
+  # logic for that is handled in Kokkos and Trilinos with the usage of
+  # nvcc_wrapper.
 
 
 ########################################################################
