@@ -889,17 +889,18 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ctest_resources_file_autogen_2_3
     CMND cat
     ARGS hello_world/CTestTestfile.cmake
     PASS_REGULAR_EXPRESSION_ALL
+      "ENVIRONMENT .CTEST_KOKKOS_DEVICE_TYPE=gpus."
       "PROCESSORS .1."
       "RESOURCE_GROUPS .1,gpus:1."
     ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )
   # NOTE: The above test ensures that the ctest_resources.json file gets
-  # generated correctly and ensures that the RESOURCE_GROUPS test property
-  # gets set correctly in a real CUDA build of a project.  What is interesting
-  # about the above case is that baare bones TriBITS does not really do
-  # anything special when setting TPL_ENABLE_CUDA=ON.  All of the special
-  # logic for that is handled in Kokkos and Trilinos with the usage of
+  # auto-generated correctly and ensures that the RESOURCE_GROUPS test
+  # property gets set correctly in a real CUDA build of a project.  What is
+  # interesting about the above case is that baare bones TriBITS does not
+  # really do anything special when setting TPL_ENABLE_CUDA=ON.  All of the
+  # special logic for that is handled in Kokkos and Trilinos with the usage of
   # nvcc_wrapper.
 
 
