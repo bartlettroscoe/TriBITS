@@ -863,7 +863,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ctest_resources_file_autogen_2_3
   EXCLUDE_IF_NOT_TRUE HAS_CTEST_RESOURCE_FILE_SUPPORT
 
   TEST_0
-    MESSAGE "Generate a resoruce file "
+    MESSAGE "Configure and generate a resoruce file "
     CMND ${CMAKE_COMMAND}
     ARGS
       ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
@@ -902,6 +902,38 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_ctest_resources_file_autogen_2_3
   # really do anything special when setting TPL_ENABLE_CUDA=ON.  All of the
   # special logic for that is handled in Kokkos and Trilinos with the usage of
   # nvcc_wrapper.
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_no_ctest_resources_file
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE HAS_CTEST_RESOURCE_FILE_SUPPORT
+
+  TEST_0
+    MESSAGE "Configure without any ctest resoruce file, just enable CUDA"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_ENABLE_TESTS=ON
+      -DTPL_ENABLE_CUDA=ON
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_1
+    MESSAGE "Check that the CTestTestfile.cmake file has the right entries"
+    CMND cat
+    ARGS hello_world/CTestTestfile.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "ENVIRONMENT .CTEST_KOKKOS_DEVICE_TYPE=gpus."
+      "PROCESSORS .1."
+      "RESOURCE_GROUPS .1,gpus:1."
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+  # NOTE: The above test ensures that the RESOURCE_GROUPS test
+  # property gets set correctly in a real CUDA build of a project.
 
 
 TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_other_ctest_resources_file_autogen_on
@@ -943,16 +975,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_other_ctest_resources_file_auto
     ARGS ctest_resources.json
     WILL_FAIL
 
-  TEST_4
-    MESSAGE "Check that the CTestTestfile.cmake file has the right entries"
-    CMND cat
-    ARGS hello_world/CTestTestfile.cmake
-    PASS_REGULAR_EXPRESSION_ALL
-      "ENVIRONMENT .CTEST_KOKKOS_DEVICE_TYPE=gpus."
-      "PROCESSORS .1."
-      "RESOURCE_GROUPS .1,gpus:1."
-    ALWAYS_FAIL_ON_NONZERO_RETURN
-
   )
   # NOTE: The above test ensures that when CTEST_RESOURCE_SPEC_FILE is set to
   # the non-default location then the autogenerate feature will not overwrite
@@ -992,16 +1014,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_au
     ARGS "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/ctest_resources.autogen_2_3_.json"
       ctest_resources.json
 
-  TEST_3
-    MESSAGE "Check that the CTestTestfile.cmake file has the right entries"
-    CMND cat
-    ARGS hello_world/CTestTestfile.cmake
-    PASS_REGULAR_EXPRESSION_ALL
-      "ENVIRONMENT .CTEST_KOKKOS_DEVICE_TYPE=gpus."
-      "PROCESSORS .1."
-      "RESOURCE_GROUPS .1,gpus:1."
-    ALWAYS_FAIL_ON_NONZERO_RETURN
-
   )
   # NOTE: The above test shows that if the user happens to provide a ctest
   # resoruce file of the same name and the same location as the default
@@ -1040,16 +1052,6 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_au
     CMND diff
     ARGS "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/other_ctest_resources.json"
       ctest_resources.json
-
-  TEST_3
-    MESSAGE "Check that the CTestTestfile.cmake file has the right entries"
-    CMND cat
-    ARGS hello_world/CTestTestfile.cmake
-    PASS_REGULAR_EXPRESSION_ALL
-      "ENVIRONMENT .CTEST_KOKKOS_DEVICE_TYPE=gpus."
-      "PROCESSORS .1."
-      "RESOURCE_GROUPS .1,gpus:1."
-    ALWAYS_FAIL_ON_NONZERO_RETURN
 
   )
   # NOTE: The above test shows that if the user happens to provide a ctest
