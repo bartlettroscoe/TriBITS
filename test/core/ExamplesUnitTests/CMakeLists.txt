@@ -1005,53 +1005,57 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_au
   )
   # NOTE: The above test shows that if the user happens to provide a ctest
   # resoruce file of the same name and the same location as the default
-  # generated file, then TriBIT will actually overwrite it!
+  # generated file, then TriBIT will actually overwrite it if the autogenerate
+  # option is enbled!
 
 
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_autogen_off
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE HAS_CTEST_RESOURCE_FILE_SUPPORT
 
+  TEST_0
+    MESSAGE "Copy in pre-created ctest resource file into the default autogen name and location"
+    CMND cp
+    ARGS "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/other_ctest_resources.json"
+      ctest_resources.json
 
+  TEST_1
+    MESSAGE "Configure pointing to default ctest resource file with autogenerate turned off"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_ENABLE_TESTS=ON
+      -DTribitsHelloWorld_CUDA_NUM_GPUS=2
+      -DTribitsHelloWorld_CUDA_SLOTS_PER_GPU=3
+      -DTPL_ENABLE_CUDA=ON
+      -DCTEST_RESOURCE_SPEC_FILE=ctest_resources.json
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
+  TEST_2
+    MESSAGE "Check that the pre-existing ctest_resources.json file was **nott** overwritten"
+    CMND diff
+    ARGS "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/other_ctest_resources.json"
+      ctest_resources.json
 
+  TEST_3
+    MESSAGE "Check that the CTestTestfile.cmake file has the right entries"
+    CMND cat
+    ARGS hello_world/CTestTestfile.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "ENVIRONMENT .CTEST_KOKKOS_DEVICE_TYPE=gpus."
+      "PROCESSORS .1."
+      "RESOURCE_GROUPS .1,gpus:1."
+    ALWAYS_FAIL_ON_NONZERO_RETURN
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  )
+  # NOTE: The above test shows that if the user happens to provide a ctest
+  # resoruce file of the same name and the same location as the default
+  # generated file, then TriBIT will not overwrite that file if the
+  # autgenerate option is disabled.
 
 
 ########################################################################
