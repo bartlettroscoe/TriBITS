@@ -915,7 +915,7 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_other_ctest_resources_file_auto
     ARGS "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/other_ctest_resources.json" .
 
   TEST_1
-    MESSAGE "Configure pinting to non-default ctest resource file with autogenerate turned on "
+    MESSAGE "Configure pointing to non-default ctest resource file with autogenerate turned on "
     CMND ${CMAKE_COMMAND}
     ARGS
       ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
@@ -957,6 +957,101 @@ TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_other_ctest_resources_file_auto
   # NOTE: The above test ensures that when CTEST_RESOURCE_SPEC_FILE is set to
   # the non-default location then the autogenerate feature will not overwrite
   # the file and will not generate the default file.
+
+
+TRIBITS_ADD_ADVANCED_TEST( TribitsHelloWorld_set_default_ctest_resources_file_autogen_on
+  OVERALL_WORKING_DIRECTORY TEST_NAME
+  OVERALL_NUM_MPI_PROCS 1
+  EXCLUDE_IF_NOT_TRUE HAS_CTEST_RESOURCE_FILE_SUPPORT
+
+  TEST_0
+    MESSAGE "Copy in pre-created ctest resource file into the default autogen name and location"
+    CMND cp
+    ARGS "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/other_ctest_resources.json"
+      ctest_resources.json
+
+  TEST_1
+    MESSAGE "Configure pointing to default ctest resource file with autogenerate turned on"
+    CMND ${CMAKE_COMMAND}
+    ARGS
+      ${TribitsHelloWorld_COMMON_CONFIG_ARGS}
+      -DTribitsHelloWorld_ENABLE_TESTS=ON
+      -DTribitsHelloWorld_AUTOGENERATE_TEST_RESOURCE_FILE=ON
+      -DTribitsHelloWorld_CUDA_NUM_GPUS=2
+      -DTribitsHelloWorld_CUDA_SLOTS_PER_GPU=3
+      -DTPL_ENABLE_CUDA=ON
+      -DCTEST_RESOURCE_SPEC_FILE=ctest_resources.json
+      ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsHelloWorld
+    PASS_REGULAR_EXPRESSION_ALL
+      "Configuring done"
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  TEST_2
+    MESSAGE "Check that the pre-existing ctest_resources.json file **was** overwritten"
+    CMND diff
+    ARGS "${CMAKE_CURRENT_SOURCE_DIR}/ctest_resources/ctest_resources.autogen_2_3_.json"
+      ctest_resources.json
+
+  TEST_3
+    MESSAGE "Check that the CTestTestfile.cmake file has the right entries"
+    CMND cat
+    ARGS hello_world/CTestTestfile.cmake
+    PASS_REGULAR_EXPRESSION_ALL
+      "ENVIRONMENT .CTEST_KOKKOS_DEVICE_TYPE=gpus."
+      "PROCESSORS .1."
+      "RESOURCE_GROUPS .1,gpus:1."
+    ALWAYS_FAIL_ON_NONZERO_RETURN
+
+  )
+  # NOTE: The above test shows that if the user happens to provide a ctest
+  # resoruce file of the same name and the same location as the default
+  # generated file, then TriBIT will actually overwrite it!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ########################################################################
