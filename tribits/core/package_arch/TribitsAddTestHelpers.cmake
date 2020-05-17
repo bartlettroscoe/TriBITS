@@ -53,10 +53,10 @@ INCLUDE(TribitsGetCategoriesString)
 
 
 #
-# Do initialation for test helpers
+# Do initialization for test helpers
 #
-# This must be run just before the pacakges define their tests and this macro
-# must be run in the base-level project scrope.
+# This must be run just before the packages define their tests and this macro
+# must be run in the base-level project scope.
 #
 MACRO(TRIBITS_ADD_TEST_HELPERS_INIT)
   IF (TPL_ENABLE_CUDA)
