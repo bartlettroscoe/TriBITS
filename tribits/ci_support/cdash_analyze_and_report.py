@@ -956,13 +956,13 @@ if __name__ == '__main__':
       outFile.write(fullCDashHtmlReportPageStr)
 
   if inOptions.sendEmailTo:
-    htmlEmailBodyFileStr = CDQAR.getFullCDashHtmlReportPageStr(cdashReportData,
+    htmlEmailBodyStr = CDQAR.getFullCDashHtmlReportPageStr(cdashReportData,
       pageStyle=defaultPageStyle)
     for emailAddress in inOptions.sendEmailTo.split(','):
       emailAddress = emailAddress.strip()
       print("\nSending email to '"+emailAddress+"' ...")
       msg=CDQAR.createHtmlMimeEmail(
-        inOptions.emailFromAddress, emailAddress, summaryLine, "", htmlEmaiBody)
+        inOptions.emailFromAddress, emailAddress, summaryLine, "", htmlEmailBodyStr)
       CDQAR.sendMineEmail(msg)
 
   #
