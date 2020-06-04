@@ -287,6 +287,11 @@ class CDashReportData(object):
     self.htmlEmailBodyBottom = ""
     # This var will store the list of data numbers for the summary line
     self.summaryLineDataNumbersList = []
+  def reset(self):
+    self.globalPass = True
+    self.htmlEmailBodyTop = ""
+    self.htmlEmailBodyBottom = ""
+    self.summaryLineDataNumbersList = []
 
 
 # Define standard CDash colors
@@ -2385,6 +2390,73 @@ def getCDashTestHtmlTableConsecColData(testsetTableType):
   else:
     raise Exception("Error, invalid testsetTableType="+str(testsetTableType))
   return consecCol
+
+
+# Class to generate the data for an HTML report for all test-sets for a given
+# issue tracker.
+#
+# This class can be reused for multiple issue issue trackers.
+#
+class IssueTrackerTestsStatusReporter(object):
+
+  # Constructor
+  #
+  # cdashReportData [persisting]: Data used to create the final report (of type
+  # CDashReportData).
+  #
+  def __init__(self, verbose=True):
+    self.cdashReportData = CDashReportData()
+    self.testsetsReporter = TestsetsReporter(
+      self.cdashReportData, testsetAcroList = ['twip', 'twim', 'twif', 'twinr'],
+      htmlStyle=None, verbose=verbose )
+    self.issueTracker = None
+    self.cdashTestingDay = None
+
+
+  # Generate a report about the status of all of the tests for one issue
+  # tracker
+  #
+  # Inputs:
+  #
+  #   testsLOD [in]: The list of test dicts for one issue tracker.  (The isuse
+  #   tracker info will be extracted from the test dicts field 'issue_tracker'
+  #   and all of the test dicts must have the same value for 'issue_tracker'
+  #   this will throw.)
+  #
+  # Return 'True' if all of the tests match an (internally defined) passing
+  # criteria such that the issue tracker could be closed.  Otherwise, returns
+  # 'False' which means that the tests have not yet mt the passing criteria.
+  # If len(testsLOD) == 0, then 'True' will be returned (which assumes that
+  # there are no tests remaining related to the issue tracker).
+  #
+  # Postconditions:
+  #
+  # * A report about the status of the tests is returned in the function
+  #   self.getIssueTrackerTestsStatusReport().
+  #
+  def reportIssueTrackerTestsStatus(self, testsLOD):
+    self.cdashReportData.reset()
+    if (len(testsLOD) == 0):
+      self.issueTracker = None
+      return True
+    self.issueTracker = testsLOD[0]['issue_tracker']
+    # ToDo: Above, assert all tests dicts in testsLOD have the 'issue_tracker'
+    # field and they are all the same value or thow!
+    self.cdashTestingDay = "YYYY-MM-DD"
+    # ToDo: Above, get the date from the test dicts field 'cdash_testing_day'!
+    self.testsetsReporter.reportTestsets(testsLOD)
+    # Return the final status
+    return False  # ToDo: Add logic to verify if issue can be closed!
+
+
+  # Generate a pass/fail report HTML string for the last call to
+  # reportIssueTrackerTestsStatus()
+  def getIssueTrackerTestsStatusReport(self):
+    if self.issueTracker == None:
+      return None
+    testsSummaryTitle = \
+      "Test results for issue "+self.issueTracker+" as of "+self.cdashTestingDay
+    return self.testsetsReporter.getTestsHtmlReportStr(testsSummaryTitle)
 
 
 # Class to optionally get test history and then analyze and report a single
