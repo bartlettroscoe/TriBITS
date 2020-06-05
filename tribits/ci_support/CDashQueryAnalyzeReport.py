@@ -2408,7 +2408,7 @@ class IssueTrackerTestsStatusReporter(object):
     self.cdashReportData = CDashReportData()
     self.testsetsReporter = TestsetsReporter(
       self.cdashReportData, testsetAcroList = ['twip', 'twim', 'twif', 'twinr'],
-      htmlStyle=None, verbose=verbose )
+      htmlStyle="", verbose=verbose )
     self.issueTracker = None
     self.cdashTestingDay = None
 
