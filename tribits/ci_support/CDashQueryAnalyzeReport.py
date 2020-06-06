@@ -1771,6 +1771,18 @@ def setTestDictAsMissing(testDict):
   return testDict
 
 
+# Transform functor that sets the 'cdash_testing_day' field in a test dict.
+#
+class AddCDashTestingDayFunctor(object):
+
+  def __init__(self, cdash_testing_day):
+    self.cdash_testing_day = cdash_testing_day
+
+  def __call__(self, testDict):
+    testDict[u'cdash_testing_day'] = unicode(self.cdash_testing_day)
+    return testDict
+
+
 # Gather up a list of the missing builds
 #
 # Inputs:
@@ -2440,8 +2452,7 @@ class IssueTrackerTestsStatusReporter(object):
       self.issueTracker = None
       return True
     (self.issueTracker, _) = getIssueTrackerAndAssertAllSame(testsLOD)
-    self.cdashTestingDay = "YYYY-MM-DD"
-    # ToDo: Above, get the date from the test dicts field 'cdash_testing_day'!
+    self.cdashTestingDay = testsLOD[0]['cdash_testing_day']
     self.testsetsReporter.reportTestsets(testsLOD)
     # Return the final status
     return False  # ToDo: Add logic to verify if issue can be closed!

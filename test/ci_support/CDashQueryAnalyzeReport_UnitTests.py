@@ -3019,6 +3019,23 @@ class test_AddTestHistoryToTestDictFunctor(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalyzeReport.addCDashTestingDayFunctor
+#
+#############################################################################
+
+
+class test_addCDashTestingDayFunctor(unittest.TestCase):
+
+  def test_1(self):
+    testDict = { u'testname':u'test1' }
+    addCDashTestingDayFunctor = AddCDashTestingDayFunctor("YYYY-MM-DD")
+    testDict=addCDashTestingDayFunctor(testDict)
+    testDict_expected = { u'testname':u'test1', u'cdash_testing_day':u'YYYY-MM-DD' }
+    self.assertEqual(testDict, testDict_expected)
+
+
+#############################################################################
+#
 # Test CDashQueryAnalyzeReport.buildHasConfigureFailures()
 #
 #############################################################################
@@ -4253,7 +4270,7 @@ class test_IssueTrackerTestsStatusReporter(unittest.TestCase):
     #  testsHtmlReportFile.write(issueTrckerTestsStatusReportHtml)
     assertListOfRegexsFoundInLinstOfStrs(self,
       regexList=[
-        '<h2>Test results for issue #1234 as of YYYY-MM-DD</h2>',
+        '<h2>Test results for issue #1234 as of 2018-10-28</h2>',
         "<h3><font color=.red.>Tests with issue trackers Failed: twif=8</font></h3>",
         "<td align=\"left\">cee-rhel6</td>",
         "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816429&build=4107319\">MueLu_&shy;UnitTestsBlockedEpetra_&shy;MPI_&shy;1</a></td>",
@@ -4349,7 +4366,7 @@ class test_IssueTrackerTestsStatusReporter(unittest.TestCase):
     #  testsHtmlReportFile.write(issueTrckerTestsStatusReportHtml)
     assertListOfRegexsFoundInLinstOfStrs(self,
       regexList=[
-        '<h2>Test results for issue #1234 as of YYYY-MM-DD</h2>',
+        '<h2>Test results for issue #1234 as of 2018-10-28</h2>',
         '<font color="green">Tests with issue trackers Passed: twip=1</font><br>',
         '<font color="gray">Tests with issue trackers Missing: twim=2</font><br>',
         '<font color="red">Tests with issue trackers Failed: twif=5</font><br>',
