@@ -4061,11 +4061,137 @@ class test_TestsetsReporter(unittest.TestCase):
 
 #############################################################################
 #
+# Test CDashQueryAnalyzeReport.getIssueTrackerAndAssertAllSame()
+#
+#############################################################################
+
+
+def tdit(testname, issue_tracker_id, skipUrlField=False):
+  td = { u'testname':unicode(testname) }
+  if issue_tracker_id:
+    td.update({u'issue_tracker':u'#'+issue_tracker_id})
+    if not skipUrlField:
+      td.update({
+        u'issue_tracker_url' :
+          unicode('https://github.com/org/repo/issues/'+issue_tracker_id)})
+  return td
+
+
+class test_getIssueTrackerAndAssertAllSame(unittest.TestCase):
+
+
+  def test_empty(self):
+    testsLOD = []
+    issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+    self.assertEqual(issueTracker, None)
+
+
+  def test_all_matching(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', '1234'),
+      tdit('test3', '1234'),
+      ]
+    issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+    self.assertEqual(issueTracker,
+      (u'#1234', u'https://github.com/org/repo/issues/1234'))
+
+
+  def test_missing_issue_tracker_field(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', None),
+      tdit('test3', '1234'),
+      ]
+    threwExcept = True
+    try:
+      issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, the test dict {u'testname': u'test2'} at index 1"+\
+        " is missing the 'issue_tracker' field!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  def test_missing_issue_tracker_url_field(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', '1234', skipUrlField=True),
+      tdit('test3', '1234'),
+      ]
+    threwExcept = True
+    try:
+      issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, the test dict"+\
+        " {u'issue_tracker': u'#1234', u'testname': u'test2'} at index 1"+\
+        " is missing the 'issue_tracker_url' field!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  def test_inconsistent_issue_tracker_field(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', '1235'),
+      tdit('test3', '1234'),
+      ]
+    threwExcept = True
+    try:
+      issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, the test dict {u'issue_tracker': u'#1235', u'issue_tracker_url':"+\
+        " u'https://github.com/org/repo/issues/1235', u'testname': u'test2'} at"+\
+        " index 1 has a different 'issue_tracker' field '#1235' than the expected"+\
+        " value of '#1234'!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  def test_inconsistent_issue_tracker_field(self):
+    testsLOD = [
+      tdit('test1', '1234'),
+      tdit('test2', '1234'),
+      tdit('test3', '1234'),
+      ]
+    testsLOD[2]['issue_tracker_url'] = u'https://github.com/org/repo/issues/1236'
+    threwExcept = True
+    try:
+      issueTracker = getIssueTrackerAndAssertAllSame(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError, errMsg:
+      self.assertEqual( str(errMsg),
+        "Error, the test dict {u'issue_tracker': u'#1234', u'issue_tracker_url':"+\
+        " u'https://github.com/org/repo/issues/1236', u'testname': u'test3'} at"+\
+        " index 2 has a different 'issue_tracker_url' field"+\
+        " 'https://github.com/org/repo/issues/1236' than the expected value of"+\
+        " 'https://github.com/org/repo/issues/1234'!" )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  #def test_inconsistent_issue_tracker_url_field(self):
+
+
+#############################################################################
+#
 # Test CDashQueryAnalyzeReport.IssueTrackerTestsStatusReporter
 #
 # NOTE: This also tests the class CDashQueryAnalyzeReport.TestsetsReporter
 #
 #############################################################################
+
+
+def setIssueTrackerFields(testsLOD, issue_tracker, issue_tracker_url):
+  for testDict in testsLOD:
+    testDict['issue_tracker'] = issue_tracker
+    testDict['issue_tracker_url'] = issue_tracker_url
 
 
 class test_IssueTrackerTestsStatusReporter(unittest.TestCase):
@@ -4081,10 +4207,37 @@ class test_IssueTrackerTestsStatusReporter(unittest.TestCase):
     self.assertEqual(reportHtml, None)
 
 
-  def test_twif_8_twinr_1(self):
+  def test_non_matching_issue_tracker_field(self):
     allTestsLOD = copy.deepcopy(g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out)
     issueTrackerTestsStatusReporter = IssueTrackerTestsStatusReporter(verbose=False)
-    testsLOD = allTestsLOD
+    threwExcept = True
+    try:
+      testsLOD = allTestsLOD
+      okayToCloseIssue = \
+        issueTrackerTestsStatusReporter.reportIssueTrackerTestsStatus(testsLOD)
+      threwExcept = False
+    except IssueTrackerFieldError, errMsg:
+      assertFindListOfStringsInString(self,
+        [
+          "Error, the test dict {",
+          "u'buildName': u'Trilinos-atdm-cee-rhel6-clang-opt-serial'",
+          "u'testname': u'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2'",
+          "} at index 1 has a different 'issue_tracker' field '#3632'"+\
+            " than the expected value of '#3640'!",
+          ],
+        str(errMsg),
+        "errMsg",
+        debugPrint=False,
+        )
+    if not threwExcept:
+      self.assertFalse("ERROR: Did not thown an excpetion")
+
+
+  def test_twif_8_twinr_1(self):
+    testsLOD = copy.deepcopy(g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out)
+    setIssueTrackerFields(testsLOD, u'#1234',
+      u'https://github.com/trilinos/Trilinos/issues/1234')
+    issueTrackerTestsStatusReporter = IssueTrackerTestsStatusReporter(verbose=False)
     okayToCloseIssue = \
       issueTrackerTestsStatusReporter.reportIssueTrackerTestsStatus(testsLOD)
     self.assertEqual(okayToCloseIssue, False)
@@ -4100,18 +4253,18 @@ class test_IssueTrackerTestsStatusReporter(unittest.TestCase):
     #  testsHtmlReportFile.write(issueTrckerTestsStatusReportHtml)
     assertListOfRegexsFoundInLinstOfStrs(self,
       regexList=[
-        '<h2>Test results for issue #3640 as of YYYY-MM-DD</h2>',
+        '<h2>Test results for issue #1234 as of YYYY-MM-DD</h2>',
         "<h3><font color=.red.>Tests with issue trackers Failed: twif=8</font></h3>",
         "<td align=\"left\">cee-rhel6</td>",
         "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816429&build=4107319\">MueLu_&shy;UnitTestsBlockedEpetra_&shy;MPI_&shy;1</a></td>",
         "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816429&build=4107319\"><font color=\"red\">Failed</font></a></td>",
-        "<td align=\"right\"><a href=\"https://github.com/trilinos/Trilinos/issues/3640\">#3640</a></td>",
+        "<td align=\"right\"><a href=\"https://github.com/trilinos/Trilinos/issues/1234\">#1234</a></td>",
         "<h3><font color=\"orange\">Tests with issue trackers Not Run: twinr=1</font></h3>",
         "<td align=\"left\">cee-rhel6</td>",
         "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816373&build=4107331\">Teko_&shy;ModALPreconditioner_&shy;MPI_&shy;1</a></td>",
         "<td align=\"left\"><a href=\"https://something.com/cdash/testDetails.php[?]test=57816373&build=4107331\"><font color=\"orange\">Not Run</font></a></td>",
         "<td align=\"left\">Required Files Missing</td>",
-        "<td align=\"right\"><a href=\"https://github.com/trilinos/Trilinos/issues/3638\">#3638</a></td>",
+        "<td align=\"right\"><a href=\"https://github.com/trilinos/Trilinos/issues/1234\">#1234</a></td>",
         ],
       stringsList=issueTrckerTestsStatusReportHtml.split('\n'),
       stringsListName="issueTrckerTestsStatusReportHtml",
@@ -4120,25 +4273,26 @@ class test_IssueTrackerTestsStatusReporter(unittest.TestCase):
 
 
   def test_twip_1_twif_5_twim_2_twinr_1(self):
-    allTestsLOD = copy.deepcopy(g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out)
+    testsLOD = copy.deepcopy(g_twoif_10_twoinr2_twif_8_twinr_1_test_data_out)
+    setIssueTrackerFields(testsLOD, u'#1234',
+      u'https://github.com/trilinos/Trilinos/issues/1234')
     # Change a test from failing to passing
-    testIdx = getIdxOfTestInTestLOD(allTestsLOD,
+    testIdx = getIdxOfTestInTestLOD(testsLOD,
       'cee-rhel6', 'Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial',
       'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
-    makeTestPassing(allTestsLOD[testIdx])
+    makeTestPassing(testsLOD[testIdx])
     # Change a from from faling to missing
-    testIdx = getIdxOfTestInTestLOD(allTestsLOD,
+    testIdx = getIdxOfTestInTestLOD(testsLOD,
       'cee-rhel6', 'Trilinos-atdm-cee-rhel6-intel-opt-serial',
       'PanzerAdaptersIOSS_tIOSSConnManager2_MPI_2')
-    makeTestMissing(allTestsLOD[testIdx])
+    makeTestMissing(testsLOD[testIdx])
     # Change another a test from failing to missing
-    testIdx = getIdxOfTestInTestLOD(allTestsLOD,
+    testIdx = getIdxOfTestInTestLOD(testsLOD,
       'cee-rhel6', 'Trilinos-atdm-cee-rhel6-intel-opt-serial',
       'PanzerAdaptersIOSS_tIOSSConnManager3_MPI_3')
-    makeTestMissing(allTestsLOD[testIdx])
+    makeTestMissing(testsLOD[testIdx])
     # Run the reporter
     issueTrackerTestsStatusReporter = IssueTrackerTestsStatusReporter(verbose=False)
-    testsLOD = allTestsLOD
     okayToCloseIssue = \
       issueTrackerTestsStatusReporter.reportIssueTrackerTestsStatus(testsLOD)
     self.assertEqual(okayToCloseIssue, False)
@@ -4195,7 +4349,7 @@ class test_IssueTrackerTestsStatusReporter(unittest.TestCase):
     #  testsHtmlReportFile.write(issueTrckerTestsStatusReportHtml)
     assertListOfRegexsFoundInLinstOfStrs(self,
       regexList=[
-        '<h2>Test results for issue #3640 as of YYYY-MM-DD</h2>',
+        '<h2>Test results for issue #1234 as of YYYY-MM-DD</h2>',
         '<font color="green">Tests with issue trackers Passed: twip=1</font><br>',
         '<font color="gray">Tests with issue trackers Missing: twim=2</font><br>',
         '<font color="red">Tests with issue trackers Failed: twif=5</font><br>',

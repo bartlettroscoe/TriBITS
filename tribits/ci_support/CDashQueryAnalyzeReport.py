@@ -2439,9 +2439,7 @@ class IssueTrackerTestsStatusReporter(object):
     if (len(testsLOD) == 0):
       self.issueTracker = None
       return True
-    self.issueTracker = testsLOD[0]['issue_tracker']
-    # ToDo: Above, assert all tests dicts in testsLOD have the 'issue_tracker'
-    # field and they are all the same value or thow!
+    (self.issueTracker, _) = getIssueTrackerAndAssertAllSame(testsLOD)
     self.cdashTestingDay = "YYYY-MM-DD"
     # ToDo: Above, get the date from the test dicts field 'cdash_testing_day'!
     self.testsetsReporter.reportTestsets(testsLOD)
@@ -2457,6 +2455,80 @@ class IssueTrackerTestsStatusReporter(object):
     testsSummaryTitle = \
       "Test results for issue "+self.issueTracker+" as of "+self.cdashTestingDay
     return self.testsetsReporter.getTestsHtmlReportStr(testsSummaryTitle)
+
+
+# Get the 'issue_tracker' filed from a list of test dicts and assert they are
+# all the same.
+#
+# Formal Paremeters:
+#
+#   testsLOD [in]: List of test dicts the must have the 'issue_tracker' and
+#   the 'issuer_tracker_url' fields and they must all be identical to each
+#   other.
+#
+# Returns:
+#
+#   (issue_tracker, issue_tracker_url)
+#
+# Throws:
+#
+#   IssueTrackerFieldError: If the 'issue_tracker' or the 'issuer_tracker_url'
+#   fields are missing from a test dict or if they don't match each other.
+#
+def getIssueTrackerAndAssertAllSame(testsLOD):
+  if len(testsLOD) == 0:
+    return None
+  issue_tracker = None
+  issue_tracker_url = None
+  i = 0
+  for testDict in testsLOD:
+    (issue_tracker_i, issue_tracker_url_i) = \
+      getIssueTrackerFromTestDict(testDict, i)
+    if issue_tracker == None and issue_tracker_url == None:
+      issue_tracker = issue_tracker_i
+      issue_tracker_url = issue_tracker_url_i
+    else:
+      assertSameIssueTracker(issue_tracker_i, issue_tracker, testDict, i)
+      assertSameIssueTrackerUrl(issue_tracker_url_i, issue_tracker_url,
+        testDict, i)
+    i += 1
+  return (issue_tracker, issue_tracker_url)
+
+
+def getIssueTrackerFromTestDict(testDict, idx):
+    issue_tracker = testDict.get('issue_tracker', None)
+    issue_tracker_url = testDict.get('issue_tracker_url', None)
+    if issue_tracker == None:
+      raise IssueTrackerFieldError(
+        "Error, the test dict "+sorted_dict_str(testDict)+" at index "+str(idx)+\
+        " is missing the 'issue_tracker' field!" )
+    if issue_tracker_url == None:
+      raise IssueTrackerFieldError(
+        "Error, the test dict "+sorted_dict_str(testDict)+" at index "+str(idx)+\
+        " is missing the 'issue_tracker_url' field!" )
+    return (issue_tracker, issue_tracker_url)
+
+
+def assertSameIssueTracker(issue_tracker, issue_tracker_expected, testDict, idx):
+  if issue_tracker != issue_tracker_expected:
+    raise IssueTrackerFieldError(
+      "Error, the test dict "+sorted_dict_str(testDict)+" at index "+str(idx)+\
+      " has a different 'issue_tracker' field '"+str(issue_tracker)+"' than the"+\
+      " expected value of '"+str(issue_tracker_expected)+"'!" )
+
+
+def assertSameIssueTrackerUrl(issue_tracker_url, issue_tracker_url_expected,
+    testDict, idx,
+  ):
+  if issue_tracker_url != issue_tracker_url_expected:
+    raise IssueTrackerFieldError(
+      "Error, the test dict "+sorted_dict_str(testDict)+" at index "+str(idx)+\
+      " has a different 'issue_tracker_url' field '"+str(issue_tracker_url)+"' than the"+\
+      " expected value of '"+str(issue_tracker_url_expected)+"'!" )
+
+
+class IssueTrackerFieldError(Exception):
+  pass
 
 
 # Class to optionally get test history and then analyze and report a single
