@@ -1472,50 +1472,6 @@ class test_cdash_analyze_and_report(unittest.TestCase):
       '2018-10-28T06:10:33 UTC')
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   # Test to check that when only 'twip' and 'twim' exists, then we consider
   # this to be global PASSED.
   #
@@ -1747,32 +1703,6 @@ cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOS
     self.assertEqual(testDict['cdash_testing_day'], u'2018-10-28')
     self.assertEqual(testDict['test_history_list'][0]['buildstarttime'],
       '2018-10-26T12:00:00 UTC')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 #
