@@ -1574,7 +1574,10 @@ def runRepoCmnd(options, cmndLineArgsArray, repoDirName, baseDir, \
     repoDirName, repoVersionDict, repoVersionDict2)
   cmndLineArgsArrayDefaultBranch = replaceDefaultBranchInCmndLineArgs( \
     cmndLineArgsArrayRepo, repoDirName, defaultBranchDict)
-  egCmndArray = [ options.useGit ] + cmndLineArgsArrayDefaultBranch
+  egCmndArray = [ options.useGit ]
+  if options.useColor:
+    egCmndArray.extend(['-c', 'color.status=always'])
+  egCmndArray.extend(cmndLineArgsArrayDefaultBranch)
   runCmnd(options, egCmndArray)
 
 
