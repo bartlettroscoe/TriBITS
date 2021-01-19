@@ -1765,6 +1765,7 @@ cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOS
       testCaseName,
       [ "--print-details=on", # grep for verbose output
         "--filter-out-builds-and-tests-not-matching-expected-builds=on",
+        "--list-unexpected-builds=on",
         ],
       1,
       "FAILED (twoif=2, twif=4): ProjectName Nightly Builds on 2018-10-28",
@@ -1776,6 +1777,7 @@ cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOS
         "Num tests with issue trackers = 4",
         "Num builds downloaded from CDash = 6",
         "Num builds matching expected builds = 4",
+        "Num builds unexpected = 2",
         "Num builds = 4",
         "Num nonpassing tests direct from CDash query = 21",
         "Num nonpassing tests matching expected builds = 6",
@@ -1792,6 +1794,7 @@ cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOS
         "Builds Missing: bm=0",
         "Builds with Configure Failures: cf=0",
         "Builds with Build Failures: bf=0",
+        "Builds unexpected: bu=2",
         "Num tests with issue trackers Passed = 0",
         "Num tests with issue trackers Missing = 0",
 
@@ -1817,9 +1820,14 @@ cee-rhel6, Trilinos-atdm-cee-rhel6-gnu-4.9.3-opt-serial, PanzerAdaptersIOSS_tIOS
 
         # Second paragraph with listing of different types of tables below
         "<p>",
+        "Builds unexpected: bu=2<br>",
         "<font color=\"red\">Tests without issue trackers Failed: twoif=2</font><br>",
         "Tests with issue trackers Failed: twif=4<br>",
         "</p>",
+
+        # bu table
+        "<h3>Builds unexpected: bu=2</h3>",
+        "TODO ADD LINES FOR BU TABLE AND ROWS",
 
         # twoif table
         "<h3><font color=\"red\">Tests without issue trackers Failed [(]limited to 10[)]: twoif=2</font></h3>",
