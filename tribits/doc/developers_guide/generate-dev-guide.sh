@@ -8,7 +8,7 @@
 #   ./generate-dev-guide.sh
 #
 # If you want to override what utils are used to generate the files, you can
-# pass in, for exmaple:
+# pass in, for example:
 #
 #   ./generate-dev-guide.sh \
 #      --generate-html=rst2html.py --generate-latex=rst2latex.py
@@ -19,8 +19,8 @@
 #    --generate-latex=
 #
 # This script also automatically extracts detailed TriBITS documentation from
-# the *.cmake files using extract_rst_cmake_doc.py (which works kind of like
-# doxygen).
+# the *.cmake files using the tool extract_rst_cmake_doc.py (which works kind
+# of like doxygen).
 #
 # To see output from extract_rst_cmake_doc.py just run the script as:
 #
@@ -28,17 +28,17 @@
 #       ./generate-dev-guide.sh [other args]
 #
 # NOTE: If you see rst2html or rst2latex errors for the file
-# TribitsDeveloeprsGuilde.rst with line numbers that don't seem to make sense,
-# this is likley due to the include of TribitsDetailedMacroFunctionDoc.rst.
+# TribitsDevelopersGuilde.rst with line numbers that don't seem to make sense,
+# this is likely due to the include of TribitsDetailedMacroFunctionDoc.rst.
 # To adjust the line numbers, subtract the line number of the include for
-# TribitsDetailedMacroFunctionDoc.rst in TribitsDevelopersGuilde.rst form the
-# line number given in the output and that will be the line number in the
-# TribitsDevelopersGuilde.rst file.  You can then match that up with the
-# original text in the *.cmake file that this came from for the given macro or
+# TribitsDetailedMacroFunctionDoc.rst in TribitsDevelopersGuilde.rst from the
+# line number given in the output and that will be the line number in the file
+# TribitsDevelopersGuilde.rst.  You can then match that up with the original
+# text in the *.cmake file that this came from for the given macro or
 # function.
 #
 # NOTE: To skip the extraction of the documentation from the *.cmake files,
-# just sent the env TRIBITS_DEV_GUIDE_varaible SKIP_DOCUMENTATION_EXTRACTION
+# just sent the env TRIBITS_DEV_GUIDE_SKIP_DOCUMENTATION_EXTRACTION variable
 # as:
 #
 #   $ env TRIBITS_DEV_GUIDE_SKIP_DOCUMENTATION_EXTRACTION=1 \
@@ -46,11 +46,12 @@
 #
 # That will result in the generated files TribitsMacroFunctionDoc.rst and
 # UtilsMacroFunctionDoc.rst being left as is.  This would be useful to speed
-# up builds (but it is very fast) but is more useful when spell checking and
+# up builds (it is very fast) but is more useful when spell checking and
 # editing the documentation.  This speeds up the editing process and then the
 # updated documentation can be copied back into the *.cmake files of origin.
 #
 # Enjoy!
+#
 
 ARGS=$@
 
