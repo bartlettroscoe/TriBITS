@@ -40,6 +40,9 @@ ToDo: Fill this in for the maintainers guide.
 .. include:: ../TribitsDevelopersGuideBody.rst
 
 
+.. include:: TribitsCoreDetailedReference.rst
+
+
 TriBITS System Maintainers Documentation
 ========================================
 
@@ -48,13 +51,15 @@ implementation of TriBITS.  This information is meant to make it easier to
 understand and manipulate the data-structures and macros/functions that make
 up internal implementation of TriBITS.
 
+
 .. include:: ../../../core/package_arch/TribitsSystemDataStructuresMacrosFunctions.rst
+
 
 .. include:: TribitsSystemMacroFunctionDoc.rst
 
-.. include:: TribitsMacroAndFunctionsBody.rst
 
 .. include:: ../TribitsDevelopersGuideReferences.rst
+
 
 .. include:: ../TribitsFAQ.rst
 

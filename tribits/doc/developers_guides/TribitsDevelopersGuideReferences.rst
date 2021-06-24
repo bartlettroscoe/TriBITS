@@ -1,7 +1,31 @@
 
+
+References
+==========
+
+.. _Agile Software Development, 2003:
+
+Martin, Robert. *Agile Software Development (Principles, Patterns, and
+Practices)*. Prentice Hall. 2003. 
+
+.. _Integration Strategies for CSE, 2009:
+
+Bartlett, Roscoe. *Integration Strategies for Computational Science &
+Engineering Software*.  2009-0655, Second International Workshop on Software
+Engineering for Computational Science and Engineering, 2009.  https://bartlettroscoe.github.io/publications/CSE_SoftwareIntegration_Strategies.pdf.
+
+.. _SCALE, 2011:
+
+*SCALE: A Comprehensive Modeling and Simulation Suite for Nuclear Safety Analysis and Design*, ORNL/TM-2005/39, Version 6.1, Oak Ridge National Laboratory, Oak Ridge, Tennessee, June 2011. Available from Radiation Safety Information Computational Center at Oak Ridge National Laboratory as CCC-785.  http://scale.ornl.gov/
+
+.. _LiveV:
+
+*LiveV*  https://github.com/lifev/cmake
+
+
 .. ***
-.. *** Common references
-.. **
+.. *** Common link references
+.. ***
 
 .. Common references to TribitsBuildReference document
 
