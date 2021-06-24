@@ -71,18 +71,22 @@ function generate_gitdist_dist_help_topic {
 
 
 function tribits_extract_rst_cmake_doc {
-  extra_args=$1
+  dir=$1
+  extra_args=$2
+
+  cd ${dir}
+  echo $PWD
 
   if [ "$TRIBITS_DEV_GUIDE_SKIP_DOCUMENTATION_EXTRACTION" == "" ] ; then
 
     echo
     echo "Extracting TriBITS documentation from *.cmake files ..."
     echo
-    ../../python_utils/extract_rst_cmake_doc.py \
-      --extract-from=../../core/package_arch/,../../ci_support/,../../core/utils/,../../ctest_driver/ \
-      --rst-file-pairs=TribitsMacroFunctionDocTemplate.rst:TribitsMacroFunctionDoc.rst.tmp,UtilsMacroFunctionDocTemplate.rst:UtilsMacroFunctionDoc.rst.tmp,TribitsSystemMacroFunctionDocTemplate.rst:TribitsSystemMacroFunctionDoc.rst.tmp \
+    ../../../python_utils/extract_rst_cmake_doc.py \
+      --extract-from=../../../core/package_arch/,../../../ci_support/,../../../core/utils/,../../../ctest_driver/ \
+      --rst-file-pairs=../TribitsMacroFunctionDocTemplate.rst:TribitsMacroFunctionDoc.rst.tmp,../UtilsMacroFunctionDocTemplate.rst:UtilsMacroFunctionDoc.rst.tmp,../TribitsSystemMacroFunctionDocTemplate.rst:TribitsSystemMacroFunctionDoc.rst.tmp \
       ${extra_args} \
-      --file-name-path-base-dir=../.. \
+      --file-name-path-base-dir=../../.. \
       $TRIBITS_DEV_GUIDE_EXTRACT_RST_CMAKE_DOC_EXTRA_ARGS
 
     update_if_different  TribitsMacroFunctionDoc.rst  tmp
@@ -90,6 +94,8 @@ function tribits_extract_rst_cmake_doc {
     update_if_different  TribitsSystemMacroFunctionDoc.rst  tmp
 
   fi
+
+  cd -
 
 }
 
@@ -209,13 +215,19 @@ function tribits_extract_other_doc {
 # Executable code
 #
 
-tribits_extract_rst_cmake_doc --show-file-name-line-num
+generate_git_version_file
 
 tribits_extract_other_doc
 
-generate_git_version_file
+tribits_extract_rst_cmake_doc  maintainers_guide --show-file-name-line-num
 
 echo
-echo "Generating HTML and PDF files ..."
+echo "Generating HTML and PDF files for maintainers_guide ..."
 echo
+
+cd maintainers_guide
+echo $PWD
 make
+cd -
+
+# ToDo: Generate users_guide!
