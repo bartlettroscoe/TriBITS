@@ -4,6 +4,11 @@ COMMON_DEPENDENT_FILES = \
   ../TribitsDevelopersGuideBody.rst \
   ../TribitsMacroAndFunctionsBody.rst \
   ../TribitsDevelopersGuideReferences.rst \
+  ../TribitsFAQ.rst \
+  ../TribitsHistory.rst \
+  ../TribitsPackageNotCMakePackage.rst \
+  ../TribitsDesignConsiderations.rst \
+  ../TribitsToolsDocumentation.rst \
   ../TribitsStandardTPLsList.txt \
   ../TribitsCommonTPLsList.txt \
   ../checkin-test-help.txt \

@@ -56,3 +56,16 @@ up internal implementation of TriBITS.
 
 .. include:: ../TribitsDevelopersGuideReferences.rst
 
+.. include:: ../TribitsFAQ.rst
+
+
+Appendix
+========
+
+.. include:: ../TribitsHistory.rst
+
+.. include:: ../TribitsPackageNotCMakePackage.rst
+
+.. include:: ../TribitsDesignConsiderations.rst
+
+.. include:: ../TribitsToolsDocumentation.rst
