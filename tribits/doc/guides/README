@@ -1,17 +1,16 @@
 ###########################################################################
-                  TriBITS Developers Guide README
+              TriBITS Users and Maintainers Guides README
 ###########################################################################
 
 This directory contains the source and output files for the RST-formatted
-TribitsDevelopersGuide.[rst,html,pdf] document.  Running the script:
+docuemnts TribitsUsersGuide.[rst,html] and TribitsUsersGuide.[rst,html].
+Running the script:
 
-  ./generate-dev-guide.sh
+  ./generate-guide.sh all
 
-is used to generate the files TribitsMacroFunctionDoc.rst,
-UtilsMacroFunctionDoc.rst, and TribitsDevelopersGuide.[html,pdf] in one shot.
+is used to generate several files and create the output *.html files.
 
-The only requirements to run this script should be Bash, Python 2.6+, and the
+The only requirements to run this script should be Bash, Python 2.7+, and the
 DocUtils package (installed with 'yum install docutils').
 
-See the documentation inside of the script generate-dev-guide.sh for more
-details.
+See the documentation inside of the script generate-guide.sh for more details.
