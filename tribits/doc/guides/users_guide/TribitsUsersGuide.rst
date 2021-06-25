@@ -75,7 +75,7 @@ Documentation`_.  Finally, several bits of information are provided in the
 `Appendix`_.
 
 
-.. include:: ../TribitsDevelopersGuideBody.rst
+.. include:: ../TribitsGuidesBody.rst
 
 
 .. include:: TribitsCoreDetailedReference.rst

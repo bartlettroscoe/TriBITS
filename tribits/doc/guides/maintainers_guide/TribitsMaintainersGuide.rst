@@ -37,7 +37,7 @@ Integration, Test System) to develop software projects.
 ToDo: Fill this in for the maintainers guide.
 
 
-.. include:: ../TribitsDevelopersGuideBody.rst
+.. include:: ../TribitsGuidesBody.rst
 
 
 .. include:: TribitsCoreDetailedReference.rst
