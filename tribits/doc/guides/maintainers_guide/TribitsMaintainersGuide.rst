@@ -58,7 +58,7 @@ up internal implementation of TriBITS.
 .. include:: TribitsSystemMacroFunctionDoc.rst
 
 
-.. include:: ../TribitsDevelopersGuideReferences.rst
+.. include:: ../TribitsGuidesReferences.rst
 
 
 .. include:: ../TribitsFAQ.rst

@@ -81,7 +81,7 @@ Documentation`_.  Finally, several bits of information are provided in the
 .. include:: TribitsCoreDetailedReference.rst
 
 
-.. include:: ../TribitsDevelopersGuideReferences.rst
+.. include:: ../TribitsGuidesReferences.rst
 
 
 .. include:: ../TribitsFAQ.rst
