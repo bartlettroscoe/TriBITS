@@ -854,3 +854,10 @@ e.g. ``some_builtin_command()``, one can always access the original built-in
 command as ``_some_builtin_command()``.
 
 .. include:: UtilsMacroFunctionDoc.rst
+
+
+.. *** NOTE: This file is symlinked into users_guide/ and maintainers_guide/
+.. *** and the symlinked file gets included in the top-level *.rst document.
+.. *** This is so that the includes for the generated files
+.. *** TribitsMacroFunctionDoc.rst and UtilsMacroFunctionDoc.rst in those
+.. *** directories work correctly.
