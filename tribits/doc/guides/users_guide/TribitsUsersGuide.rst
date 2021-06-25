@@ -8,7 +8,7 @@ TriBITS Users Guide and Reference
 
 .. |date| date::
 
-:Abstract: This document describes the usage of TriBITS to build, test, and deploy complex software.  The primary audience are those individuals who develop on a software project which uses TriBITS.  The overall structure of a TriBITS project is described including all of the various project- and package-specific files that TriBITS requires or can use and how and what order these files are processed.  It also contains detailed reference information on all of the various TriBITS macros and functions directly used in TriBITS project CMake files.  Many other topics of interest to a TriBITS project developer and architect are discussed as well.
+:Abstract: This document describes the usage of TriBITS to build, test, and deploy complex software.  The primary audience are those individuals who develop on a software project which uses TriBITS as the framework for the project's CMake build system.  The overall structure of a TriBITS project is described including all of the various project- and package-specific files that TriBITS requires or can use and what order these files are processed.  It also contains detailed reference information on all of the various TriBITS macros and functions directly used in a TriBITS project's CMakeLists.txt files.  Many other topics of interest to a TriBITS project developer and architect are discussed as well.
 
 .. sectnum::
    :depth: 2

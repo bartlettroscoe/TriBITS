@@ -18,6 +18,10 @@ Engineering for Computational Science and Engineering, 2009.  https://bartlettro
 
 *SCALE: A Comprehensive Modeling and Simulation Suite for Nuclear Safety Analysis and Design*, ORNL/TM-2005/39, Version 6.1, Oak Ridge National Laboratory, Oak Ridge, Tennessee, June 2011. Available from Radiation Safety Information Computational Center at Oak Ridge National Laboratory as CCC-785.  http://scale.ornl.gov/
 
+.. _Professional CMake:
+
+Scott, Craig.  *Professional CMake: A Practical Guide (5th Edition).* ISBN 978-1-925904-03-1. 2019.  https://crascit.com/
+
 .. _LiveV:
 
 *LiveV*  https://github.com/lifev/cmake
@@ -94,10 +98,13 @@ Engineering for Computational Science and Engineering, 2009.  https://bartlettro
 
 .. _Enabling extra repositories through a file: TribitsBuildReference.html#enabling-extra-repositories-through-a-file
 
-.. Common references to the TribitsOverview document
+.. Common references to TriBITS documents
 
 .. _TriBITS Overview: ../overview/TribitsOverview.pdf
 
+.. _TriBITS Users Guide and Reference: TribitsUsersGuide.html
+
+.. _TriBITS Maintainers Guide and Reference: TribitsMaintainersGuide.html
 
 .. Common references to the TribitsLifecycleModel document
 

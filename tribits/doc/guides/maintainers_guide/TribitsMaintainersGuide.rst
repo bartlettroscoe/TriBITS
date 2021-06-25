@@ -8,7 +8,7 @@ TriBITS Maintainers Guide and Reference
 
 .. |date| date::
 
-:Abstract: This document describes the internal implementation and the maintenance of the TriBITS project itself.  The primary audience are those individuals who will make changes and contributions to the TriBITS project.  This includes 
+:Abstract: This document describes the internal implementation and the maintenance of the TriBITS project itself.  The primary audience are those individuals who will make changes and contributions to the TriBITS project or just want to understand its implementation details.  Included is all of the same information as the TriBITS Users Guide but also include file names and line numbers for all of the documented TriBITS macros and functions.
 
 .. sectnum::
    :depth: 2
@@ -31,10 +31,14 @@ TriBITS Maintainers Guide and Reference
 Introduction
 =============
 
-This document describes the usage and maintenance of TriBITS (Tribal Build,
-Integration, Test System) to develop software projects.
-
-ToDo: Fill this in for the maintainers guide.
+This document describes the usage and maintenance of the TriBITS (Tribal
+Build, Integration, Test System) package itself.  This document includes a
+super-set the material from the `TriBITS Users Guide and Reference`_ document.
+In addition, all of the detailed function and macro documentation blocks
+include the file names and line numbers where they are implemented in the
+TriBITS source repository. This makes it easier to navigate around the TriBITS
+source code when developing on TriBITS itself or just trying to understand its
+implementation.
 
 
 .. include:: ../TribitsGuidesBody.rst
