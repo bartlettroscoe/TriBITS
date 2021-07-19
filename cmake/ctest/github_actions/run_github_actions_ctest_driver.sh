@@ -109,7 +109,7 @@ assert_required_option --cxx-compiler-and-ver "${cxx_compiler_and_ver}"
 export CTEST_SITE=${os}
 
 # CTEST_BUILD_NAME
-CTEST_BUILD_NAME=tribits_${os}_cmake-${cmake_ver}_${cmake_generator}_python-${python_ver}_${cxx_compiler_and_ver}
+CTEST_BUILD_NAME=tribits_cmake-${cmake_ver}_${cmake_generator}_python-${python_ver}_${cxx_compiler_and_ver}
 if [[ "${fortran_compiler_and_ver}" == "" ]] ; then
   CTEST_BUILD_NAME=${CTEST_BUILD_NAME}_nofortran
 fi
