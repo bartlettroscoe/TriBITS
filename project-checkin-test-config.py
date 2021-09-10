@@ -2,10 +2,9 @@ configuration = {
 
     # The default command line arguments
     'defaults': {
-        '--send-email-to-on-push': 'trilinos-checkin-tests@software.sandia.gov',
-        '--enable-packages': 'TriBITS',
-        '--no-rebase': '',
-        '--no-append-test-results': ''
+        '--send-email-to-on-push': 'tribits-checkins@googlegroups.com',
+        '--enable-all-packages': 'on',
+        '--no-rebase': ''
         },
     # NOTE: The last two options --no-rebase --no-append-test-results ensure
     # that the checkin-test.py script does *not* modify the SHA1s of the local
@@ -24,14 +23,15 @@ configuration = {
             ('MPI_DEBUG', [
                 '-DTPL_ENABLE_MPI:BOOL=ON',
                 '-DCMAKE_BUILD_TYPE:STRING=DEBUG',
-                '-DTriBITSProj_ENABLE_DEBUG:BOOL=ON',
+                '-DTriBITS_ENABLE_DEBUG:BOOL=ON',
+                '-DTriBITS_ENABLE_Fortran:BOOL=ON',
                 ]),
 
             # Options for the SERIAL_RELEASE build.
             ('SERIAL_RELEASE', [
                 '-DTPL_ENABLE_MPI:BOOL=OFF',
                 '-DCMAKE_BUILD_TYPE:STRING=RELEASE',
-                '-DTriBITSProj_ENABLE_DEBUG:BOOL=OFF',
+                '-DTriBITS_ENABLE_DEBUG:BOOL=OFF',
                 ]),
 
             ], # default-builds
