@@ -4461,7 +4461,7 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
 
     TEST_6
       MESSAGE "Run ldd on built libsimplecxx"
-      CMND ldd ARGS install/lib/libsimplecxx*
+      CMND ldd ARGS install/lib/libsimplecxx.so
 
     TEST_7
       MESSAGE "Run ldd on built app"
