@@ -1537,7 +1537,7 @@ macro(tribits_ctest_all_at_once)
     ctest_test(
       BUILD "${CTEST_BINARY_DIRECTORY}"
       PARALLEL_LEVEL "${CTEST_PARALLEL_LEVEL}"
-      INCLUDE TribitsExampleApp
+      INCLUDE "TribitsExampleApp.*SHARED"
       )
 
     # See if a 'LastTestsFailed*.log' file exists to determine if there are
