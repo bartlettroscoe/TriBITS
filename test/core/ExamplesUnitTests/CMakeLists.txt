@@ -4442,6 +4442,7 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
       CMND ${CMAKE_COMMAND} ARGS
         -DCMAKE_PREFIX_PATH=${buildDir}/install
         -DTribitsExApp_USE_COMPONENTS=SimpleCxx,WithSubpackages
+        -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
       PASS_REGULAR_EXPRESSION_ALL
         "-- Configuring done"
