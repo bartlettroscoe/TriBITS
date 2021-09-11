@@ -4459,6 +4459,10 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_6
+      MESSAGE "Run ldd on built app"
+      CMND ldd ARGS app_build/app
+
+    TEST_7
       MESSAGE "Test TribitsExampleApp"
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
