@@ -1143,7 +1143,7 @@ macro(tribits_ctest_package_by_package)
         BUILD "${CTEST_BINARY_DIRECTORY}"
         PARALLEL_LEVEL "${CTEST_PARALLEL_LEVEL}"
         INCLUDE_LABEL "^${TRIBITS_PACKAGE}$"
-          )
+        )
       # See if a 'LastTestsFailed*.log' file exists to determine if there are
       # failed tests
       tribits_find_last_test_failed_log_file()
@@ -1537,6 +1537,7 @@ macro(tribits_ctest_all_at_once)
     ctest_test(
       BUILD "${CTEST_BINARY_DIRECTORY}"
       PARALLEL_LEVEL "${CTEST_PARALLEL_LEVEL}"
+      INCLUDE TribitsExampleApp
       )
 
     # See if a 'LastTestsFailed*.log' file exists to determine if there are
