@@ -4381,6 +4381,23 @@ tribits_add_advanced_test( TribitsExampleProject_TribitsExampleProjectAddons
 ########################################################################
 
 
+set_default_and_from_env(TRIBITS_ADD_LD_LIBRARY_HACK_FOR_SIMPLETPL OFF)
+if (TRIBITS_ADD_LD_LIBRARY_HACK_FOR_SIMPLETPL)
+  set(LD_LIBRARY_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG
+    ENVIRONMENT LD_LIBRARY_PATH=${buildDir}/simpletpl_build/install/lib)
+else()
+  set(LD_LIBRARY_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG "")
+endif()
+# NOTE: Above, we have to set LD_LIBRARY_PATH to pick up the
+# libsimpletpl.so because CMake 3.17.5 and 3.21.2 with the GitHub Actions
+# Umbuntu build is refusing to put in the RPATH for libsimpletpl.so into
+# libsimplecxx.so even through CMAKE_INSTALL_RPATH_USE_LINK_PATH=ON is
+# set.  This is not needed for the RHEL 7 builds that I have tried where
+# CMake is behaving correctly and putting in RPATH correctly.  But because
+# I can't log into this system, it is very hard and time consuming to
+# debug this so I am just giving up at this point.
+
+
 function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
 
   if (sharedOrStatic STREQUAL "SHARED")
@@ -4477,6 +4494,8 @@ function(TribitsExampleApp_ALL_ST_NoFortran_test sharedOrStatic)
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    ${LD_LIBRARY_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG}
 
     )
 
@@ -4589,6 +4608,9 @@ function(TribitsExampleApp_ALL_ST_test byProjectOrPackage sharedOrStatic)
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    ${LD_LIBRARY_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG}
+
     )
 
 endfunction()
@@ -4673,6 +4695,9 @@ function(TribitsExampleApp_ALL_ST_buildtree_test sharedOrStatic)
         "app_test [.]+   Passed"
         "100% tests passed, 0 tests failed out of 1"
       ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    ${LD_LIBRARY_HACK_FOR_SIMPLETPL_ENVIRONMENT_ARG}
+
     )
 
 endfunction()
