@@ -77,19 +77,8 @@ include(TribitsGeneralMacros)
 function(tribits_write_external_package_config_file_str tplName tplConfigFileStrOut)
 
   #
-  # A) Parse commandline arguments and setup the text of the config file
+  # A) Set up beginning of config file text
   #
-
-  cmake_parse_arguments(
-     PARSE #prefix
-     ""    #options
-     "OUTPUT_DIRECTORY"  #one_value_keywords
-     ""    #multi_value_keywords
-     ${ARGN}
-     )
-  tribits_check_for_unparsed_arguments()
-
-  set(outputDir "${PARSE_OUTPUT_DIRECTORY}")
 
   set(configFileStr "")
   string(APPEND configFileStr
@@ -105,6 +94,87 @@ function(tribits_write_external_package_config_file_str tplName tplConfigFileStr
   # B) Create IMPORTED library targets from TPL_${tplName}_LIBRARIES
   #
 
+  tribits_process_external_package_libraries_list(
+    ${tplName}
+    LIB_TARGETS_LIST  libTargets
+    LIB_LINK_FLAGS_LIST  libLinkFlags
+    CONFIG_FILE_STR  configFileStr
+    )
+
+  #
+  # C) Create the <tplName>::all_libs
+  #
+
+  string(APPEND configFileStr
+    "add_library(${tplName}::all_libs INTERFACE IMPORTED GLOBAL)\n"
+    "target_link_libraries(${tplName}::all_libs\n")
+  foreach (libTarget IN LISTS libTargets)
+    string(APPEND configFileStr
+      "  INTERFACE ${libTarget}\n")
+  endforeach()
+  string(APPEND configFileStr
+    "  )\n\n")
+
+  #
+  # D) Set the output
+  #
+
+  set(${tplConfigFileStrOut} "${configFileStr}" PARENT_SCOPE)
+
+endfunction()
+
+
+# @FUNCTION: tribits_process_external_package_libraries_list()
+#
+# Read the ``TPL_<tplName>_LIBRARIES` list variable and produce the string for
+# the IMPORTED targets commands and return list of targets and left over
+# linker flags..
+#
+# Usage::
+#
+#   tribits_process_external_package_libraries_list(
+#     <tplName>
+#     LIB_TARGETS_LIST <libTargetsList>
+#     LIB_LINK_FLAGS_LIST <libLinkFlagsList>
+#     CONFIG_FILE_STR <configFileFragStrInOut>
+#     )
+#
+# The arguments are:
+#
+#   ``<tplName>``: Name of the external package/TPL
+#
+#   ``<libTargetsList>``: Name of list variable that will be set with the list
+#   of IMPORTED library targets generated from this list.
+#
+#   ``<libLinkFlagsList>``: Name of list variable that will be set with the
+#   list of ``-L<dir>`` library directoy paths.
+#
+#   ``<configFileFragStrInOut>``: A string variable that will be appended with
+#   the IMPORTED library commands for the list of targts given in
+#   ``<libTargetsList>``.
+#
+function(tribits_process_external_package_libraries_list  tplName)
+
+  #
+  # A) Parse commandline arguments
+  #
+
+  cmake_parse_arguments(
+     PARSE #prefix
+     ""    #options
+     "LIB_TARGETS_LIST;LIB_LINK_FLAGS_LIST;CONFIG_FILE_STR"  #one_value_keywords
+     ""    #multi_value_keywords
+     ${ARGN}
+     )
+  tribits_check_for_unparsed_arguments()
+
+  set(configFileStrInit "${${PARSE_CONFIG_FILE_STR}}")
+
+  #
+  # B) Create IMPORTED library targets from TPL_${tplName}_LIBRARIES
+  #
+
+  set(configFileStr "")
   set(libTargets "")
   set(lastLib "")
 
@@ -115,11 +185,11 @@ function(tribits_write_external_package_config_file_str tplName tplConfigFileStr
   list(REVERSE reversLibraries)
 
   foreach (libentry IN LISTS reversLibraries)
-    print_var(libentry)
+    #print_var(libentry)
     if (IS_ABSOLUTE "${libentry}")
       # Should be an absolute library path
       get_filename_component(full_libname "${libentry}" NAME_WLE)
-      print_var(full_libname)
+      #print_var(full_libname)
       # Assert is a valid lib name and get lib name
       string(LENGTH "${full_libname}" full_libname_len)
       if (full_libname_len LESS 0)
@@ -130,7 +200,7 @@ function(tribits_write_external_package_config_file_str tplName tplConfigFileStr
         tribits_print_invalid_lib_name(${tplName} "${full_libname}")
       endif()
       string(SUBSTRING "${full_libname}" 3 -1 libname)
-      print_var(libname)
+      #print_var(libname)
       # Create IMPORTED library target
       string(APPEND configFileStr
         "add_library(${tplName}::${libname} IMPORTED GLOBAL)\n"
@@ -156,25 +226,14 @@ function(tribits_write_external_package_config_file_str tplName tplConfigFileStr
     endif()
   endforeach()
 
-  #
-  # C) Create the <tplName>::all_libs
-  #
-
-  string(APPEND configFileStr
-    "add_library(${tplName}::all_libs INTERFACE IMPORTED GLOBAL)\n"
-    "target_link_libraries(${tplName}::all_libs\n")
-  foreach (libTarget IN LISTS libTargets)
-    string(APPEND configFileStr
-      "  INTERFACE ${libTarget}\n")
-  endforeach()
-  string(APPEND configFileStr
-    "  )\n\n")
 
   #
-  # D) Set the output
+  # C) Set ouptut arguments:
   #
 
-  set(${tplConfigFileStrOut} "${configFileStr}" PARENT_SCOPE)
+  set(${PARSE_LIB_TARGETS_LIST} "${libTargets}" PARENT_SCOPE)
+  set(${PARSE_LIB_LINK_FLAGS_LIST} "") # ToDo: Fill in once supported!
+  set(${PARSE_CONFIG_FILE_STR} "${configFileStrInit}${configFileStr}" PARENT_SCOPE)
 
 endfunction()
 
