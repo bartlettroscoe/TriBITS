@@ -260,16 +260,15 @@ function(tribits_process_external_package_libraries_list_full_lib_path
     #print_var(libname)
     # Create IMPORTED library target
     string(APPEND configFileStr
-      "add_library(${tplName}::${libname} IMPORTED GLOBAL)\n"
+      "add_library(${tplName}::${libname} IMPORTED UNKNOWN GLOBAL)\n"
       "set_target_properties(${tplName}::${libname} PROPERTIES\n"
       "  IMPORTED_LOCATION \"${libentry}\")\n"
       )
     # Set dependency on previous library
     if (lastLib)
       string(APPEND configFileStr
-        "add_library(${tplName}::${libname} IMPORTED GLOBAL)\n"
         "target_link_libraries(${tplName}::${libname}\n"
-        "  INTERFACE ${tplName}::${lastlib})\n"
+        "  INTERFACE ${tplName}::${lastLib})\n"
         )
     endif()
     string(APPEND configFileStr

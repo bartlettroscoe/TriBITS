@@ -88,9 +88,57 @@ function(unittest_tribits_process_external_package_libraries_list_incl_dirs_0_li
 [=[
 #beginning
 
-add_library(SomeTpl::somelib IMPORTED GLOBAL)
+add_library(SomeTpl::somelib IMPORTED UNKNOWN GLOBAL)
 set_target_properties(SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib.so")
+
+]=]
+    )
+
+endfunction()
+
+
+function(unittest_tribits_process_external_package_libraries_list_incl_dirs_0_lib_files_2)
+
+  message("\n***")
+  message("*** Testing tribits_process_external_package_libraries_list(): incl dirs 0, lib files 2")
+  message("***\n")
+
+  set(tplName SomeTpl)
+  set(TPL_${tplName}_LIBRARIES
+    "/some/explicit/path/libsomelib2.so" "/some/explicit/path/libsomelib1.so")
+
+  set(configFileFragStr "#beginning\n\n")
+
+  tribits_process_external_package_libraries_list( ${tplName}
+    LIB_TARGETS_LIST libTargetsList
+    LIB_LINK_FLAGS_LIST libLinkFlagsList
+    CONFIG_FILE_STR configFileFragStr
+    )
+
+  unittest_compare_const( libTargetsList
+    "SomeTpl::somelib1;SomeTpl::somelib2"
+    )
+
+  unittest_compare_const( libLinkFlagsList
+    ""
+    )
+
+  print_var(configFileFragStr)
+
+  unittest_string_block_compare( configFileFragStr
+[=[
+#beginning
+
+add_library(SomeTpl::somelib1 IMPORTED UNKNOWN GLOBAL)
+set_target_properties(SomeTpl::somelib1 PROPERTIES
+  IMPORTED_LOCATION "/some/explicit/path/libsomelib1.so")
+
+add_library(SomeTpl::somelib2 IMPORTED UNKNOWN GLOBAL)
+set_target_properties(SomeTpl::somelib2 PROPERTIES
+  IMPORTED_LOCATION "/some/explicit/path/libsomelib2.so")
+target_link_libraries(SomeTpl::somelib2
+  INTERFACE SomeTpl::somelib1)
 
 ]=]
     )
@@ -119,7 +167,7 @@ function(unittest_tribits_write_external_package_config_file_str_incl_dirs_0_lib
 
 include_guard()
 
-add_library(SomeTpl::somelib IMPORTED GLOBAL)
+add_library(SomeTpl::somelib IMPORTED UNKNOWN GLOBAL)
 set_target_properties(SomeTpl::somelib PROPERTIES
   IMPORTED_LOCATION "/some/explicit/path/libsomelib.so")
 
@@ -147,8 +195,9 @@ unittest_initialize_vars()
 #
 
 unittest_tribits_process_external_package_libraries_list_incl_dirs_0_lib_files_1()
+unittest_tribits_process_external_package_libraries_list_incl_dirs_0_lib_files_2()
 
 unittest_tribits_write_external_package_config_file_str_incl_dirs_0_lib_files_1()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(4)
+unittest_final_result(7)
