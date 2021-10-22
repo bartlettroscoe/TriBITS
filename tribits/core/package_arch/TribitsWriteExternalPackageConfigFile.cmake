@@ -41,17 +41,42 @@
 include(TribitsGeneralMacros)
 
 
+# @FUNCTION: tribits_write_external_package_config_file()
+#
+# Write out a ``<tplName>Config.cmake`` file given the list of include
+# directories and libraries for an external package/TPL.
+#
+# Usage::
+#
+#   tribits_write_external_package_config_fil3(
+#     <tplName> <tplConfigFile> )
+#
+# The arguments are:
+#
+#   ``<tplName>``: Name of the external package/TPL
+#
+#   ``<tplConfigFile>``: Full file path for the ``<tplName>Config.cmake``
+#   file that will be written out.
+#
+# This function just calls
+# ``tribits_write_external_package_config_file_str()`` and writes that text to
+# the file ``<tplConfigFile>`` so see that function for more details.
+#
+function(tribits_write_external_package_config_file  tplName  tplConfigFile)
+  tribits_write_external_package_config_file_str(${tplName} tplConfigFileStr)
+  file(WRITE "${tplConfigFile}" "${tplConfigFileStr}")
+endfunction()
+
+
 # @FUNCTION: tribits_write_external_package_config_file_str()
 #
-# Write out a ``<tplName>Config.cmake`` file into the provided directory given
-# the list of include directories and libraries for an external package/TPL.
+# Create the text strig for a ``<tplName>Config.cmake`` file given the list of
+# include directories and libraries for an external package/TPL.
 #
 # Usage::
 #
 #   tribits_write_external_package_config_file_str(
-#     <tplName>
-#     <tplConfigFileStrOut>
-#     )
+#     <tplName> <tplConfigFileStrOut> )
 #
 # The arguments are:
 #

@@ -39,6 +39,8 @@
 
 include_guard()
 
+include(TribitsWriteExternalPackageConfigFile)
+
 include(AdvancedSet)
 include(AppendSet)
 include(AssertDefined)
@@ -674,6 +676,13 @@ function(tribits_tpl_find_include_dirs_and_libraries TPL_NAME)
   if (_${TPL_NAME}_ENABLE_SUCCESS)
     global_set(TPL_${TPL_NAME}_NOT_FOUND FALSE)
   endif()
+
+  set(buildDirCMakePkgsDir
+    "${${PROJECT_NAME}_BINARY_DIR}/${${PROJECT_NAME}_BUILD_DIR_CMAKE_PKGS_DIR}")
+  set(tplConfigFile
+    "${buildDirCMakePkgsDir}/${TPL_NAME}/${TPL_NAME}Config.cmake")
+  tribits_write_external_package_config_file(${TPL_NAME} "${tplConfigFile}")
+  include("${tplConfigFile}")
 
 endfunction()
 
