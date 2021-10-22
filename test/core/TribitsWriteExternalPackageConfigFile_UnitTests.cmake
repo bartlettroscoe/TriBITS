@@ -59,17 +59,6 @@ include(UnitTestHelpers)
 #####################################################################
 
 
-set(config_file_frag_str_incl_dirs_0_lib_files_1
-[=[
-#beginning
-
-add_library(SomeTpl::somelib IMPORTED GLOBAL)
-set_target_properties(SomeTpl::somelib PROPERTIES
-  IMPORTED_LOCATION "/some/explicit/path/libsomelib.so")
-
-]=]
-)
-
 function(unittest_tribits_process_external_package_libraries_list_incl_dirs_0_lib_files_1)
 
   message("\n***")
@@ -96,13 +85,33 @@ function(unittest_tribits_process_external_package_libraries_list_incl_dirs_0_li
     )
 
   unittest_string_block_compare( configFileFragStr
-    "${config_file_frag_str_incl_dirs_0_lib_files_1}"
+[=[
+#beginning
+
+add_library(SomeTpl::somelib IMPORTED GLOBAL)
+set_target_properties(SomeTpl::somelib PROPERTIES
+  IMPORTED_LOCATION "/some/explicit/path/libsomelib.so")
+
+]=]
     )
 
 endfunction()
 
 
-set(config_file_str_incl_dirs_0_lib_files_1
+function(unittest_tribits_write_external_package_config_file_str_incl_dirs_0_lib_files_1)
+
+  message("\n***")
+  message("*** Testing the generation of <tplName>Config.cmake: incl dirs 0, lib files 1")
+  message("***\n")
+
+  set(tplName SomeTpl)
+  set(TPL_${tplName}_INCLUDE_DIRS "")
+  set(TPL_${tplName}_LIBRARIES "/some/explicit/path/libsomelib.so")
+
+  tribits_write_external_package_config_file_str(${tplName}
+    tplConfigFileStr )
+
+  unittest_string_block_compare( tplConfigFileStr
 [=[
 # Package config file for external package/TPL 'SomeTpl'
 #
@@ -120,23 +129,6 @@ target_link_libraries(SomeTpl::all_libs
   )
 
 ]=]
-)
-
-function(unittest_tribits_write_external_package_config_file_str_incl_dirs_0_lib_files_1)
-
-  message("\n***")
-  message("*** Testing the generation of <tplName>Config.cmake: incl dirs 0, lib files 1")
-  message("***\n")
-
-  set(tplName SomeTpl)
-  set(TPL_${tplName}_INCLUDE_DIRS "")
-  set(TPL_${tplName}_LIBRARIES "/some/explicit/path/libsomelib.so")
-
-  tribits_write_external_package_config_file_str(${tplName}
-    tplConfigFileStr )
-
-  unittest_string_block_compare( tplConfigFileStr
-    "${config_file_str_incl_dirs_0_lib_files_1}"
     )
 
 endfunction()
