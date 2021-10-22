@@ -155,9 +155,7 @@ endfunction()
 #
 function(tribits_process_external_package_libraries_list  tplName)
 
-  #
   # A) Parse commandline arguments
-  #
 
   cmake_parse_arguments(
      PARSE #prefix
@@ -168,11 +166,11 @@ function(tribits_process_external_package_libraries_list  tplName)
      )
   tribits_check_for_unparsed_arguments()
 
+  # Capture the initial input string in case the name of the var
+  # 'configFileStr' is the same in the parent scope.
   set(configFileStrInit "${${PARSE_CONFIG_FILE_STR}}")
 
-  #
   # B) Create IMPORTED library targets from TPL_${tplName}_LIBRARIES
-  #
 
   set(configFileStr "")
   set(libTargets "")
@@ -181,61 +179,109 @@ function(tribits_process_external_package_libraries_list  tplName)
   # Iterate through libs in reverse order setting dependencies on the libs
   # that came before them so CMake will put in right order on the link line.
 
-  set(reversLibraries ${TPL_${tplName}_LIBRARIES})
-  list(REVERSE reversLibraries)
+  set(reverseLibraries ${TPL_${tplName}_LIBRARIES})
+  list(REVERSE reverseLibraries)
 
-  foreach (libentry IN LISTS reversLibraries)
+  foreach (libentry IN LISTS reverseLibraries)
     #print_var(libentry)
-    if (IS_ABSOLUTE "${libentry}")
-      # Should be an absolute library path
-      get_filename_component(full_libname "${libentry}" NAME_WLE)
-      #print_var(full_libname)
-      # Assert is a valid lib name and get lib name
-      string(LENGTH "${full_libname}" full_libname_len)
-      if (full_libname_len LESS 0)
-        tribits_print_invalid_lib_name(${tplName} "${full_libname}")
-      endif()
-      string(SUBSTRING "${full_libname}" 0 3 libPart)
-      if (NOT libPart STREQUAL "lib")
-        tribits_print_invalid_lib_name(${tplName} "${full_libname}")
-      endif()
-      string(SUBSTRING "${full_libname}" 3 -1 libname)
-      #print_var(libname)
-      # Create IMPORTED library target
-      string(APPEND configFileStr
-        "add_library(${tplName}::${libname} IMPORTED GLOBAL)\n"
-        "set_target_properties(${tplName}::${libname} PROPERTIES\n"
-        "  IMPORTED_LOCATION \"${libentry}\")\n"
-        )
-      # Set dependency on previous library
-      if (lastLib)
-        string(APPEND configFileStr
-          "add_library(${tplName}::${libname} IMPORTED GLOBAL)\n"
-          "target_link_libraries(${tplName}::${libname}\n"
-          "  INTERFACE ${tplName}::${lastlib})\n"
-          )
-      endif()
-      string(APPEND configFileStr
-        "\n")
-      # Update for next loop
-      set(lastLib ${libname})
-      list(APPEND libTargets "${tplName}::${libname}")
+    tribits_tpl_libraries_entry_type(${libentry} libEntryType)
+    if (libEntryType STREQUAL "FULL_LIB_PATH")
+      tribits_process_external_package_libraries_list_full_lib_path(
+        ${tplName}  "${libentry}"  libTargets  lastLib  configFileStr )
     else()
       message(SEND_ERROR
         "ERROR: Can't handle argument '${libentry}' in list TPL_${tplName}_LIBRARIES")
     endif()
   endforeach()
 
-
-  #
   # C) Set ouptut arguments:
-  #
-
   set(${PARSE_LIB_TARGETS_LIST} "${libTargets}" PARENT_SCOPE)
   set(${PARSE_LIB_LINK_FLAGS_LIST} "") # ToDo: Fill in once supported!
   set(${PARSE_CONFIG_FILE_STR} "${configFileStrInit}${configFileStr}" PARENT_SCOPE)
 
 endfunction()
+
+
+# Returns the type of the library entry in the list TPL_<tplName>_LIBRARIES
+#
+# Arguments:
+#
+#   ``libentry`` [in]: Element of ``TPL_<tplName>_LIBRARIES``
+#
+#   ``libEntryTypeOut`` [out]: Variable set on output to the type of entry.
+#
+# The types of entries set on ``libEntryTypeOut`` include:
+#
+#   ``FULL_LIB_PATH``: A full library path
+#
+#   ``LIB_NAME_LINK_OPTION``: A library name link option of the form
+#   ``-l<libname>``
+#
+#   ``LIB_DIR_LIONK_OPTION``: A library directory search option of the form
+#   ``-L<dir>``
+#
+#   ``UNSUPPORTED_LIB_ENTRY``: An unspported lib option
+#
+function(tribits_tpl_libraries_entry_type  libentry  libEntryTypeOut)
+  if (IS_ABSOLUTE "${libentry}")
+    set(libEntryType FULL_LIB_PATH)
+  else()
+    set(libEntryType UNSUPPORTED_LIB_ENTRY)
+  endif()
+  # ToDo: Implement support for the other types!
+  set(${libEntryTypeOut} ${libEntryType} PARENT_SCOPE)
+endfunction()
+
+
+# Function to process a full library path lib entry inside of loop over
+# TPL_<tplName>_LIBRARIES in the function
+# tribits_process_external_package_libraries_list()
+#
+function(tribits_process_external_package_libraries_list_full_lib_path
+    tplName  libentry  libTargetsInOut  lastLibInOut  configFileStrInOut
+  )
+    # Set local vars for inout vars
+    set(libTargets ${${libTargetsInOut}})
+    set(lastLib ${${lastLibInOut}})
+    set(configFileStr ${${configFileStrInOut}})
+    # Should be an absolute library path
+    get_filename_component(full_libname "${libentry}" NAME_WLE)
+    #print_var(full_libname)
+    # Assert is a valid lib name and get lib name
+    string(LENGTH "${full_libname}" full_libname_len)
+    if (full_libname_len LESS 0)
+      tribits_print_invalid_lib_name(${tplName} "${full_libname}")
+    endif()
+    string(SUBSTRING "${full_libname}" 0 3 libPart)
+    if (NOT libPart STREQUAL "lib")
+      tribits_print_invalid_lib_name(${tplName} "${full_libname}")
+    endif()
+    string(SUBSTRING "${full_libname}" 3 -1 libname)
+    #print_var(libname)
+    # Create IMPORTED library target
+    string(APPEND configFileStr
+      "add_library(${tplName}::${libname} IMPORTED GLOBAL)\n"
+      "set_target_properties(${tplName}::${libname} PROPERTIES\n"
+      "  IMPORTED_LOCATION \"${libentry}\")\n"
+      )
+    # Set dependency on previous library
+    if (lastLib)
+      string(APPEND configFileStr
+        "add_library(${tplName}::${libname} IMPORTED GLOBAL)\n"
+        "target_link_libraries(${tplName}::${libname}\n"
+        "  INTERFACE ${tplName}::${lastlib})\n"
+        )
+    endif()
+    string(APPEND configFileStr
+      "\n")
+    # Update for next loop
+    set(lastLib ${libname})
+    list(APPEND libTargets "${tplName}::${libname}")
+    # Set output vars
+    set(${libTargetsInOut} ${libTargets} PARENT_SCOPE)
+    set(${lastLibInOut} ${lastLib} PARENT_SCOPE)
+    set(${configFileStrInOut} ${configFileStr} PARENT_SCOPE)
+endfunction() 
 
 
 function(tribits_print_invalid_lib_name  tplName  full_libname)
