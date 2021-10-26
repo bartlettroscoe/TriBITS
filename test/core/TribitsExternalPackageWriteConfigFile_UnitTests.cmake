@@ -71,9 +71,9 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
   set(configFileFragStr "#beginning\n\n")
 
   tribits_external_package_process_libraries_list( ${tplName}
-    LIB_TARGETS_LIST libTargetsList
-    LIB_LINK_FLAGS_LIST libLinkFlagsList
-    CONFIG_FILE_STR configFileFragStr
+    LIB_TARGETS_LIST_OUT libTargetsList
+    LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
+    CONFIG_FILE_STR_INOUT configFileFragStr
     )
 
   unittest_compare_const( libTargetsList
@@ -111,9 +111,9 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
   set(configFileFragStr "#beginning\n\n")
 
   tribits_external_package_process_libraries_list( ${tplName}
-    LIB_TARGETS_LIST libTargetsList
-    LIB_LINK_FLAGS_LIST libLinkFlagsList
-    CONFIG_FILE_STR configFileFragStr
+    LIB_TARGETS_LIST_OUT libTargetsList
+    LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
+    CONFIG_FILE_STR_INOUT configFileFragStr
     )
 
   unittest_compare_const( libTargetsList
@@ -161,9 +161,9 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
   set(configFileFragStr "#beginning\n\n")
 
   tribits_external_package_process_libraries_list( ${tplName}
-    LIB_TARGETS_LIST libTargetsList
-    LIB_LINK_FLAGS_LIST libLinkFlagsList
-    CONFIG_FILE_STR configFileFragStr
+    LIB_TARGETS_LIST_OUT libTargetsList
+    LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
+    CONFIG_FILE_STR_INOUT configFileFragStr
     )
 
   unittest_compare_const( libTargetsList

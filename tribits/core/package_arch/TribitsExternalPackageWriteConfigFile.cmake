@@ -115,9 +115,9 @@ function(tribits_external_package_write_config_file_str tplName tplConfigFileStr
   # B) Create IMPORTED library targets from TPL_${tplName}_LIBRARIES
   tribits_external_package_process_libraries_list(
     ${tplName}
-    LIB_TARGETS_LIST  libTargets
-    LIB_LINK_FLAGS_LIST  libLinkFlags
-    CONFIG_FILE_STR  configFileStr
+    LIB_TARGETS_LIST_OUT  libTargets
+    LIB_LINK_FLAGS_LIST_OUT  libLinkFlags
+    CONFIG_FILE_STR_INOUT  configFileStr
     )
 
   # C) Create the <tplName>::all_libs target
@@ -125,7 +125,7 @@ function(tribits_external_package_write_config_file_str tplName tplConfigFileStr
     ${tplName}
     LIB_TARGETS_LIST  ${libTargets}
     LIB_LINK_FLAGS_LIST  ${libLinkFlags}
-    CONFIG_FILE_STR  configFileStr
+    CONFIG_FILE_STR_INOUT  configFileStr
     )
 
   # D) Set the output
@@ -144,19 +144,19 @@ endfunction()
 #
 #   tribits_external_package_process_libraries_list(
 #     <tplName>
-#     LIB_TARGETS_LIST <libTargetsList>
-#     LIB_LINK_FLAGS_LIST <libLinkFlagsList>
-#     CONFIG_FILE_STR <configFileFragStrInOut>
+#     LIB_TARGETS_LIST_OUT <libTargetsListOut>
+#     LIB_LINK_FLAGS_LIST_OUT <libLinkFlagsListOut>
+#     CONFIG_FILE_STR_INOUT <configFileFragStrInOut>
 #     )
 #
 # The arguments are:
 #
 #   ``<tplName>``: Name of the external package/TPL
 #
-#   ``<libTargetsList>``: Name of list variable that will be set with the list
-#   of IMPORTED library targets generated from this list.
+#   ``<libTargetsListOut>``: Name of list variable that will be set with the
+#   list of IMPORTED library targets generated from this list.
 #
-#   ``<libLinkFlagsList>``: Name of list variable that will be set with the
+#   ``<libLinkFlagsListOut>``: Name of list variable that will be set with the
 #   list of ``-L<dir>`` library directoy paths.
 #
 #   ``<configFileFragStrInOut>``: A string variable that will be appended with
@@ -170,7 +170,7 @@ function(tribits_external_package_process_libraries_list  tplName)
   cmake_parse_arguments(
      PARSE #prefix
      ""    #options
-     "LIB_TARGETS_LIST;LIB_LINK_FLAGS_LIST;CONFIG_FILE_STR"  #one_value_keywords
+     "LIB_TARGETS_LIST_OUT;LIB_LINK_FLAGS_LIST_OUT;CONFIG_FILE_STR_INOUT"  #one_value_keywords
      ""    #multi_value_keywords
      ${ARGN}
      )
@@ -178,7 +178,7 @@ function(tribits_external_package_process_libraries_list  tplName)
 
   # Capture the initial input string in case the name of the var
   # 'configFileStr' is the same in the parent scope.
-  set(configFileStrInit "${${PARSE_CONFIG_FILE_STR}}")
+  set(configFileStrInit "${${PARSE_CONFIG_FILE_STR_INOUT}}")
 
   # B) Create IMPORTED library targets from TPL_${tplName}_LIBRARIES
 
@@ -205,9 +205,10 @@ function(tribits_external_package_process_libraries_list  tplName)
   endforeach()
 
   # C) Set output arguments:
-  set(${PARSE_LIB_TARGETS_LIST} "${libTargets}" PARENT_SCOPE)
-  set(${PARSE_LIB_LINK_FLAGS_LIST} "") # ToDo: Fill in once supported!
-  set(${PARSE_CONFIG_FILE_STR} "${configFileStrInit}${configFileStr}" PARENT_SCOPE)
+  set(${PARSE_LIB_TARGETS_LIST_OUT} "${libTargets}" PARENT_SCOPE)
+  set(${PARSE_LIB_LINK_FLAGS_LIST_OUT} "") # ToDo: Fill in once supported!
+  set(${PARSE_CONFIG_FILE_STR_INOUT} "${configFileStrInit}${configFileStr}"
+    PARENT_SCOPE)
 
 endfunction()
 
@@ -310,7 +311,7 @@ endfunction()
 #     <tplName>
 #     LIB_TARGETS_LIST <libTargetsList>
 #     LIB_LINK_FLAGS_LIST <libLinkFlagsList>
-#     CONFIG_FILE_STR <configFileFragStrInOut>
+#     CONFIG_FILE_STR_INOUT <configFileFragStrInOut>
 #     )
 #
 # The arguments are:
@@ -333,7 +334,7 @@ function(tribits_external_package_create_all_libs_target  tplName)
   cmake_parse_arguments(
      PARSE #prefix
      ""    #options
-     "CONFIG_FILE_STR"  #one_value_keywords
+     "CONFIG_FILE_STR_INOUT"  #one_value_keywords
      "LIB_TARGETS_LIST;LIB_LINK_FLAGS_LIST"  #multi_value_keywords
      ${ARGN}
      )
@@ -345,7 +346,7 @@ function(tribits_external_package_create_all_libs_target  tplName)
 
   # Capture the initial input string in case the name of the var
   # 'configFileStr' is the same in the parent scope.
-  set(configFileStrInit "${${PARSE_CONFIG_FILE_STR}}")
+  set(configFileStrInit "${${PARSE_CONFIG_FILE_STR_INOUT}}")
 
   set(configFileStr "")
 
@@ -379,7 +380,8 @@ function(tribits_external_package_create_all_libs_target  tplName)
       "\n")
 
   # C) Set output arguments
-  set(${PARSE_CONFIG_FILE_STR} "${configFileStrInit}${configFileStr}" PARENT_SCOPE)
+  set(${PARSE_CONFIG_FILE_STR_INOUT} "${configFileStrInit}${configFileStr}"
+    PARENT_SCOPE)
 
 endfunction()
 
