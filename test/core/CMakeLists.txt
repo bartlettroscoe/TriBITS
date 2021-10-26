@@ -145,7 +145,7 @@ tribits_add_advanced_test( TribitsWriteExternalPackageConfigFile_UnitTests
       -DCURRENT_TEST_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}
       -P "${CMAKE_CURRENT_SOURCE_DIR}/TribitsWriteExternalPackageConfigFile_UnitTests.cmake"
     PASS_REGULAR_EXPRESSION_ALL
-      "Final UnitTests Result: num_run = 10"
+      "Final UnitTests Result: num_run = 11"
       "Final UnitTests Result: PASSED"
   )
 

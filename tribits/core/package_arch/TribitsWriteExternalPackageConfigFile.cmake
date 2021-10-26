@@ -130,15 +130,34 @@ function(tribits_write_external_package_config_file_str tplName tplConfigFileStr
   # C) Create the <tplName>::all_libs
   #
 
+  # add_library()
   string(APPEND configFileStr
-    "add_library(${tplName}::all_libs INTERFACE IMPORTED GLOBAL)\n"
-    "target_link_libraries(${tplName}::all_libs\n")
-  foreach (libTarget IN LISTS libTargets)
+    "add_library(${tplName}::all_libs INTERFACE IMPORTED GLOBAL)\n")
+  # target_link_libraries()
+  if (libTargets)
     string(APPEND configFileStr
-      "  INTERFACE ${libTarget}\n")
-  endforeach()
+      "target_link_libraries(${tplName}::all_libs\n")
+    foreach (libTarget IN LISTS libTargets)
+      string(APPEND configFileStr
+        "  INTERFACE ${libTarget}\n")
+    endforeach()
+    string(APPEND configFileStr
+      "  )\n")
+  endif()
+  # target_include_directories()
+  if (TPL_${tplName}_INCLUDE_DIRS)
+    string(APPEND configFileStr
+      "target_include_directories(${tplName}::all_libs\n")
+    foreach (inclDir IN LISTS TPL_${tplName}_INCLUDE_DIRS)
+      string(APPEND configFileStr
+        "  INTERFACE ${inclDir}\n")
+    endforeach()
+    string(APPEND configFileStr
+      "  )\n")
+  endif()
+  # Add trailing newline
   string(APPEND configFileStr
-    "  )\n\n")
+      "\n")
 
   #
   # D) Set the output
@@ -312,7 +331,3 @@ function(tribits_print_invalid_lib_name  tplName  full_libname)
   message(SEND_ERROR
     "ERROR: TPL_${tplName}_LIBRARIES entry '${full_libname}' not a valid lib name!")
 endfunction()
-
-
-
-
