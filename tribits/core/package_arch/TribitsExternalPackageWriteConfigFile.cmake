@@ -41,7 +41,7 @@
 include(TribitsGeneralMacros)
 
 
-# @FUNCTION: tribits_write_external_package_config_file()
+# @FUNCTION: tribits_external_package_write_config_file()
 #
 # Write out a ``<tplName>Config.cmake`` file given the list of include
 # directories and libraries for an external package/TPL.
@@ -59,23 +59,23 @@ include(TribitsGeneralMacros)
 #   file that will be written out.
 #
 # This function just calls
-# ``tribits_write_external_package_config_file_str()`` and writes that text to
+# ``tribits_external_package_write_config_file_str()`` and writes that text to
 # the file ``<tplConfigFile>`` so see that function for more details.
 #
-function(tribits_write_external_package_config_file  tplName  tplConfigFile)
-  tribits_write_external_package_config_file_str(${tplName} tplConfigFileStr)
+function(tribits_external_package_write_config_file  tplName  tplConfigFile)
+  tribits_external_package_write_config_file_str(${tplName} tplConfigFileStr)
   file(WRITE "${tplConfigFile}" "${tplConfigFileStr}")
 endfunction()
 
 
-# @FUNCTION: tribits_write_external_package_config_file_str()
+# @FUNCTION: tribits_external_package_write_config_file_str()
 #
 # Create the text strig for a ``<tplName>Config.cmake`` file given the list of
 # include directories and libraries for an external package/TPL.
 #
 # Usage::
 #
-#   tribits_write_external_package_config_file_str(
+#   tribits_external_package_write_config_file_str(
 #     <tplName> <tplConfigFileStrOut> )
 #
 # The arguments are:
@@ -99,7 +99,7 @@ endfunction()
 # * ``TPL_<tplName>_LIBRARIES`` containing arguments other than library files
 # * or ``-l`` and ``-L`` arguments and files.
 #
-function(tribits_write_external_package_config_file_str tplName tplConfigFileStrOut)
+function(tribits_external_package_write_config_file_str tplName tplConfigFileStrOut)
 
   # A) Set up beginning of config file text
   set(configFileStr "")
@@ -113,7 +113,7 @@ function(tribits_write_external_package_config_file_str tplName tplConfigFileStr
     )
 
   # B) Create IMPORTED library targets from TPL_${tplName}_LIBRARIES
-  tribits_process_external_package_libraries_list(
+  tribits_external_package_process_libraries_list(
     ${tplName}
     LIB_TARGETS_LIST  libTargets
     LIB_LINK_FLAGS_LIST  libLinkFlags
@@ -121,7 +121,7 @@ function(tribits_write_external_package_config_file_str tplName tplConfigFileStr
     )
 
   # C) Create the <tplName>::all_libs target
-  tribits_create_external_package_all_libs_target(
+  tribits_external_package_create_all_libs_target(
     ${tplName}
     LIB_TARGETS_LIST  ${libTargets}
     LIB_LINK_FLAGS_LIST  ${libLinkFlags}
@@ -134,7 +134,7 @@ function(tribits_write_external_package_config_file_str tplName tplConfigFileStr
 endfunction()
 
 
-# @FUNCTION: tribits_process_external_package_libraries_list()
+# @FUNCTION: tribits_external_package_process_libraries_list()
 #
 # Read the ``TPL_<tplName>_LIBRARIES` list variable and produce the string for
 # the IMPORTED targets commands and return list of targets and left over
@@ -142,7 +142,7 @@ endfunction()
 #
 # Usage::
 #
-#   tribits_process_external_package_libraries_list(
+#   tribits_external_package_process_libraries_list(
 #     <tplName>
 #     LIB_TARGETS_LIST <libTargetsList>
 #     LIB_LINK_FLAGS_LIST <libLinkFlagsList>
@@ -163,7 +163,7 @@ endfunction()
 #   the IMPORTED library commands for the list of targts given in
 #   ``<libTargetsList>``.
 #
-function(tribits_process_external_package_libraries_list  tplName)
+function(tribits_external_package_process_libraries_list  tplName)
 
   # A) Parse commandline arguments
 
@@ -196,7 +196,7 @@ function(tribits_process_external_package_libraries_list  tplName)
     #print_var(libentry)
     tribits_tpl_libraries_entry_type(${libentry} libEntryType)
     if (libEntryType STREQUAL "FULL_LIB_PATH")
-      tribits_process_external_package_libraries_list_full_lib_path(
+      tribits_external_package_process_libraries_list_full_lib_path(
         ${tplName}  "${libentry}"  libTargets  lastLib  configFileStr )
     else()
       message(SEND_ERROR
@@ -245,9 +245,9 @@ endfunction()
 
 # Function to process a full library path lib entry inside of loop over
 # TPL_<tplName>_LIBRARIES in the function
-# tribits_process_external_package_libraries_list()
+# tribits_external_package_process_libraries_list()
 #
-function(tribits_process_external_package_libraries_list_full_lib_path
+function(tribits_external_package_process_libraries_list_full_lib_path
     tplName  libentry  libTargetsInOut  lastLibInOut  configFileStrInOut
   )
     # Set local vars for inout vars
@@ -299,14 +299,14 @@ function(tribits_print_invalid_lib_name  tplName  full_libname)
 endfunction()
 
 
-# @FUNCTION: tribits_create_external_package_all_libs_target()
+# @FUNCTION: tribits_external_package_create_all_libs_target()
 #
 # Creates the <tplName>::all_libs target command text using input info and
 # from ``TPL_<tplName>_INCLUDE_DIRS``.
 #
 # Usage::
 #
-#   tribits_create_external_package_all_libs_target(
+#   tribits_external_package_create_all_libs_target(
 #     <tplName>
 #     LIB_TARGETS_LIST <libTargetsList>
 #     LIB_LINK_FLAGS_LIST <libLinkFlagsList>
@@ -326,7 +326,7 @@ endfunction()
 #   ``<configFileFragStrInOut>``: A string variable that will be appended with
 #   the ``<tplName>::all_libs`` target statements.
 #
-function(tribits_create_external_package_all_libs_target  tplName)
+function(tribits_external_package_create_all_libs_target  tplName)
 
   # Parse commandline arguments
 

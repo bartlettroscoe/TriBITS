@@ -47,7 +47,7 @@ set( CMAKE_MODULE_PATH
   "${${PROJECT_NAME}_TRIBITS_DIR}/core/package_arch"
   )
 
-include(TribitsWriteExternalPackageConfigFile)
+include(TribitsExternalPackageWriteConfigFile)
 
 include(UnitTestHelpers)
 
@@ -59,10 +59,10 @@ include(UnitTestHelpers)
 #####################################################################
 
 
-function(unittest_tribits_process_external_package_libraries_list_incl_dirs_0_lib_files_1)
+function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_1)
 
   message("\n***")
-  message("*** Testing tribits_process_external_package_libraries_list(): incl dirs 0, lib files 1")
+  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, lib files 1")
   message("***\n")
 
   set(tplName SomeTpl)
@@ -70,7 +70,7 @@ function(unittest_tribits_process_external_package_libraries_list_incl_dirs_0_li
 
   set(configFileFragStr "#beginning\n\n")
 
-  tribits_process_external_package_libraries_list( ${tplName}
+  tribits_external_package_process_libraries_list( ${tplName}
     LIB_TARGETS_LIST libTargetsList
     LIB_LINK_FLAGS_LIST libLinkFlagsList
     CONFIG_FILE_STR configFileFragStr
@@ -98,10 +98,10 @@ set_target_properties(SomeTpl::somelib PROPERTIES
 endfunction()
 
 
-function(unittest_tribits_process_external_package_libraries_list_incl_dirs_0_lib_files_2)
+function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_2)
 
   message("\n***")
-  message("*** Testing tribits_process_external_package_libraries_list(): incl dirs 0, lib files 2")
+  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, lib files 2")
   message("***\n")
 
   set(tplName SomeTpl)
@@ -110,7 +110,7 @@ function(unittest_tribits_process_external_package_libraries_list_incl_dirs_0_li
 
   set(configFileFragStr "#beginning\n\n")
 
-  tribits_process_external_package_libraries_list( ${tplName}
+  tribits_external_package_process_libraries_list( ${tplName}
     LIB_TARGETS_LIST libTargetsList
     LIB_LINK_FLAGS_LIST libLinkFlagsList
     CONFIG_FILE_STR configFileFragStr
@@ -146,10 +146,10 @@ target_link_libraries(SomeTpl::somelib2
 endfunction()
 
 
-function(unittest_tribits_process_external_package_libraries_list_incl_dirs_0_lib_files_3)
+function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_3)
 
   message("\n***")
-  message("*** Testing tribits_process_external_package_libraries_list(): incl dirs 0, lib files 3")
+  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, lib files 3")
   message("***\n")
 
   set(tplName SomeTpl)
@@ -160,7 +160,7 @@ function(unittest_tribits_process_external_package_libraries_list_incl_dirs_0_li
 
   set(configFileFragStr "#beginning\n\n")
 
-  tribits_process_external_package_libraries_list( ${tplName}
+  tribits_external_package_process_libraries_list( ${tplName}
     LIB_TARGETS_LIST libTargetsList
     LIB_LINK_FLAGS_LIST libLinkFlagsList
     CONFIG_FILE_STR configFileFragStr
@@ -202,7 +202,7 @@ target_link_libraries(SomeTpl::somelib3
 endfunction()
 
 
-function(unittest_tribits_write_external_package_config_file_str_incl_dirs_0_lib_files_1)
+function(unittest_tribits_external_package_write_config_file_str_incl_dirs_0_lib_files_1)
 
   message("\n***")
   message("*** Testing the generation of <tplName>Config.cmake: incl dirs 0, lib files 1")
@@ -212,7 +212,7 @@ function(unittest_tribits_write_external_package_config_file_str_incl_dirs_0_lib
   set(TPL_${tplName}_INCLUDE_DIRS "")
   set(TPL_${tplName}_LIBRARIES "/some/explicit/path/libsomelib.so")
 
-  tribits_write_external_package_config_file_str(${tplName}
+  tribits_external_package_write_config_file_str(${tplName}
     tplConfigFileStr )
 
   unittest_string_block_compare( tplConfigFileStr
@@ -238,7 +238,7 @@ target_link_libraries(SomeTpl::all_libs
 endfunction()
 
 
-function(unittest_tribits_write_external_package_config_file_str_incl_dirs_2_lib_files_0)
+function(unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_files_0)
 
   message("\n***")
   message("*** Testing the generation of <tplName>Config.cmake: incl dirs 2, lib files 0")
@@ -248,7 +248,7 @@ function(unittest_tribits_write_external_package_config_file_str_incl_dirs_2_lib
   set(TPL_${tplName}_INCLUDE_DIRS "/some/path/to/include/d" "/some/other/path/to/include/e")
   set(TPL_${tplName}_LIBRARIES "")
 
-  tribits_write_external_package_config_file_str(${tplName}
+  tribits_external_package_write_config_file_str(${tplName}
     tplConfigFileStr )
 
   print_var(tplConfigFileStr)
@@ -273,7 +273,7 @@ target_include_directories(SomeTpl::all_libs
 endfunction()
 
 
-function(unittest_tribits_write_external_package_config_file_str_incl_dirs_1_lib_files_1)
+function(unittest_tribits_external_package_write_config_file_str_incl_dirs_1_lib_files_1)
 
   message("\n***")
   message("*** Testing the generation of <tplName>Config.cmake: incl dirs 1, lib files 1")
@@ -283,7 +283,7 @@ function(unittest_tribits_write_external_package_config_file_str_incl_dirs_1_lib
   set(TPL_${tplName}_INCLUDE_DIRS "/some/path/to/include/C")
   set(TPL_${tplName}_LIBRARIES "/some/explicit/path/libsomelib.so")
 
-  tribits_write_external_package_config_file_str(${tplName}
+  tribits_external_package_write_config_file_str(${tplName}
     tplConfigFileStr )
 
   print_var(tplConfigFileStr)
@@ -314,7 +314,7 @@ target_include_directories(SomeTpl::all_libs
 endfunction()
 
 
-function(unittest_tribits_write_external_package_config_file_str_incl_dirs_2_lib_files_1)
+function(unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_files_1)
 
   message("\n***")
   message("*** Testing the generation of <tplName>Config.cmake: incl dirs 2, lib files 1")
@@ -324,7 +324,7 @@ function(unittest_tribits_write_external_package_config_file_str_incl_dirs_2_lib
   set(TPL_${tplName}_INCLUDE_DIRS "/some/path/to/include/a" "/some/other/path/to/include/b")
   set(TPL_${tplName}_LIBRARIES "/some/explicit/path/libsomelib.so")
 
-  tribits_write_external_package_config_file_str(${tplName}
+  tribits_external_package_write_config_file_str(${tplName}
     tplConfigFileStr )
 
   print_var(tplConfigFileStr)
@@ -368,14 +368,14 @@ unittest_initialize_vars()
 # Run the unit tests
 #
 
-unittest_tribits_process_external_package_libraries_list_incl_dirs_0_lib_files_1()
-unittest_tribits_process_external_package_libraries_list_incl_dirs_0_lib_files_2()
-unittest_tribits_process_external_package_libraries_list_incl_dirs_0_lib_files_3()
+unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_1()
+unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_2()
+unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_3()
 
-unittest_tribits_write_external_package_config_file_str_incl_dirs_0_lib_files_1()
-unittest_tribits_write_external_package_config_file_str_incl_dirs_2_lib_files_0()
-unittest_tribits_write_external_package_config_file_str_incl_dirs_1_lib_files_1()
-unittest_tribits_write_external_package_config_file_str_incl_dirs_2_lib_files_1()
+unittest_tribits_external_package_write_config_file_str_incl_dirs_0_lib_files_1()
+unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_files_0()
+unittest_tribits_external_package_write_config_file_str_incl_dirs_1_lib_files_1()
+unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_files_1()
 
 # Pass in the number of expected tests that must pass!
 unittest_final_result(13)
