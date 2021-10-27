@@ -54,9 +54,14 @@ include(UnitTestHelpers)
 
 #####################################################################
 #
-# Unit tests for code in TribitsWriteExternalPackageConfigFile.cmake
+# Unit tests for code in TribitsExternalPackageWriteConfigFile.cmake
 #
 #####################################################################
+
+
+#
+# Tests for tribits_external_package_process_libraries_list_incl()
+#
 
 
 function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_1)
@@ -124,8 +129,6 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
     ""
     )
 
-  print_var(configFileFragStr)
-
   unittest_string_block_compare( configFileFragStr
 [=[
 #beginning
@@ -174,8 +177,6 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
     ""
     )
 
-  print_var(configFileFragStr)
-
   unittest_string_block_compare( configFileFragStr
 [=[
 #beginning
@@ -200,6 +201,155 @@ target_link_libraries(SomeTpl::somelib3
     )
 
 endfunction()
+
+
+function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_1_1)
+
+  message("\n***")
+  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, lib opts 1, 1")
+  message("***\n")
+
+  set(tplName SomeTpl)
+  set(TPL_${tplName}_LIBRARIES
+    -llib1 -L/some/explicit/path
+    )
+
+  set(configFileFragStr "#beginning\n\n")
+
+  tribits_external_package_process_libraries_list( ${tplName}
+    LIB_TARGETS_LIST_OUT libTargetsList
+    LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
+    CONFIG_FILE_STR_INOUT configFileFragStr
+    )
+
+  unittest_compare_const( libTargetsList
+    "SomeTpl::lib1"
+    )
+
+  unittest_compare_const( libLinkFlagsList
+    "-L/some/explicit/path"
+    )
+
+  unittest_string_block_compare( configFileFragStr
+[=[
+#beginning
+
+add_library(SomeTpl::lib1 IMPORTED UNKNOWN GLOBAL)
+set_target_properties(SomeTpl::lib1 PROPERTIES
+  IMPORTED_LIBNAME "lib1")
+
+]=]
+    )
+
+endfunction()
+
+
+function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_2_2)
+
+  message("\n***")
+  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, lib opts 2, 2")
+  message("***\n")
+
+  set(tplName SomeTpl)
+  set(TPL_${tplName}_LIBRARIES
+    -llib2 -L/some/explicit/path2
+    -llib1 -L/some/explicit/path1
+    )
+
+  set(configFileFragStr "#beginning\n\n")
+
+  tribits_external_package_process_libraries_list( ${tplName}
+    LIB_TARGETS_LIST_OUT libTargetsList
+    LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
+    CONFIG_FILE_STR_INOUT configFileFragStr
+    )
+
+  unittest_compare_const( libTargetsList
+    "SomeTpl::lib1;SomeTpl::lib2"
+    )
+
+  unittest_compare_const( libLinkFlagsList
+    "-L/some/explicit/path2;-L/some/explicit/path1"
+    )
+
+  unittest_string_block_compare( configFileFragStr
+[=[
+#beginning
+
+add_library(SomeTpl::lib1 IMPORTED UNKNOWN GLOBAL)
+set_target_properties(SomeTpl::lib1 PROPERTIES
+  IMPORTED_LIBNAME "lib1")
+
+add_library(SomeTpl::lib2 IMPORTED UNKNOWN GLOBAL)
+set_target_properties(SomeTpl::lib2 PROPERTIES
+  IMPORTED_LIBNAME "lib2")
+target_link_libraries(SomeTpl::lib2
+  INTERFACE SomeTpl::lib1)
+
+]=]
+    )
+
+endfunction()
+
+
+function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_3_3)
+
+  message("\n***")
+  message("*** Testing tribits_external_package_process_libraries_list(): incl dirs 0, lib opts 3, 3")
+  message("***\n")
+
+  set(tplName SomeTpl)
+  set(TPL_${tplName}_LIBRARIES
+    -llib3 -L/some/explicit/path3
+    -llib2 -L/some/explicit/path2
+    -llib1 -L/some/explicit/path1
+    )
+
+  set(configFileFragStr "#beginning\n\n")
+
+  tribits_external_package_process_libraries_list( ${tplName}
+    LIB_TARGETS_LIST_OUT libTargetsList
+    LIB_LINK_FLAGS_LIST_OUT libLinkFlagsList
+    CONFIG_FILE_STR_INOUT configFileFragStr
+    )
+
+  unittest_compare_const( libTargetsList
+    "SomeTpl::lib1;SomeTpl::lib2;SomeTpl::lib3"
+    )
+
+  unittest_compare_const( libLinkFlagsList
+    "-L/some/explicit/path3;-L/some/explicit/path2;-L/some/explicit/path1"
+    )
+
+  unittest_string_block_compare( configFileFragStr
+[=[
+#beginning
+
+add_library(SomeTpl::lib1 IMPORTED UNKNOWN GLOBAL)
+set_target_properties(SomeTpl::lib1 PROPERTIES
+  IMPORTED_LIBNAME "lib1")
+
+add_library(SomeTpl::lib2 IMPORTED UNKNOWN GLOBAL)
+set_target_properties(SomeTpl::lib2 PROPERTIES
+  IMPORTED_LIBNAME "lib2")
+target_link_libraries(SomeTpl::lib2
+  INTERFACE SomeTpl::lib1)
+
+add_library(SomeTpl::lib3 IMPORTED UNKNOWN GLOBAL)
+set_target_properties(SomeTpl::lib3 PROPERTIES
+  IMPORTED_LIBNAME "lib3")
+target_link_libraries(SomeTpl::lib3
+  INTERFACE SomeTpl::lib2)
+
+]=]
+    )
+
+endfunction()
+
+
+#
+# Tests for tribits_external_package_write_config_file_str()
+#
 
 
 function(unittest_tribits_external_package_write_config_file_str_incl_dirs_0_lib_files_1)
@@ -251,8 +401,6 @@ function(unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib
   tribits_external_package_write_config_file_str(${tplName}
     tplConfigFileStr )
 
-  print_var(tplConfigFileStr)
-
   unittest_string_block_compare( tplConfigFileStr
 [=[
 # Package config file for external package/TPL 'SomeTpl'
@@ -263,8 +411,8 @@ include_guard()
 
 add_library(SomeTpl::all_libs INTERFACE IMPORTED GLOBAL)
 target_include_directories(SomeTpl::all_libs
-  INTERFACE /some/path/to/include/d
-  INTERFACE /some/other/path/to/include/e
+  INTERFACE "/some/path/to/include/d"
+  INTERFACE "/some/other/path/to/include/e"
   )
 
 ]=]
@@ -286,8 +434,6 @@ function(unittest_tribits_external_package_write_config_file_str_incl_dirs_1_lib
   tribits_external_package_write_config_file_str(${tplName}
     tplConfigFileStr )
 
-  print_var(tplConfigFileStr)
-
   unittest_string_block_compare( tplConfigFileStr
 [=[
 # Package config file for external package/TPL 'SomeTpl'
@@ -305,7 +451,7 @@ target_link_libraries(SomeTpl::all_libs
   INTERFACE SomeTpl::somelib
   )
 target_include_directories(SomeTpl::all_libs
-  INTERFACE /some/path/to/include/C
+  INTERFACE "/some/path/to/include/C"
   )
 
 ]=]
@@ -327,8 +473,6 @@ function(unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib
   tribits_external_package_write_config_file_str(${tplName}
     tplConfigFileStr )
 
-  print_var(tplConfigFileStr)
-
   unittest_string_block_compare( tplConfigFileStr
 [=[
 # Package config file for external package/TPL 'SomeTpl'
@@ -346,8 +490,66 @@ target_link_libraries(SomeTpl::all_libs
   INTERFACE SomeTpl::somelib
   )
 target_include_directories(SomeTpl::all_libs
-  INTERFACE /some/path/to/include/a
-  INTERFACE /some/other/path/to/include/b
+  INTERFACE "/some/path/to/include/a"
+  INTERFACE "/some/other/path/to/include/b"
+  )
+
+]=]
+    )
+
+endfunction()
+
+
+function(unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_opts_2_2)
+
+  message("\n***")
+  message("*** Testing the generation of <tplName>Config.cmake: incl dirs 2, lib opts 2, 2")
+  message("***\n")
+
+  set(tplName SomeTpl)
+  set(TPL_${tplName}_INCLUDE_DIRS
+    "/some/path/to/include/a"
+    "/some/other/path/to/include/b")
+  set(TPL_${tplName}_LIBRARIES
+    -llib2 -L/some/explicit/path2
+    -llib1 -L/some/explicit/path1
+    )
+
+  tribits_external_package_write_config_file_str(${tplName}
+    tplConfigFileStr )
+
+  print_var(tplConfigFileStr)
+
+  unittest_string_block_compare( tplConfigFileStr
+[=[
+# Package config file for external package/TPL 'SomeTpl'
+#
+# Generated by CMake, do not edit!
+
+include_guard()
+
+add_library(SomeTpl::lib1 IMPORTED UNKNOWN GLOBAL)
+set_target_properties(SomeTpl::lib1 PROPERTIES
+  IMPORTED_LIBNAME "lib1")
+
+add_library(SomeTpl::lib2 IMPORTED UNKNOWN GLOBAL)
+set_target_properties(SomeTpl::lib2 PROPERTIES
+  IMPORTED_LIBNAME "lib2")
+target_link_libraries(SomeTpl::lib2
+  INTERFACE SomeTpl::lib1)
+
+add_library(SomeTpl::all_libs INTERFACE IMPORTED GLOBAL)
+target_link_libraries(SomeTpl::all_libs
+  INTERFACE SomeTpl::lib1
+  INTERFACE SomeTpl::lib2
+  )
+target_include_directories(SomeTpl::all_libs
+  INTERFACE "/some/path/to/include/a"
+  INTERFACE "/some/other/path/to/include/b"
+  )
+target_link_options(SomeTpl::all_libs
+  INTERFACE "-L/some/explicit/path2"
+  INTERFACE "-L/some/explicit/path1"
   )
 
 ]=]
@@ -371,11 +573,15 @@ unittest_initialize_vars()
 unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_1()
 unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_2()
 unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_files_3()
+unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_1_1()
+unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_2_2()
+unittest_tribits_external_package_process_libraries_list_incl_dirs_0_lib_opts_3_3()
 
 unittest_tribits_external_package_write_config_file_str_incl_dirs_0_lib_files_1()
 unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_files_0()
 unittest_tribits_external_package_write_config_file_str_incl_dirs_1_lib_files_1()
 unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_files_1()
+unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib_opts_2_2()
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(13)
+unittest_final_result(23)
