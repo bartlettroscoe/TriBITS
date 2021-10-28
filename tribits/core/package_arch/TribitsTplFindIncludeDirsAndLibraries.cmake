@@ -683,6 +683,7 @@ function(tribits_tpl_find_include_dirs_and_libraries TPL_NAME)
     "${buildDirCMakePkgsDir}/${TPL_NAME}/${TPL_NAME}Config.cmake")
   tribits_external_package_write_config_file(${TPL_NAME} "${tplConfigFile}")
   include("${tplConfigFile}")
+  tribits_external_package_install_config_file(${TPL_NAME} "${tplConfigFile}")
 
 endfunction()
 

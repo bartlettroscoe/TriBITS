@@ -48,7 +48,7 @@ include(TribitsGeneralMacros)
 #
 # Usage::
 #
-#   tribits_write_external_package_config_fil3(
+#   tribits_write_external_package_config_file(
 #     <tplName> <tplConfigFile> )
 #
 # The arguments are:
@@ -65,6 +65,30 @@ include(TribitsGeneralMacros)
 function(tribits_external_package_write_config_file  tplName  tplConfigFile)
   tribits_external_package_write_config_file_str(${tplName} tplConfigFileStr)
   file(WRITE "${tplConfigFile}" "${tplConfigFileStr}")
+endfunction()
+
+
+# @FUNCTION: tribits_external_package_install_config_file()
+#
+# Install an already-generated ``<tplName>Config.cmake`` file.
+#
+# Usage::
+#
+#   tribits_write_external_package_install_config_file(
+#     <tplName> <tplConfigFile> )
+#
+# The arguments are:
+#
+#   ``<tplName>``: Name of the external package/TPL
+#
+#   ``<tplConfigFile>``: Full file path for the ``<tplName>Config.cmake``
+#   file that will be installed into the correct location.
+#
+function(tribits_external_package_install_config_file  tplName  tplConfigFile)
+ install(
+    FILES "${tplConfigFile}"
+    DESTINATION "${${PROJECT_NAME}_INSTALL_LIB_DIR}/cmake/${tplName}"
+    )
 endfunction()
 
 
