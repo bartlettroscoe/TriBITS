@@ -468,11 +468,9 @@ function(tribits_generate_package_config_file_for_install_tree  packageName)
   # Custom code in configuration file.
   set(PACKAGE_CONFIG_CODE "")
 
-  if (${packageName}_FULL_ENABLED_DEP_PACKAGES)
-    tribits_append_dependent_package_config_file_includes(${packageName}
-      CONFIG_FILE_BASE_DIR "\${CMAKE_CURRENT_LIST_DIR}/.."
-      CONFIG_FILE_STR_INOUT PACKAGE_CONFIG_CODE )
-  endif()
+  tribits_append_dependent_package_config_file_includes(${packageName}
+    CONFIG_FILE_BASE_DIR "\${CMAKE_CURRENT_LIST_DIR}/.."
+    CONFIG_FILE_STR_INOUT PACKAGE_CONFIG_CODE )
 
   # Import install targets
   string(APPEND PACKAGE_CONFIG_CODE
@@ -531,10 +529,26 @@ function(tribits_append_dependent_package_config_file_includes packageName)
   # Include configurations of dependent packages
   string(APPEND configFileStr
     "# Include configuration of dependent packages\n")
-  foreach(depPkg ${${packageName}_FULL_ENABLED_DEP_PACKAGES})
+  foreach(depPkg IN LISTS ${packageName}_FULL_ENABLED_DEP_PACKAGES)
     set(cmakePkgDir "${configFileBaseDir}/${depPkg}")
     string(APPEND configFileStr
       "include(\"${cmakePkgDir}/${depPkg}Config.cmake\")\n")
+  endforeach()
+
+  # Include configurations of dependent external packages/TPLs
+  string(APPEND configFileStr
+    "\n# Include configuration of dependent external packages/TPls\n")
+  foreach(depTpl IN LISTS ${packageName}_LIB_REQUIRED_DEP_TPLS)
+    set(cmakeTplDir "${configFileBaseDir}/${depTpl}")
+    string(APPEND configFileStr
+      "include(\"${cmakeTplDir}/${depTpl}Config.cmake\")\n")
+  endforeach()
+  foreach(depTpl IN LISTS ${packageName}_LIB_OPTIONAL_DEP_TPLS)
+    if (${packageName}_ENABLE_${depTpl})
+      set(cmakeTplDir "${configFileBaseDir}/${depTpl}")
+      string(APPEND configFileStr
+        "include(\"${cmakeTplDir}/${depTpl}Config.cmake\")\n")
+    endif()
   endforeach()
 
   # Set the output
