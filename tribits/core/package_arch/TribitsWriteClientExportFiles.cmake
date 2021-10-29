@@ -358,12 +358,14 @@ function(tribits_write_flexible_package_client_export_files)
     set(PACKAGE_CONFIG_CODE "")
 
     # Include configurations of dependent packages
+    string(APPEND PACKAGE_CONFIG_CODE
+      "# Include configuration of dependent packages\n")
     foreach(DEP_PACKAGE ${${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES})
       # Could use file(RELATIVE_PATH ...), but probably not necessary
       # since unlike install trees, build trees need not be relocatable
-      set(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
-include(\"${BUILD_DIR_CMAKE_PKGS_DIR}/${DEP_PACKAGE}/${DEP_PACKAGE}Config.cmake\")"
-        )
+      set(cmakePkgDir "${BUILD_DIR_CMAKE_PKGS_DIR}/${DEP_PACKAGE}")
+      string(APPEND PACKAGE_CONFIG_CODE
+        "include(\"${cmakePkgDir}/${DEP_PACKAGE}Config.cmake\")\n")
     endforeach()
 
     # Import build tree targets into applications.
@@ -378,10 +380,9 @@ include(\"${BUILD_DIR_CMAKE_PKGS_DIR}/${DEP_PACKAGE}/${DEP_PACKAGE}Config.cmake\
     if (PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR)
       tribits_get_package_config_build_dir_targets_file(${PACKAGE_NAME}
         "${PACKAGE_CONFIG_FOR_BUILD_BASE_DIR}" packageConfigBuildDirTargetsFile )
-      set(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
-# Import ${PACKAGE_NAME} targets
-include(\"${packageConfigBuildDirTargetsFile}\")"
-        )
+      string(APPEND PACKAGE_CONFIG_CODE
+        "\n# Import ${PACKAGE_NAME} targets\n"
+        "include(\"${packageConfigBuildDirTargetsFile}\")")
     endif()
 
     tribits_set_compiler_vars_for_config_file(BUILD_DIR)
@@ -417,9 +418,9 @@ include(\"${packageConfigBuildDirTargetsFile}\")"
   # installers that allow relocation of the install tree at *install*
   # time.
   # The export files are typically installed in
-  #     <install dir>/<lib path>/cmake/<package name>/.
+  #     <install-dir>/<lib-path>/cmake/<package-name>/.
   # The relative path to the installation dir is hence k*(../) + ../../, where
-  # k is the number of components in <lib path>. Extract those here.
+  # k is the number of components in <lib-path>. Extract those here.
   # This doesn't work if ${${PROJECT_NAME}_INSTALL_LIB_DIR} contains "./" or
   # "../" components, but really, it never did. All of this should actually be
   # handled by CMake's configure_package_config_file().
@@ -437,23 +438,22 @@ include(\"${packageConfigBuildDirTargetsFile}\")"
   set(PACKAGE_CONFIG_CODE "")
 
   if (${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES)
-    set(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
-# Include configuration of dependent packages")
+    string(APPEND PACKAGE_CONFIG_CODE
+      "# Include configuration of dependent packages\n")
   endif()
   foreach(DEP_PACKAGE ${${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES})
-    set(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
-include(\"\${CMAKE_CURRENT_LIST_DIR}/../${DEP_PACKAGE}/${DEP_PACKAGE}Config.cmake\")"
-      )
+    set(pkgInstallDir "\${CMAKE_CURRENT_LIST_DIR}/../${DEP_PACKAGE}")
+    string(APPEND PACKAGE_CONFIG_CODE
+      "include(\"${pkgInstallDir}/${DEP_PACKAGE}Config.cmake\")\n" )
   endforeach()
   if (${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES)
-    set(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}\n")
+    string(APPEND PACKAGE_CONFIG_CODE "\n")
   endif()
 
-  # Import install
-  set(PACKAGE_CONFIG_CODE "${PACKAGE_CONFIG_CODE}
-# Import ${PACKAGE_NAME} targets
-include(\"\${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME}Targets.cmake\")"
-    )
+  # Import install targets
+  string(APPEND PACKAGE_CONFIG_CODE
+    "# Import ${PACKAGE_NAME} targets\n"
+    "include(\"\${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME}Targets.cmake\")")
 
   # Write the specification of the rpath if necessary. This is only needed if
   # we're building shared libraries.
