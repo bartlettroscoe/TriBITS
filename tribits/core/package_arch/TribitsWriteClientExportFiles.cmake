@@ -357,16 +357,9 @@ function(tribits_write_flexible_package_client_export_files)
     # Custom code in configuration file.
     set(PACKAGE_CONFIG_CODE "")
 
-    # Include configurations of dependent packages
-    string(APPEND PACKAGE_CONFIG_CODE
-      "# Include configuration of dependent packages\n")
-    foreach(DEP_PACKAGE ${${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES})
-      # Could use file(RELATIVE_PATH ...), but probably not necessary
-      # since unlike install trees, build trees need not be relocatable
-      set(cmakePkgDir "${BUILD_DIR_CMAKE_PKGS_DIR}/${DEP_PACKAGE}")
-      string(APPEND PACKAGE_CONFIG_CODE
-        "include(\"${cmakePkgDir}/${DEP_PACKAGE}Config.cmake\")\n")
-    endforeach()
+    tribits_append_dependent_package_config_file_includes(${PACKAGE_NAME}
+      CONFIG_FILE_BASE_DIR "${BUILD_DIR_CMAKE_PKGS_DIR}"
+      CONFIG_FILE_STR_INOUT PACKAGE_CONFIG_CODE )
 
     # Import build tree targets into applications.
     #
@@ -438,21 +431,14 @@ function(tribits_write_flexible_package_client_export_files)
   set(PACKAGE_CONFIG_CODE "")
 
   if (${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES)
-    string(APPEND PACKAGE_CONFIG_CODE
-      "# Include configuration of dependent packages\n")
-  endif()
-  foreach(DEP_PACKAGE ${${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES})
-    set(pkgInstallDir "\${CMAKE_CURRENT_LIST_DIR}/../${DEP_PACKAGE}")
-    string(APPEND PACKAGE_CONFIG_CODE
-      "include(\"${pkgInstallDir}/${DEP_PACKAGE}Config.cmake\")\n" )
-  endforeach()
-  if (${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES)
-    string(APPEND PACKAGE_CONFIG_CODE "\n")
+    tribits_append_dependent_package_config_file_includes(${PACKAGE_NAME}
+      CONFIG_FILE_BASE_DIR "\${CMAKE_CURRENT_LIST_DIR}/.."
+      CONFIG_FILE_STR_INOUT PACKAGE_CONFIG_CODE )
   endif()
 
   # Import install targets
   string(APPEND PACKAGE_CONFIG_CODE
-    "# Import ${PACKAGE_NAME} targets\n"
+    "\n# Import ${PACKAGE_NAME} targets\n"
     "include(\"\${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME}Targets.cmake\")")
 
   # Write the specification of the rpath if necessary. This is only needed if
@@ -471,6 +457,50 @@ function(tribits_write_flexible_package_client_export_files)
       "${PARSE_PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR}/${PACKAGE_NAME}Config_install.cmake"
       )
   endif()
+
+endfunction()
+
+
+# @FUNCTION: tribits_append_dependent_package_config_file_includes()
+#
+# Append the includes for upstream internal packages and external packages
+# (TPLs) to a `<Package>Config.cmake` file string.
+#
+# Usage::
+#
+#   tribits_append_dependent_package_config_file_includes(
+#     <packageName>
+#     CONFIG_FILE_BASE_DIR <configFileBaseDir>
+#     CONFIG_FILE_STR_INOUT <configFileStrInOut>
+#     )
+#
+function(tribits_append_dependent_package_config_file_includes packageName)
+
+  # Parse input
+
+  cmake_parse_arguments(
+     PARSE  #prefix
+     ""  #options
+     "CONFIG_FILE_BASE_DIR;CONFIG_FILE_STR_INOUT" #one_value_keywords
+     "" #multi_value_keywords
+     ${ARGN}
+     )
+  tribits_check_for_unparsed_arguments()
+
+  set(configFileBaseDir "${PARSE_CONFIG_FILE_BASE_DIR}")
+  set(configFileStr "${${PARSE_CONFIG_FILE_STR_INOUT}}")
+
+  # Include configurations of dependent packages
+  string(APPEND configFileStr
+    "# Include configuration of dependent packages\n")
+  foreach(depPkg ${${packageName}_FULL_ENABLED_DEP_PACKAGES})
+    set(cmakePkgDir "${configFileBaseDir}/${depPkg}")
+    string(APPEND configFileStr
+      "include(\"${cmakePkgDir}/${depPkg}Config.cmake\")\n")
+  endforeach()
+
+  # Set the output
+  set(${PARSE_CONFIG_FILE_STR_INOUT} "${configFileStr}" PARENT_SCOPE)
 
 endfunction()
 
