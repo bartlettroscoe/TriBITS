@@ -349,65 +349,7 @@ function(tribits_write_flexible_package_client_export_files)
   # G) Create <Package>Config_install.cmake file for the install tree
   #
 
-  # This file isn't generally useful inside the build tree so it is being
-  # "hidden" in the CMakeFiles directory.  It gets installed in a separate
-  # function.  (NOTE: The install target is added in a different function to
-  # allow this function to be unit tested in a cmake -P script.)
-  #
-  # Set the include and library directories relative to the location
-  # at which the ${PROJECT_NAME}Config.cmake file is going to be
-  # installed. Note the variable reference below is escaped so it
-  # won't be replaced until a client project attempts to locate
-  # directories using the installed config file. This is to deal with
-  # installers that allow relocation of the install tree at *install*
-  # time.
-  # The export files are typically installed in
-  #     <install-dir>/<lib-path>/cmake/<package-name>/.
-  # The relative path to the installation dir is hence k*(../) + ../../, where
-  # k is the number of components in <lib-path>. Extract those here.
-  # This doesn't work if ${${PROJECT_NAME}_INSTALL_LIB_DIR} contains "./" or
-  # "../" components, but really, it never did. All of this should actually be
-  # handled by CMake's configure_package_config_file().
-  string(REPLACE "/" ";" PATH_LIST ${${PROJECT_NAME}_INSTALL_LIB_DIR})
-  set(RELATIVE_PATH "../..")
-  foreach(PATH ${PATH_LIST})
-    set(RELATIVE_PATH "${RELATIVE_PATH}/..")
-  endforeach()
-  set(FULL_LIBRARY_DIRS_SET
-    "\${CMAKE_CURRENT_LIST_DIR}/${RELATIVE_PATH}/${${PROJECT_NAME}_INSTALL_LIB_DIR}")
-  set(FULL_INCLUDE_DIRS_SET
-    "\${CMAKE_CURRENT_LIST_DIR}/${RELATIVE_PATH}/${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}")
-
-  # Custom code in configuration file.
-  set(PACKAGE_CONFIG_CODE "")
-
-  if (${PACKAGE_NAME}_FULL_ENABLED_DEP_PACKAGES)
-    tribits_append_dependent_package_config_file_includes(${PACKAGE_NAME}
-      CONFIG_FILE_BASE_DIR "\${CMAKE_CURRENT_LIST_DIR}/.."
-      CONFIG_FILE_STR_INOUT PACKAGE_CONFIG_CODE )
-  endif()
-
-  # Import install targets
-  string(APPEND PACKAGE_CONFIG_CODE
-    "\n# Import ${PACKAGE_NAME} targets\n"
-    "include(\"\${CMAKE_CURRENT_LIST_DIR}/${PACKAGE_NAME}Targets.cmake\")")
-
-  # Write the specification of the rpath if necessary. This is only needed if
-  # we're building shared libraries.
-  if (BUILD_SHARED_LIBS)
-    set(SHARED_LIB_RPATH_COMMAND
-      ${CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG}${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_LIB_DIR}
-      )
-  endif()
-
-  tribits_set_compiler_vars_for_config_file(INSTALL_DIR)
-
-  if (PARSE_PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR)
-    configure_file(
-      "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/TribitsPackageConfigTemplate.cmake.in"
-      "${PARSE_PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR}/${PACKAGE_NAME}Config_install.cmake"
-      )
-  endif()
+  tribits_generate_package_config_file_for_install_tree(${PACKAGE_NAME})
 
 endfunction()
 
@@ -473,6 +415,84 @@ function(tribits_generate_package_config_file_for_build_tree  packageName)
     configure_file(
       "${tribitsConfigFilesDir}/TribitsPackageConfigTemplate.cmake.in"
       "${PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR}/${packageName}Config.cmake"
+      )
+  endif()
+
+endfunction()
+
+
+# @FUNCTION: tribits_generate_package_config_file_for_install_tree()
+#
+# Called from tribits_write_flexible_package_client_export_files() to finish
+# up generating text for and writing the file `<Package>Config_install.cmake`
+# that will get installed.
+#
+# Usage::
+#
+#   tribits_generate_package_config_file_for_install_tree(<packageName>)
+#
+# The export files are typically installed in
+#     <install-dir>/<lib-path>/cmake/<package-name>/.
+#
+# This file isn't generally useful inside the build tree so it is being
+# "hidden" in the CMakeFiles directory.  It gets installed in a separate
+# function.  (NOTE: The install target is added in a different function to
+# allow this function to be unit tested in a cmake -P script.)
+#
+function(tribits_generate_package_config_file_for_install_tree  packageName)
+
+  # Set the include and library directories relative to the location
+  # at which the ${PROJECT_NAME}Config.cmake file is going to be
+  # installed. Note the variable reference below is escaped so it
+  # won't be replaced until a client project attempts to locate
+  # directories using the installed config file. This is to deal with
+  # installers that allow relocation of the install tree at *install*
+  # time.
+  # The export files are typically installed in
+  #     <install-dir>/<lib-path>/cmake/<package-name>/.
+  # The relative path to the installation dir is hence k*(../) + ../../, where
+  # k is the number of components in <lib-path>. Extract those here.
+  # This doesn't work if ${${PROJECT_NAME}_INSTALL_LIB_DIR} contains "./" or
+  # "../" components, but really, it never did. All of this should actually be
+  # handled by CMake's configure_package_config_file().
+  string(REPLACE "/" ";" PATH_LIST ${${PROJECT_NAME}_INSTALL_LIB_DIR})
+  set(RELATIVE_PATH "../..")
+  foreach(PATH ${PATH_LIST})
+    set(RELATIVE_PATH "${RELATIVE_PATH}/..")
+  endforeach()
+  set(FULL_LIBRARY_DIRS_SET
+    "\${CMAKE_CURRENT_LIST_DIR}/${RELATIVE_PATH}/${${PROJECT_NAME}_INSTALL_LIB_DIR}")
+  set(FULL_INCLUDE_DIRS_SET
+    "\${CMAKE_CURRENT_LIST_DIR}/${RELATIVE_PATH}/${${PROJECT_NAME}_INSTALL_INCLUDE_DIR}")
+
+  # Custom code in configuration file.
+  set(PACKAGE_CONFIG_CODE "")
+
+  if (${packageName}_FULL_ENABLED_DEP_PACKAGES)
+    tribits_append_dependent_package_config_file_includes(${packageName}
+      CONFIG_FILE_BASE_DIR "\${CMAKE_CURRENT_LIST_DIR}/.."
+      CONFIG_FILE_STR_INOUT PACKAGE_CONFIG_CODE )
+  endif()
+
+  # Import install targets
+  string(APPEND PACKAGE_CONFIG_CODE
+    "\n# Import ${packageName} targets\n"
+    "include(\"\${CMAKE_CURRENT_LIST_DIR}/${packageName}Targets.cmake\")")
+
+  # Write the specification of the rpath if necessary. This is only needed if
+  # we're building shared libraries.
+  if (BUILD_SHARED_LIBS)
+    set(SHARED_LIB_RPATH_COMMAND
+      ${CMAKE_SHARED_LIBRARY_RUNTIME_CXX_FLAG}${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_LIB_DIR}
+      )
+  endif()
+
+  tribits_set_compiler_vars_for_config_file(INSTALL_DIR)
+
+  if (PARSE_PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR)
+    configure_file(
+      "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/TribitsPackageConfigTemplate.cmake.in"
+      "${PARSE_PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR}/${packageName}Config_install.cmake"
       )
   endif()
 
