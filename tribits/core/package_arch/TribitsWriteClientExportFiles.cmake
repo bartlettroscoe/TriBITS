@@ -342,60 +342,11 @@ function(tribits_write_flexible_package_client_export_files)
   #
   # F) Create the contents of the <Package>Config.cmake file for the build tree
   #
-  # These get placed under <buildDir>/cmake_packages/<packageName>/
-  #
-  # That makes them easy to find by find_package() by adding
-  # <buildDir>/cmake_packages/ to CMAKE_PREFIX_PATH.
-  #
 
-  set(BUILD_DIR_CMAKE_PKGS_DIR
-     "${${PROJECT_NAME}_BINARY_DIR}/${${PROJECT_NAME}_BUILD_DIR_CMAKE_PKGS_DIR}")
-
-  if (PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR
-      OR PARSE_PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR
-    )
-    # Custom code in configuration file.
-    set(PACKAGE_CONFIG_CODE "")
-
-    tribits_append_dependent_package_config_file_includes(${PACKAGE_NAME}
-      CONFIG_FILE_BASE_DIR "${BUILD_DIR_CMAKE_PKGS_DIR}"
-      CONFIG_FILE_STR_INOUT PACKAGE_CONFIG_CODE )
-
-    # Import build tree targets into applications.
-    #
-    # BMA: Export only the immediate libraries of this project to the
-    # build tree. Should manage more carefully, checking that they are
-    # targets of this project and not other libs.  Also, should
-    # consider more careful recursive management of targets when there
-    # are sub-packages.  We'd like to export per-package, but deps
-    # won't be satisfied, so we export one file for the project for
-    # now...
-    if (PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR)
-      tribits_get_package_config_build_dir_targets_file(${PACKAGE_NAME}
-        "${PACKAGE_CONFIG_FOR_BUILD_BASE_DIR}" packageConfigBuildDirTargetsFile )
-      string(APPEND PACKAGE_CONFIG_CODE
-        "\n# Import ${PACKAGE_NAME} targets\n"
-        "include(\"${packageConfigBuildDirTargetsFile}\")")
-    endif()
-
-    tribits_set_compiler_vars_for_config_file(BUILD_DIR)
-
-    if ("${CMAKE_CXX_FLAGS}" STREQUAL "")
-      set(CMAKE_CXX_FLAGS_ESCAPED "")
-    else()
-      # Replace " by \".
-      string(REGEX REPLACE "\"" "\\\\\"" CMAKE_CXX_FLAGS_ESCAPED ${CMAKE_CXX_FLAGS})
-    endif()
-    set(tribitsConfigFilesDir
-      "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}")
-    configure_file(
-      "${tribitsConfigFilesDir}/TribitsPackageConfigTemplate.cmake.in"
-      "${PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR}/${PACKAGE_NAME}Config.cmake"
-      )
-  endif()
+  tribits_generate_package_config_file_for_build_tree(${PACKAGE_NAME})
 
   #
-  # G) Create <Package>Config_install.cmake file for the install tree.
+  # G) Create <Package>Config_install.cmake file for the install tree
   #
 
   # This file isn't generally useful inside the build tree so it is being
@@ -455,6 +406,73 @@ function(tribits_write_flexible_package_client_export_files)
     configure_file(
       "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}/TribitsPackageConfigTemplate.cmake.in"
       "${PARSE_PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR}/${PACKAGE_NAME}Config_install.cmake"
+      )
+  endif()
+
+endfunction()
+
+
+# @FUNCTION: tribits_generate_package_config_file_for_build_tree()
+#
+# Called from tribits_write_flexible_package_client_export_files() to finish
+# up generating text for and writing the file `<Package>Config.cmake` for the
+# build tree.
+#
+# Usage::
+#
+#   tribits_generate_package_config_file_for_build_tree(<packageName>)
+#
+# These files get placed under <buildDir>/cmake_packages/<packageName>/
+#
+# That makes them easy to find by find_package() by adding
+# <buildDir>/cmake_packages/ to CMAKE_PREFIX_PATH.
+#
+function(tribits_generate_package_config_file_for_build_tree  packageName)
+
+  set(BUILD_DIR_CMAKE_PKGS_DIR
+     "${${PROJECT_NAME}_BINARY_DIR}/${${PROJECT_NAME}_BUILD_DIR_CMAKE_PKGS_DIR}")
+
+  if (PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR
+      OR PARSE_PACKAGE_CONFIG_FOR_INSTALL_BASE_DIR
+    )
+    # Custom code in configuration file (gets pulled from by configure_file()
+    # below)
+    set(PACKAGE_CONFIG_CODE "")
+
+    tribits_append_dependent_package_config_file_includes(${packageName}
+      CONFIG_FILE_BASE_DIR "${BUILD_DIR_CMAKE_PKGS_DIR}"
+      CONFIG_FILE_STR_INOUT PACKAGE_CONFIG_CODE )
+
+    # Import build tree targets into applications.
+    #
+    # BMA: Export only the immediate libraries of this project to the
+    # build tree. Should manage more carefully, checking that they are
+    # targets of this project and not other libs.  Also, should
+    # consider more careful recursive management of targets when there
+    # are sub-packages.  We'd like to export per-package, but deps
+    # won't be satisfied, so we export one file for the project for
+    # now...
+    if (PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR)
+      tribits_get_package_config_build_dir_targets_file(${packageName}
+        "${PACKAGE_CONFIG_FOR_BUILD_BASE_DIR}" packageConfigBuildDirTargetsFile )
+      string(APPEND PACKAGE_CONFIG_CODE
+        "\n# Import ${packageName} targets\n"
+        "include(\"${packageConfigBuildDirTargetsFile}\")")
+    endif()
+
+    tribits_set_compiler_vars_for_config_file(BUILD_DIR)
+
+    if ("${CMAKE_CXX_FLAGS}" STREQUAL "")
+      set(CMAKE_CXX_FLAGS_ESCAPED "")
+    else()
+      # Replace " by \".
+      string(REGEX REPLACE "\"" "\\\\\"" CMAKE_CXX_FLAGS_ESCAPED ${CMAKE_CXX_FLAGS})
+    endif()
+    set(tribitsConfigFilesDir
+      "${${PROJECT_NAME}_TRIBITS_DIR}/${TRIBITS_CMAKE_INSTALLATION_FILES_DIR}")
+    configure_file(
+      "${tribitsConfigFilesDir}/TribitsPackageConfigTemplate.cmake.in"
+      "${PARSE_PACKAGE_CONFIG_FOR_BUILD_BASE_DIR}/${packageName}Config.cmake"
       )
   endif()
 
