@@ -539,17 +539,23 @@ function(tribits_append_dependent_package_config_file_includes packageName)
   string(APPEND configFileStr
     "\n# Include configuration of dependent external packages/TPls\n")
   foreach(depTpl IN LISTS ${packageName}_LIB_REQUIRED_DEP_TPLS)
-    set(cmakeTplDir "${configFileBaseDir}/${depTpl}")
-    string(APPEND configFileStr
-      "include(\"${cmakeTplDir}/${depTpl}Config.cmake\")\n")
-  endforeach()
-  foreach(depTpl IN LISTS ${packageName}_LIB_OPTIONAL_DEP_TPLS)
-    if (${packageName}_ENABLE_${depTpl})
+    if (TARGET ${depTpl}::all_libs)
       set(cmakeTplDir "${configFileBaseDir}/${depTpl}")
       string(APPEND configFileStr
         "include(\"${cmakeTplDir}/${depTpl}Config.cmake\")\n")
     endif()
   endforeach()
+  foreach(depTpl IN LISTS ${packageName}_LIB_OPTIONAL_DEP_TPLS)
+    if (${packageName}_ENABLE_${depTpl} AND TARGET ${depTpl}::all_libs)
+      set(cmakeTplDir "${configFileBaseDir}/${depTpl}")
+      string(APPEND configFileStr
+        "include(\"${cmakeTplDir}/${depTpl}Config.cmake\")\n")
+    endif()
+  endforeach()
+  # NOTE: Above, every TPL does not have a <tplName>Config.cmake file written
+  # for it.  For example, special TPLs like "MPI" don't have this file created
+  # or have an MPI::all_libs target corrected.  Therefore, we check for the
+  # defintion <tplName>::all_libs before we include the file above.
 
   # Set the output
   set(${PARSE_CONFIG_FILE_STR_INOUT} "${configFileStr}" PARENT_SCOPE)
