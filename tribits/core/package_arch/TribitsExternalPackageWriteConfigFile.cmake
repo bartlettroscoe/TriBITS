@@ -351,7 +351,7 @@ function(tribits_external_package_process_libraries_list_lib_name_link_option
   string(SUBSTRING "${libentry}" 2 -1 libname)
   # Create IMPORTED library target
   string(APPEND configFileStr
-    "add_library(${tplName}::${libname} IMPORTED UNKNOWN GLOBAL)\n"
+    "add_library(${tplName}::${libname} IMPORTED INTERFACE GLOBAL)\n"
     "set_target_properties(${tplName}::${libname} PROPERTIES\n"
     "  IMPORTED_LIBNAME \"${libname}\")\n"
     )

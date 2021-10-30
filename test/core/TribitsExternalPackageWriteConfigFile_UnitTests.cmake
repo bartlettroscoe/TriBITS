@@ -234,7 +234,7 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
 [=[
 #beginning
 
-add_library(SomeTpl::lib1 IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::lib1 IMPORTED INTERFACE GLOBAL)
 set_target_properties(SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
@@ -276,11 +276,11 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
 [=[
 #beginning
 
-add_library(SomeTpl::lib1 IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::lib1 IMPORTED INTERFACE GLOBAL)
 set_target_properties(SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::lib2 IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::lib2 IMPORTED INTERFACE GLOBAL)
 set_target_properties(SomeTpl::lib2 PROPERTIES
   IMPORTED_LIBNAME "lib2")
 target_link_libraries(SomeTpl::lib2
@@ -325,17 +325,17 @@ function(unittest_tribits_external_package_process_libraries_list_incl_dirs_0_li
 [=[
 #beginning
 
-add_library(SomeTpl::lib1 IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::lib1 IMPORTED INTERFACE GLOBAL)
 set_target_properties(SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::lib2 IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::lib2 IMPORTED INTERFACE GLOBAL)
 set_target_properties(SomeTpl::lib2 PROPERTIES
   IMPORTED_LIBNAME "lib2")
 target_link_libraries(SomeTpl::lib2
   INTERFACE SomeTpl::lib1)
 
-add_library(SomeTpl::lib3 IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::lib3 IMPORTED INTERFACE GLOBAL)
 set_target_properties(SomeTpl::lib3 PROPERTIES
   IMPORTED_LIBNAME "lib3")
 target_link_libraries(SomeTpl::lib3
@@ -528,11 +528,11 @@ function(unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib
 
 include_guard()
 
-add_library(SomeTpl::lib1 IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::lib1 IMPORTED INTERFACE GLOBAL)
 set_target_properties(SomeTpl::lib1 PROPERTIES
   IMPORTED_LIBNAME "lib1")
 
-add_library(SomeTpl::lib2 IMPORTED UNKNOWN GLOBAL)
+add_library(SomeTpl::lib2 IMPORTED INTERFACE GLOBAL)
 set_target_properties(SomeTpl::lib2 PROPERTIES
   IMPORTED_LIBNAME "lib2")
 target_link_libraries(SomeTpl::lib2
