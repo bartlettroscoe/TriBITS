@@ -410,7 +410,7 @@ function(unittest_tribits_external_package_write_config_file_str_incl_dirs_2_lib
 include_guard()
 
 add_library(SomeTpl::all_libs INTERFACE IMPORTED GLOBAL)
-target_include_directories(SomeTpl::all_libs
+target_include_directories(SomeTpl::all_libs SYSTEM
   INTERFACE "/some/path/to/include/d"
   INTERFACE "/some/other/path/to/include/e"
   )
@@ -450,7 +450,7 @@ add_library(SomeTpl::all_libs INTERFACE IMPORTED GLOBAL)
 target_link_libraries(SomeTpl::all_libs
   INTERFACE SomeTpl::somelib
   )
-target_include_directories(SomeTpl::all_libs
+target_include_directories(SomeTpl::all_libs SYSTEM
   INTERFACE "/some/path/to/include/C"
   )
 
@@ -489,7 +489,7 @@ add_library(SomeTpl::all_libs INTERFACE IMPORTED GLOBAL)
 target_link_libraries(SomeTpl::all_libs
   INTERFACE SomeTpl::somelib
   )
-target_include_directories(SomeTpl::all_libs
+target_include_directories(SomeTpl::all_libs SYSTEM
   INTERFACE "/some/path/to/include/a"
   INTERFACE "/some/other/path/to/include/b"
   )
@@ -543,7 +543,7 @@ target_link_libraries(SomeTpl::all_libs
   INTERFACE SomeTpl::lib1
   INTERFACE SomeTpl::lib2
   )
-target_include_directories(SomeTpl::all_libs
+target_include_directories(SomeTpl::all_libs SYSTEM
   INTERFACE "/some/path/to/include/a"
   INTERFACE "/some/other/path/to/include/b"
   )

@@ -453,7 +453,7 @@ function(tribits_external_package_create_all_libs_target  tplName)
   # target_include_directories()
   if (TPL_${tplName}_INCLUDE_DIRS)
     string(APPEND configFileStr
-      "target_include_directories(${tplName}::all_libs\n")
+      "target_include_directories(${tplName}::all_libs SYSTEM\n")
     foreach (inclDir IN LISTS TPL_${tplName}_INCLUDE_DIRS)
       string(APPEND configFileStr
         "  INTERFACE \"${inclDir}\"\n")
