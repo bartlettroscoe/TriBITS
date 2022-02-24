@@ -701,7 +701,7 @@ function(TribitsExampleApp_INCLUDE byProjectOrPackage sharedOrStatic importedNoS
     OVERALL_WORKING_DIRECTORY  TEST_NAME
     OVERALL_NUM_MPI_PROCS  1
     EXCLUDE_IF_NOT_TRUE  ${PROJECT_NAME}_ENABLE_Fortran  COMPILER_IS_GNU
-      CMAKE_VERSION_2_23
+      CMAKE_VERSION_2_23  NINJA_EXE
     XHOSTTYPE  Darwin
 
     TEST_0
@@ -746,21 +746,15 @@ function(TribitsExampleApp_INCLUDE byProjectOrPackage sharedOrStatic importedNoS
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_3
-      MESSAGE "Verbose build (CMAKE_VERBOSE_MAKEFILE=ON) just TribitsExampleApp app.o to see include dirs"
+      MESSAGE "Build TribitsExampleApp verbose to see include dirs"
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
-      CMND ${CMAKE_COMMAND} ARGS --build . -v --target CMakeFiles/app.dir/app.cpp.o
+      CMND ${CMAKE_COMMAND} ARGS --build . -v
       PASS_REGULAR_EXPRESSION_ALL
         "${tribitExProjIncludeRegex}"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_4
-      MESSAGE "Build the rest of TribitsExampleApp to see include dirs"
-      WORKING_DIRECTORY app_build
-      SKIP_CLEAN_WORKING_DIRECTORY
-      CMND ${CMAKE_COMMAND} ARGS --build . -v
-
-    TEST_5
       MESSAGE "Test TribitsExampleApp"
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
