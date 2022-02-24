@@ -727,16 +727,16 @@ function(TribitsExampleApp_INCLUDE byProjectOrPackage sharedOrStatic importedNoS
       MESSAGE "Build and install TribitsExampleProject locally"
       WORKING_DIRECTORY BUILD
       SKIP_CLEAN_WORKING_DIRECTORY
-      CMND make ARGS ${CTEST_BUILD_FLAGS} install
+      CMND ${CMAKE_COMMAND} ARGS --build . --target install
 
     TEST_2
       MESSAGE "Configure TribitsExampleApp locally"
       WORKING_DIRECTORY app_build
       CMND ${CMAKE_COMMAND} ARGS
+        -GNinja
         -DCMAKE_PREFIX_PATH=${testDir}/install
         -DTribitsExApp_USE_COMPONENTS=SimpleCxx,MixedLang,WithSubpackages
         ${findByProjectOrPackageArg}
-        -DCMAKE_VERBOSE_MAKEFILE=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
       PASS_REGULAR_EXPRESSION_ALL
         "${foundProjectOrPackageStr}"
@@ -749,7 +749,7 @@ function(TribitsExampleApp_INCLUDE byProjectOrPackage sharedOrStatic importedNoS
       MESSAGE "Verbose build (CMAKE_VERBOSE_MAKEFILE=ON) just TribitsExampleApp app.o to see include dirs"
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
-      CMND make ARGS ${CTEST_BUILD_FLAGS} app.o
+      CMND ${CMAKE_COMMAND} ARGS --build . -v --target CMakeFiles/app.dir/app.cpp.o
       PASS_REGULAR_EXPRESSION_ALL
         "${tribitExProjIncludeRegex}"
       ALWAYS_FAIL_ON_NONZERO_RETURN
@@ -758,10 +758,7 @@ function(TribitsExampleApp_INCLUDE byProjectOrPackage sharedOrStatic importedNoS
       MESSAGE "Build the rest of TribitsExampleApp to see include dirs"
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
-      CMND make ARGS ${CTEST_BUILD_FLAGS}
-      PASS_REGULAR_EXPRESSION_ALL
-        "Built target app"
-      ALWAYS_FAIL_ON_NONZERO_RETURN
+      CMND ${CMAKE_COMMAND} ARGS --build . -v
 
     TEST_5
       MESSAGE "Test TribitsExampleApp"
@@ -779,10 +776,10 @@ function(TribitsExampleApp_INCLUDE byProjectOrPackage sharedOrStatic importedNoS
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
   # NOTE: Above test checks that the IMPORTED_NO_SYSTEM property is set
-  # correctly and CMake is handling it correctly.  NOTE: We had to use
-  # configure option -DCMAKE_VERBOSE_MAKEFILE=ON instead of running 'make
-  # VERBOSE=1 ...' because the latter does not produce all of the output when
-  # running with ctest -S scripts for some reason.
+  # correctly and CMake is handling it correctly.  NOTE: Above, we had to
+  # switch to Ninja and 'cmake --build . -v [--target <target>] in order to
+  # get verbose output when run inside of a cmake -S script with CMake
+  # 3.23-rc2.  Not sure why this is but this is better anyway.
 
   if (${testNameBase}_NAME)
     set_tests_properties(${${testNameBase}_NAME}
