@@ -736,6 +736,7 @@ function(TribitsExampleApp_INCLUDE byProjectOrPackage sharedOrStatic importedNoS
         -DCMAKE_PREFIX_PATH=${testDir}/install
         -DTribitsExApp_USE_COMPONENTS=SimpleCxx,MixedLang,WithSubpackages
         ${findByProjectOrPackageArg}
+        -DCMAKE_VERBOSE_MAKEFILE=ON
         ${${PROJECT_NAME}_TRIBITS_DIR}/examples/TribitsExampleApp
       PASS_REGULAR_EXPRESSION_ALL
         "${foundProjectOrPackageStr}"
@@ -745,10 +746,10 @@ function(TribitsExampleApp_INCLUDE byProjectOrPackage sharedOrStatic importedNoS
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_3
-      MESSAGE "Verbose build TribitsExampleApp to see include dirs"
+      MESSAGE "Verbose build (CMAKE_VERBOSE_MAKEFILE=ON) TribitsExampleApp to see include dirs"
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
-      CMND make ARGS VERBOSE=1 ${CTEST_BUILD_FLAGS}
+      CMND make ARGS ${CTEST_BUILD_FLAGS}
       PASS_REGULAR_EXPRESSION_ALL
         "${tribitExProjIncludeRegex}"
         "Built target app"
@@ -770,7 +771,10 @@ function(TribitsExampleApp_INCLUDE byProjectOrPackage sharedOrStatic importedNoS
     ADDED_TEST_NAME_OUT ${testNameBase}_NAME
     )
   # NOTE: Above test checks that the IMPORTED_NO_SYSTEM property is set
-  # correctly and CMake is handling it correctly.
+  # correctly and CMake is handling it correctly.  NOTE: We had to use
+  # configure option -DCMAKE_VERBOSE_MAKEFILE=ON instead of running 'make
+  # VERBOSE=1 ...' because the latter does not produce all of the output when
+  # running with ctest -S scripts for some reason.
 
   if (${testNameBase}_NAME)
     set_tests_properties(${${testNameBase}_NAME}
