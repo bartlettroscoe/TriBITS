@@ -746,16 +746,24 @@ function(TribitsExampleApp_INCLUDE byProjectOrPackage sharedOrStatic importedNoS
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
     TEST_3
-      MESSAGE "Verbose build (CMAKE_VERBOSE_MAKEFILE=ON) TribitsExampleApp to see include dirs"
+      MESSAGE "Verbose build (CMAKE_VERBOSE_MAKEFILE=ON) just TribitsExampleApp app.o to see include dirs"
+      WORKING_DIRECTORY app_build
+      SKIP_CLEAN_WORKING_DIRECTORY
+      CMND make ARGS ${CTEST_BUILD_FLAGS} app.o
+      PASS_REGULAR_EXPRESSION_ALL
+        "${tribitExProjIncludeRegex}"
+      ALWAYS_FAIL_ON_NONZERO_RETURN
+
+    TEST_4
+      MESSAGE "Build the rest of TribitsExampleApp to see include dirs"
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
       CMND make ARGS ${CTEST_BUILD_FLAGS}
       PASS_REGULAR_EXPRESSION_ALL
-        "${tribitExProjIncludeRegex}"
         "Built target app"
       ALWAYS_FAIL_ON_NONZERO_RETURN
 
-    TEST_4
+    TEST_5
       MESSAGE "Test TribitsExampleApp"
       WORKING_DIRECTORY app_build
       SKIP_CLEAN_WORKING_DIRECTORY
