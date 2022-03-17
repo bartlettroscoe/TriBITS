@@ -846,7 +846,7 @@ function(tribits_add_test EXE_NAME)
      #multi_value_keywords
 "DIRECTORY;KEYWORDS;COMM;NUM_MPI_PROCS;NUM_TOTAL_CORES_USED;ARGS;${POSTFIX_AND_ARGS_LIST};NAME;NAME_POSTFIX;CATEGORIES;HOST;XHOST;HOSTTYPE;XHOSTTYPE;EXCLUDE_IF_NOT_TRUE;PASS_REGULAR_EXPRESSION;FAIL_REGULAR_EXPRESSION;TIMEOUT;ENVIRONMENT;ADDED_TESTS_NAMES_OUT"
      )
-
+     
   tribits_check_for_unparsed_arguments()
 
   if (NOT "${PARSE_ARGS}" STREQUAL "")
@@ -996,7 +996,7 @@ function(tribits_add_test EXE_NAME)
         message(STATUS "TEST_NAME = ${TEST_NAME_INSTANCE}")
       endif()
 
-      tribits_convert_cmnd_arg_string_to_add_test_arg_array(${PARSE_ARG} INARGS)
+      tribits_convert_cmnd_arg_string_to_add_test_arg_array("${PARSE_ARG}" INARGS)
       if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
         print_var(INARGS)
       endif()
@@ -1010,7 +1010,7 @@ function(tribits_add_test EXE_NAME)
       tribits_add_test_add_test_all( ${TEST_NAME_INSTANCE}
         "${EXECUTABLE_PATH}" "${PARSE_CATEGORIES}"  "${NUM_PROCS_USED}"
         "${NUM_TOTAL_CORES_USED}"
-        "${SET_RUN_SERIAL}" "${SET_DISABLED_AND_MSG}" ADDED_TEST_NAME  ${INARGS}
+        "${SET_RUN_SERIAL}" "${SET_DISABLED_AND_MSG}" ADDED_TEST_NAME "${INARGS}"
 	"${${TEST_NAME_INSTANCE}_EXTRA_ARGS}" )
       if(PARSE_ADDED_TESTS_NAMES_OUT AND ADDED_TEST_NAME)
         list(APPEND ADDED_TESTS_NAMES_OUT ${ADDED_TEST_NAME})
@@ -1055,7 +1055,7 @@ function(tribits_add_test EXE_NAME)
       tribits_add_test_add_test_all( ${TEST_NAME_INSTANCE}
         "${EXECUTABLE_PATH}" "${PARSE_CATEGORIES}" "${NUM_PROCS_USED}" 
         "${NUM_TOTAL_CORES_USED}"
-        "${SET_RUN_SERIAL}" "${SET_DISABLED_AND_MSG}" ADDED_TEST_NAME  ${INARGS}
+        "${SET_RUN_SERIAL}" "${SET_DISABLED_AND_MSG}" ADDED_TEST_NAME  "${INARGS}"
 	"${${TEST_NAME_INSTANCE}_EXTRA_ARGS}"
         )
       if(PARSE_ADDED_TESTS_NAMES_OUT AND ADDED_TEST_NAME)

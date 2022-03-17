@@ -198,7 +198,7 @@ function(tribits_convert_cmnd_arg_string_to_add_test_arg_array CMND_ARG_STRING A
 
   #print_var(NEWSTR)
 
-  set(${ARG_ARRAY_VARNAME} ${NEWSTR} PARENT_SCOPE)
+  set(${ARG_ARRAY_VARNAME} "${NEWSTR}" PARENT_SCOPE)
 
 endfunction()
 
@@ -524,13 +524,13 @@ function( tribits_add_test_get_test_cmnd_array  CMND_ARRAY_OUT
        ${MPI_EXEC_NUMPROCS_FLAG} ${NUM_PROCS_USED}
        ${MPI_EXEC_POST_NUMPROCS_FLAGS}
        "${EXECUTABLE_PATH}"
-       ${ARGN}
+       "${ARGN}"
        PARENT_SCOPE
        )
   else()
     set(${CMND_ARRAY_OUT}
        "${EXECUTABLE_PATH}"
-       ${ARGN}
+       "${ARGN}"
        PARENT_SCOPE
        )
   endif()
@@ -847,13 +847,13 @@ function(tribits_add_test_add_test_all  TEST_NAME_IN
   )
 
   tribits_add_test_get_test_cmnd_array( CMND_ARRAY
-    "${EXECUTABLE_PATH_IN}"  "${NUM_PROCS_USED_IN}" ${ARGN} )
+    "${EXECUTABLE_PATH_IN}"  "${NUM_PROCS_USED_IN}" "${ARGN}" )
 
   tribits_add_test_query_disable(DISABLE_THIS_TEST  ${TEST_NAME_IN})
 
   if (NOT  DISABLE_THIS_TEST)
 
-    tribits_add_test_add_test(${TEST_NAME_IN}  ${EXECUTABLE_PATH_IN}  ${CMND_ARRAY})
+    tribits_add_test_add_test(${TEST_NAME_IN}  ${EXECUTABLE_PATH_IN}  "${CMND_ARRAY}")
     set(${ADDED_TEST_NAME_OUT}  ${TEST_NAME_IN}  PARENT_SCOPE)
 
     tribits_private_add_test_post_process_added_test(${TEST_NAME_IN}

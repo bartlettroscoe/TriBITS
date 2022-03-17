@@ -86,6 +86,7 @@ function(tribits_join_exec_process_set_args  OUTPUT_STRING_VAR)
   foreach(STRING_VAL_RAW ${ARGN})
     # Remove quotes around arguments because CTest does not need them
     string(REGEX REPLACE "\"" "" STRING_VAL "${STRING_VAL_RAW}")
+    string(REGEX REPLACE "\;" "\\\;" STRING_VAL "${STRING_VAL}")
     if (OUTPUT_STRING STREQUAL "")
       set(OUTPUT_STRING "\"${STRING_VAL}\"")
     else()

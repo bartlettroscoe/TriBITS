@@ -1094,7 +1094,7 @@ function(tribits_add_advanced_test TEST_NAME_IN)
 	 "${testBlockOptionsList}"
 	 ""     # one_value_keywords
 	 "${testBlockMultiValueKeywordsList}"
-         ${PARSE_TEST_${TEST_CMND_IDX}}
+         "${PARSE_TEST_${TEST_CMND_IDX}}"
          )
 
       tribits_check_for_unparsed_arguments(PARSE) # ToDo: Use a different prefix!
@@ -1169,7 +1169,7 @@ function(tribits_add_advanced_test TEST_NAME_IN)
       endif()
 
       tribits_add_test_get_test_cmnd_array( TEST_CMND_ARRAY
-        "${EXECUTABLE_PATH}" "${NUM_PROCS_USED}" ${ARGS_STR} )
+        "${EXECUTABLE_PATH}" "${NUM_PROCS_USED}" "${ARGS_STR}" )
 
     elseif (PARSE_CMND)
 
