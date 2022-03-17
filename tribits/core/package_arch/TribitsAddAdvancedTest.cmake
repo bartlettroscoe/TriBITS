@@ -889,7 +889,6 @@ function(tribits_add_advanced_test TEST_NAME_IN)
 
   set(multiValueKeywordsList
     ${TEST_IDX_LIST}  OVERALL_WORKING_DIRECTORY
-    LIST_SEPARATOR
     OVERALL_NUM_MPI_PROCS  OVERALL_NUM_TOTAL_CORES_USED
     CATEGORIES  COMM  HOST  XHOST  HOSTTYPE  XHOSTTYPE  EXCLUDE_IF_NOT_TRUE
     FINAL_PASS_REGULAR_EXPRESSION  FINAL_FAIL_REGULAR_EXPRESSION
@@ -1000,7 +999,6 @@ function(tribits_add_advanced_test TEST_NAME_IN)
     "#\n"
     "\n"
     "set( TEST_NAME ${TEST_NAME} )\n"
-    "set( LIST_SEPARATOR \"${PARSE_LIST_SEPARATOR}\" )\n"
     )
 
   # Loop through each test case

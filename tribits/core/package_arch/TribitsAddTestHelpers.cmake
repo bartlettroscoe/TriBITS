@@ -161,7 +161,7 @@ function(tribits_convert_cmnd_arg_string_to_add_test_arg_array CMND_ARG_STRING A
   #print_var(CMND_ARG_STRING)
   #print_var(ARG_ARRAY_VARNAME)
 
-  string(LENGTH ${CMND_ARG_STRING} STR_LEN)
+  string(LENGTH "${CMND_ARG_STRING}" STR_LEN)
   #print_var(STR_LEN)
 
   math(EXPR STR_LAST_IDX "${STR_LEN}-1")
@@ -172,7 +172,7 @@ function(tribits_convert_cmnd_arg_string_to_add_test_arg_array CMND_ARG_STRING A
 
   foreach(IDX RANGE ${STR_LAST_IDX})
 
-    string(SUBSTRING ${CMND_ARG_STRING} ${IDX} 1 STR_CHAR)
+    string(SUBSTRING "${CMND_ARG_STRING}" ${IDX} 1 STR_CHAR)
     #print_var(STR_CHAR)
 
     if (STR_CHAR STREQUAL "\"")
@@ -685,7 +685,7 @@ endfunction()
 #
 function(tribits_add_test_add_test TEST_NAME EXE_NAME)
 
-  string(REPLACE "${PARSE_LIST_SEPARATOR}" "\\;" args "${ARGN}")
+  set(args "${ARGN}")
 
   if (TRIBITS_ADD_TEST_ADD_TEST_CAPTURE)
     append_global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT NAME ${TEST_NAME} COMMAND ${args})
@@ -765,8 +765,6 @@ endfunction()
 function(tribits_private_add_test_set_environment  TEST_NAME_IN)
 
   if (PARSE_ENVIRONMENT)
-    string(REPLACE "${PARSE_LIST_SEPARATOR}" "\\;" PARSE_ENVIRONMENT
-      "${PARSE_ENVIRONMENT}")
     tribits_set_test_property(${TEST_NAME_IN} PROPERTY ENVIRONMENT
       "${PARSE_ENVIRONMENT}")
   endif()

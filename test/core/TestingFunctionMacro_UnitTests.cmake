@@ -831,9 +831,8 @@ function(unittest_tribits_add_test_basic)
   message("Add two tests using POSTFIX_AND_ARGS_0 with spaces and semi-colons")
   global_set(TRIBITS_ADD_TEST_ADD_TEST_INPUT)
   tribits_add_test( ${EXEN}
-    POSTFIX_AND_ARGS_0  "test0"  "has some<sep>spaces" "--and semi<sep>colons too"
-    POSTFIX_AND_ARGS_1  "test1"  "has2 some<sep>spaces" "--and2 semi<sep>colons too"
-    LIST_SEPARATOR "<sep>"
+    POSTFIX_AND_ARGS_0  "test0"  "has some\;spaces" "--and semi\;colons too"
+    POSTFIX_AND_ARGS_1  "test1"  "has2 some\;spaces" "--and2 semi\;colons too"
     ADDED_TESTS_NAMES_OUT  ${EXEN}_TEST_NAMES
     )
   unittest_compare_const(
@@ -2445,12 +2444,11 @@ function(unittest_tribits_add_advanced_test_basic)
   message("***\n*** Add a single package executable with quoted arguments containing semi-colons\n***")
   tribits_add_advanced_test_unittest_reset()
   tribits_add_advanced_test( TAAT_basic_exec_1_args_3_quotes_semicolons
-    TEST_0 EXEC ${EXEN} ARGS "arg1=val1<semicolon>val2" arg2 arg3
-    LIST_SEPARATOR "<semicolon>"
+    TEST_0 EXEC ${EXEN} ARGS "arg1=val1\;val2" arg2 arg3
     )
   unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_CMND_ARRAY_0
-    "\"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\" \"arg1=val1<semicolon>val2\" \"arg2\" \"arg3\""
+    "\"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\" \"arg1=val1;val2\" \"arg2\" \"arg3\""
     )
   unittest_compare_const(
     TRIBITS_ADD_ADVANCED_TEST_NUM_CMNDS
@@ -2459,7 +2457,7 @@ function(unittest_tribits_add_advanced_test_basic)
   unittest_file_regex(
     "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_NAME}_TAAT_basic_exec_1_args_3_quotes_semicolons.cmake"
     REGEX_STRINGS
-      "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\" \"arg1=val1<semicolon>val2\" \"arg2\" \"arg3\""
+      "TEST_0_CMND \"${CMAKE_CURRENT_BINARY_DIR}/${PACKEXEN}\" \"arg1=val1\;val2\" \"arg2\" \"arg3\""
       "NUM_CMNDS 1"
     )
 
@@ -4012,7 +4010,6 @@ function(unittest_tribits_add_executable_and_test)
     execName
     ADDED_TESTS_NAMES_OUT execName_TEST_NAME
     ADDED_EXE_TARGET_NAME_OUT execName_TARGET_NAME
-    LIST_SEPARATOR <semicolon>
     TIMEOUT 11.5
     WILL_FAIL
     ENVIRONMENT env1=envval1 env2=envval2
@@ -4049,7 +4046,7 @@ function(unittest_tribits_add_executable_and_test)
     )
   unittest_compare_const(
     TRIBITS_ADD_TEST_CAPTURE_ARGS
-    "execName;COMM;serial;mpi;CATEGORIES;category1;category2;HOST;host1;host2;XHOST;host1;host2;HOSTTYPE;hosttype1;hosttype2;XHOSTTYPE;hosttype1;hosttype2;EXCLUDE_IF_NOT_TRUE;var1;var2;NOEXEPREFIX;NOEXESUFFIX;NAME;testName;NAME_POSTFIX;testNamePostfix;DIRECTORY;dir;KEYWORDS;keyword1;keyword2;NUM_MPI_PROCS;numProcs;PASS_REGULAR_EXPRESSION;regex1;regex2;FAIL_REGULAR_EXPRESSION;regex1;regex2;ENVIRONMENT;env1=envval1;env2=envval2;DISABLED;Disable this test because I said;STANDARD_PASS_OUTPUT;WILL_FAIL;TIMEOUT;11.5;LIST_SEPARATOR;<semicolon>;ADD_DIR_TO_NAME;ADDED_TESTS_NAMES_OUT;ADDED_TESTS_NAMES_OUT;ADDED_TESTS_NAMES"
+    "execName;COMM;serial;mpi;CATEGORIES;category1;category2;HOST;host1;host2;XHOST;host1;host2;HOSTTYPE;hosttype1;hosttype2;XHOSTTYPE;hosttype1;hosttype2;EXCLUDE_IF_NOT_TRUE;var1;var2;NOEXEPREFIX;NOEXESUFFIX;NAME;testName;NAME_POSTFIX;testNamePostfix;DIRECTORY;dir;KEYWORDS;keyword1;keyword2;NUM_MPI_PROCS;numProcs;PASS_REGULAR_EXPRESSION;regex1;regex2;FAIL_REGULAR_EXPRESSION;regex1;regex2;ENVIRONMENT;env1=envval1;env2=envval2;DISABLED;Disable this test because I said;STANDARD_PASS_OUTPUT;WILL_FAIL;TIMEOUT;11.5;ADD_DIR_TO_NAME;ADDED_TESTS_NAMES_OUT;ADDED_TESTS_NAMES_OUT;ADDED_TESTS_NAMES"
     )
   # NOTE: Above, we input the list in reverse order to prove that the
   # arguments are handled correctly internally.
@@ -4513,4 +4510,4 @@ message("*** Determine final result of all unit tests")
 message("***\n")
 
 # Pass in the number of expected tests that must pass!
-unittest_final_result(686)
+unittest_final_result(687)

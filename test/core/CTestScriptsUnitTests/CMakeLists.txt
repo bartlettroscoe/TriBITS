@@ -213,37 +213,33 @@ tribits_add_advanced_test(
   OVERALL_NUM_MPI_PROCS 1
   )
 
-tribits_add_test(GenericDriver
+tribits_add_test(GenericDriver 
   NAME CTestScripts_tat_args_with_semicolon
-  ARGS "arg<sep>with<sep>a<sep>few<sep>semicolons 0"
+  ARGS "arg\;with\;a\;few\;semicolons 0"
   PASS_REGULAR_EXPRESSION "arg[;]with[;]a;few[;]semicolons"
-  LIST_SEPARATOR "<sep>"
   NUM_MPI_PROCS 1
   )
 
 tribits_add_test(GenericDriver
   NAME CTestScripts_tat_args_with_semicolon_and_spaces
   POSTFIX_AND_ARGS_0 ""
-    "arg<sep>with<sep>semicolons and<sep>several spaces"
+    "arg\;with\;semicolons and\;several spaces"
     0
   PASS_REGULAR_EXPRESSION "arg[;]with[;]semicolons and[;]several spaces"
-  LIST_SEPARATOR "<sep>"
   NUM_MPI_PROCS 1
   )
 
 tribits_add_advanced_test(
   CTestScripts_taat_cmnd_1_args_with_semicolon
-  TEST_0 EXEC GenericDriver ARGS "arg<sep>with<sep>a<sep>few<sep>semicolons" 0
+  TEST_0 EXEC GenericDriver ARGS "arg\;with\;a\;few\;semicolons" 0
     PASS_REGULAR_EXPRESSION "arg[;]with[;]a;few[;]semicolons"
-  LIST_SEPARATOR "<sep>"
   OVERALL_NUM_MPI_PROCS 1
   )
 
 tribits_add_advanced_test(
   CTestScripts_taat_cmnd_1_args_with_semicolon_and_spaces
-  TEST_0 EXEC GenericDriver ARGS "arg<sep>with<sep>semicolons and<sep>several spaces" 0
+  TEST_0 EXEC GenericDriver ARGS "arg\;with\;semicolons and\;several spaces" 0
     PASS_REGULAR_EXPRESSION "arg[;]with[;]semicolons and[;]several spaces"
-  LIST_SEPARATOR "<sep>"
   OVERALL_NUM_MPI_PROCS 1
   )
 
@@ -256,9 +252,8 @@ tribits_add_test("${CMAKE_COMMAND}" NOEXEPREFIX NOEXESUFFIX
   PASS_REGULAR_EXPRESSION
       "MY_ENV_VAR_0 = 'val0a[;]val0b[;]val0c'\nMY_ENV_VAR_1 = 'val1a[;]val1b[;]val1c'"
   ENVIRONMENT
-    MY_ENV_VAR_0=val0a<semicol>val0b<semicol>val0c
-    MY_ENV_VAR_1=val1a<semicol>val1b<semicol>val1c
-  LIST_SEPARATOR "<semicol>"
+    "MY_ENV_VAR_0=val0a;val0b;val0c"
+    "MY_ENV_VAR_1=val1a;val1b;val1c"
   NUM_MPI_PROCS 1
   )
 
@@ -271,9 +266,8 @@ tribits_add_test("${CMAKE_COMMAND}" NOEXEPREFIX NOEXESUFFIX
   PASS_REGULAR_EXPRESSION
       "MY_ENV_VAR_0 = 'val 0a[;]val 0b[;]val 0c'\nMY_ENV_VAR_1 = 'val 1a[;]val 1b[;]val 1c'"
   ENVIRONMENT
-    "MY_ENV_VAR_0=val 0a<semicol>val 0b<semicol>val 0c"
-    "MY_ENV_VAR_1=val 1a<semicol>val 1b<semicol>val 1c"
-  LIST_SEPARATOR "<semicol>"
+    "MY_ENV_VAR_0=val 0a;val 0b;val 0c"
+    "MY_ENV_VAR_1=val 1a;val 1b;val 1c"
   NUM_MPI_PROCS 1
   )
 
@@ -287,9 +281,8 @@ tribits_add_advanced_test(
       "MY_ENV_VAR_0 = 'val0a[;]val0b[;]val0c'"
       "MY_ENV_VAR_1 = 'val1a[;]val1b[;]val1c'"
   ENVIRONMENT
-    MY_ENV_VAR_0=val0a<semicol>val0b<semicol>val0c
-    MY_ENV_VAR_1=val1a<semicol>val1b<semicol>val1c
-  LIST_SEPARATOR "<semicol>"
+    "MY_ENV_VAR_0=val0a;val0b;val0c"
+    "MY_ENV_VAR_1=val1a;val1b;val1c"
   OVERALL_NUM_MPI_PROCS 1
   )
 
@@ -303,9 +296,8 @@ tribits_add_advanced_test(
       "MY_ENV_VAR_0 = 'val 0a[;]val 0b[;]val 0c'"
       "MY_ENV_VAR_1 = 'val 1a[;]val 1b[;]val 1c'"
   ENVIRONMENT
-    "MY_ENV_VAR_0=val 0a<semicol>val 0b<semicol>val 0c"
-    "MY_ENV_VAR_1=val 1a<semicol>val 1b<semicol>val 1c"
-  LIST_SEPARATOR "<semicol>"
+    "MY_ENV_VAR_0=val 0a;val 0b;val 0c"
+    "MY_ENV_VAR_1=val 1a;val 1b;val 1c"
   OVERALL_NUM_MPI_PROCS 1
   )
 
