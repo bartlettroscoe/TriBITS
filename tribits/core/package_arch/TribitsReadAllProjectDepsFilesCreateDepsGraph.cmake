@@ -235,10 +235,10 @@ macro(tribits_read_defined_external_and_internal_toplevel_packages_lists)
   tribits_read_extra_repositories_lists()
 
   #
-  # D) Set new variables temporarily (#63) (TODO: Remove these)
+  # D) Set new and old vars during refactoring (#63) (TODO: Remove these)
   #
-  #set(${PROJECT_NAME}_DEFINED_TPLS ${${PROJECT_NAME}_TPLS})
-  #list(LENGTH ${PROJECT_NAME}_DEFINED_TPLS ${PROJECT_NAME}_NUM_DEFINED_TPLS)
+
+  # Set new vars from old vars (#63) (ToDo: Remove these)
   set(${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES ${${PROJECT_NAME}_PACKAGES})
   list(LENGTH ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
     ${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES)
@@ -246,6 +246,10 @@ macro(tribits_read_defined_external_and_internal_toplevel_packages_lists)
     ${${PROJECT_NAME}_DEFINED_TPLS} ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
   list(LENGTH ${PROJECT_NAME}_ALL_DEFINED_TOPLEVEL_PACKAGES
     ${PROJECT_NAME}_NUM_ALL_DEFINED_TOPLEVEL_PACKAGES)
+
+  # Set old vars from new vars (#63) (ToDo: Remove these)
+  set(${PROJECT_NAME}_TPLS ${${PROJECT_NAME}_DEFINED_TPLS})
+  set(${PROJECT_NAME}_NUM_TPLS ${${PROJECT_NAME}_NUM_DEFINED_TPLS})
 
 endmacro()
 
