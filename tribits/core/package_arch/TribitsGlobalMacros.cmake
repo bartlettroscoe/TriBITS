@@ -1416,6 +1416,7 @@ macro(tribits_handle_project_extra_link_flags_as_a_tpl)
     endforeach()
 
     # Prepend ${PROJECT_NAME}TribitsLastLib to the list of external packages/TPLs
+    list(PREPEND ${PROJECT_NAME}_DEFINED_TPLS ${lastLibTplName})
     list(PREPEND ${PROJECT_NAME}_TPLS ${lastLibTplName})
     set(TPL_ENABLE_${lastLibTplName} ON)
     set(${lastLibTplName}_PACKAGE_BUILD_STATUS EXTERNAL)

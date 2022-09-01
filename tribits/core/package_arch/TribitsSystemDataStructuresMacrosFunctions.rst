@@ -149,6 +149,8 @@ processed `<repoDir>/TPLsList.cmake`_ files is given in the list variable::
 
   ${PROJECT_NAME}_DEFINED_TPLS
 
+.. _${PROJECT_NAME}_NUM_DEFINED_TPLS:
+
 with size::
 
   ${PROJECT_NAME}_NUM_DEFINED_TPLS
@@ -160,6 +162,8 @@ processed `<repoDir>/PackagesList.cmake`_ files is given in the list
 variable::
 
   ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
+
+.. _${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES:
 
 with size::
 
@@ -177,6 +181,8 @@ packages (TriBITS top-level packages) is stored in the project-level non-cache
 list variable::
 
   ${PROJECT_NAME}_DEFINED_TOPLEVEL_PACKAGES
+
+.. _${PROJECT_NAME}_NUM_DEFINED_TOPLEVEL_PACKAGES:
 
 with size::
 
@@ -383,11 +389,15 @@ Given the above upstream dependency list variables, the following derived list
 variables are then constructed which provide navigation from a package to its
 downstream/forward dependent packages:
 
+  .. _${PACKAGE_NAME}_FORWARD_LIB_DEP_PACKAGES:
+
   ``${PACKAGE_NAME}_FORWARD_LIB_DEP_PACKAGES``
 
     For a given package ``${PACKAGE_NAME}``, lists the names of all of the
     forward packages ``<fwdDepPkg>`` that list this package in their
     ``<fwdDepPkg>_LIB_DEFINED_PACKAGES`` variables.
+
+  .. _${PACKAGE_NAME}_FORWARD_TEST_DEP_PACKAGES:
 
   ``${PACKAGE_NAME}_FORWARD_TEST_DEP_PACKAGES``
 
@@ -596,30 +606,30 @@ already handles these automatically.)
   .. _${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES:
 
   ``${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES``
-  
+
     List of *direct* package dependencies that are required for the libraries
     and non-test executables built by ``${PACKAGE_NAME}``.
-  
+
   .. _${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES:
 
   ``${PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES``
-  
+
     List of *direct* package dependencies that are only optional for the
     libraries and non-test executables built by ``${PACKAGE_NAME}``.
-  
+
   .. _${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES:
 
   ``${PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES``
-  
+
     List of *direct* package dependencies that are required for the
     tests/examples built by ``${PACKAGE_NAME}``.  This list should **not**
     contain any of the packages already listed in
     ``${PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES``.
-  
+
   .. _${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES:
 
   ``${PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES```
-  
+
     List of *direct* package dependencies that are optional for the
     tests/examples built by ``${PACKAGE_NAME}``.  This list should **not**
     contain any of the SE packages listed in
@@ -632,25 +642,25 @@ variables are then constructed which provide navigation from a package to its
 downstream/forward dependent packages:
 
   ``${PACKAGE_NAME}_FORWARD_LIB_REQUIRED_DEP_PACKAGES``
-  
+
     For a given package ``${PACKAGE_NAME}``, lists the names of all of the
     forward packages ``${FORWARD_PACKAGE_NAME}`` that list this package in
     their ``${FORWARD_PACKAGE_NAME}_LIB_REQUIRED_DEP_PACKAGES`` variables.
-  
+
   ``${PACKAGE_NAME}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES``
-  
+
     For a given package ``${PACKAGE_NAME}``, lists the names of all of the
     forward packages ``${FORWARD_PACKAGE_NAME}`` that list this package in
     their ``${FORWARD_PACKAGE_NAME}_LIB_OPTIONAL_DEP_PACKAGES`` variables.
-  
+
   ``${PACKAGE_NAME}_FORWARD_TEST_REQUIRED_DEP_PACKAGES``
-  
+
     For a given package ``${PACKAGE_NAME}``, lists the names of all of the
     forward packages ``${FORWARD_PACKAGE_NAME}`` that list this package in
     their ``${FORWARD_PACKAGE_NAME}_TEST_REQUIRED_DEP_PACKAGES`` variables.
-  
+
   ``${PACKAGE_NAME}_FORWARD_TEST_OPTIONAL_DEP_PACKAGES``
-  
+
     For a given package ``${PACKAGE_NAME}``, lists the names of all of the
     forward packages ``${FORWARD_PACKAGE_NAME}`` that list this package in
     their ``${FORWARD_PACKAGE_NAME}_TEST_OPTIONAL_DEP_PACKAGES`` variables.

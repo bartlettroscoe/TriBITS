@@ -335,16 +335,28 @@ endmacro()
 # Macro that sets to undefined all of the variables that must be set by the
 # `tribits_package_define_dependencies()`_ macro.
 #
-# It also sets to empty the forward dependency list vars::
+# It also sets to empty the forward dependency list vars:
+#
+#  * `${PACKAGE_NAME}_FORWARD_LIB_DEP_PACKAGES`_
+#  * `${PACKAGE_NAME}_FORWARD_TEST_DEP_PACKAGES`_
+#
+# for each of the forward/downstream in `Variables defining the package
+# dependencies graph`_.
+#
+# See `Function call tree for constructing package dependency graph`_
+#
+# **__Legacy variables:__**
+#
+# It also sets to empty the forward dependency list vars:
 #
 #    <packageName>_FORWARD_<listType>
 #
 # for each of the forward/downstream in `Legacy list variables defining the
 # package dependencies graph`_.
 #
-# See `Function call tree for constructing package dependency graph`_
-#
 macro(tribits_prep_to_read_dependencies  PACKAGE_NAME_IN)
+
+  # Initial vars that must be set in the Dependencies.cmake file
 
   tribits_declare_undefined(LIB_REQUIRED_DEP_PACKAGES)
   tribits_declare_undefined(LIB_OPTIONAL_DEP_PACKAGES)
@@ -358,6 +370,12 @@ macro(tribits_prep_to_read_dependencies  PACKAGE_NAME_IN)
 
   set(REGRESSION_EMAIL_LIST "") # Allow to be empty
 
+  # Initialize other vars
+
+  set(${PACKAGE_NAME_IN}_FORWARD_LIB_DEP_PACKAGES "")
+  set(${PACKAGE_NAME_IN}_FORWARD_TEST_DEP_PACKAGES "")
+
+  # Legacy vars #63
   set(${PACKAGE_NAME_IN}_FORWARD_LIB_REQUIRED_DEP_PACKAGES "")
   set(${PACKAGE_NAME_IN}_FORWARD_LIB_OPTIONAL_DEP_PACKAGES "")
   set(${PACKAGE_NAME_IN}_FORWARD_TEST_REQUIRED_DEP_PACKAGES "")
