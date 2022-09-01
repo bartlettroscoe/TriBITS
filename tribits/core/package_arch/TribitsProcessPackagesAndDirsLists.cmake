@@ -431,6 +431,7 @@ macro(tribits_process_packages_and_dirs_lists  REPOSITORY_NAME  REPOSITORY_DIR)
 
       if (TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE)
         message("")
+        print_var(${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES)
         print_var(${PROJECT_NAME}_PACKAGES)
       endif()
 
@@ -554,6 +555,7 @@ macro(tribits_process_packages_and_dirs_lists  REPOSITORY_NAME  REPOSITORY_DIR)
       endif()
 
       if (PACKAGE_EXISTS OR ${PROJECT_NAME}_IGNORE_PACKAGE_EXISTS_CHECK)
+        list(APPEND ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES ${TRIBITS_PACKAGE})
         list(APPEND ${PROJECT_NAME}_PACKAGES ${TRIBITS_PACKAGE})
         tribits_insert_standard_package_options(${TRIBITS_PACKAGE}
           ${PACKAGE_TESTGROUP})
@@ -584,6 +586,7 @@ macro(tribits_process_packages_and_dirs_lists  REPOSITORY_NAME  REPOSITORY_DIR)
       endif()
 
       if (TRIBITS_PROCESS_PACKAGES_AND_DIRS_LISTS_VERBOSE)
+        print_var(${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES)
         print_var(${PROJECT_NAME}_PACKAGES)
       endif()
 
@@ -591,10 +594,19 @@ macro(tribits_process_packages_and_dirs_lists  REPOSITORY_NAME  REPOSITORY_DIR)
 
     # Get the actual number of packages that actually exist
 
+    list(LENGTH ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
+      ${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES )
+    math(EXPR ${PROJECT_NAME}_LAST_DEFINED_INTERNAL_TOPLEVEL_PACKAGE_IDX
+      "${${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES}-1")
+
     list(LENGTH ${PROJECT_NAME}_PACKAGES ${PROJECT_NAME}_NUM_PACKAGES )
     math(EXPR ${PROJECT_NAME}_LAST_PACKAGE_IDX "${${PROJECT_NAME}_NUM_PACKAGES}-1")
 
     # Create a reverse list for later use
+
+    set(${PROJECT_NAME}_REVERSE_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
+      ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
+    list(REVERSE ${PROJECT_NAME}_REVERSE_DEFINED_INTERNAL_TOPLEVEL_PACKAGES)
 
     set(${PROJECT_NAME}_REVERSE_PACKAGES ${${PROJECT_NAME}_PACKAGES})
     list(REVERSE ${PROJECT_NAME}_REVERSE_PACKAGES)
@@ -614,6 +626,7 @@ macro(tribits_process_packages_and_dirs_lists  REPOSITORY_NAME  REPOSITORY_DIR)
   # Print the final set of packages in debug mode
 
   if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
+    print_var(${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES)
     print_var(${PROJECT_NAME}_PACKAGES)
   endif()
 

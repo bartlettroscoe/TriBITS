@@ -416,10 +416,10 @@ function(unittest_read_packages_and_dependencies)
 
   unittest_compare_const(${PROJECT_NAME}_DEFINED_TPLS "MPI;BLAS;LAPACK;Boost")
   unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
-  unittest_compare_const(${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES 4)
-  unittest_compare_const(${PROJECT_NAME}_ALL_DEFINED_TOPLEVEL_PACKAGES "MPI;BLAS;LAPACK;Boost;Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  unittest_compare_const(${PROJECT_NAME}_NUM_ALL_DEFINED_TOPLEVEL_PACKAGES 8)
+  unittest_compare_const(${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_DEFINED_TOPLEVEL_PACKAGES "MPI;BLAS;LAPACK;Boost;Teuchos;RTOp;Ex2Package1;Ex2Package2")
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TOPLEVEL_PACKAGES 8)
 
   # ToDo: Add checks for ${PACKAGE_NAME}_REL_SOURCE_DIR,,
   # ${PACKAGE_NAME}_SOURCE_DIR, ${PACKAGE_NAME}_TESTGROUP and other vars set
