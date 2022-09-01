@@ -286,7 +286,7 @@ macro(tribits_set_up_enabled_lists_and_se_pkg_idx)
   endforeach()
 
   # ${PROJECT_NAME}_ENABLED_TPLS
-  tribits_get_enabled_list( ${PROJECT_NAME}_TPLS  TPL
+  tribits_get_enabled_list( ${PROJECT_NAME}_DEFINED_TPLS  TPL
     ${PROJECT_NAME}_ENABLED_TPLS  ${PROJECT_NAME}_NUM_ENABLED_TPLS)
 
   # ${PROJECT_NAME}_REVERSE_ENABLED_TPLS

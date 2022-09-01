@@ -435,10 +435,10 @@ create_ctest_dependency_handling_test_case(
     "Adding POST extra Continuous repository preCopyrightTrilinos"
     "Adding POST extra Continuous repository Dakota"
     "Trilinos_NUM_PACKAGES='24'"
-    "Trilinos_NUM_TPLS='19'"
+    "Trilinos_NUM_DEFINED_TPLS='19'"
     "Reading list of POST extra packages from .*/MockTrilinos/preCopyrightTrilinos/PackagesList.cmake"
     "Trilinos_NUM_PACKAGES='26'"
-    "Trilinos_NUM_TPLS='20'"
+    "Trilinos_NUM_DEFINED_TPLS='20'"
     "Skipping reading packages and TPLs for POST extra repo Dakota because marked NOPACKAGES"
     )
 
@@ -472,10 +472,10 @@ create_ctest_dependency_handling_test_case(
     "Adding POST extra Continuous repository preCopyrightTrilinos"
     "Adding POST extra Continuous repository Dakota"
     "Trilinos_NUM_PACKAGES='24'"
-    "Trilinos_NUM_TPLS='19'"
+    "Trilinos_NUM_DEFINED_TPLS='19'"
     "Reading list of POST extra packages from .*/MockTrilinos/preCopyrightTrilinos/PackagesList.cmake"
     "Trilinos_NUM_PACKAGES='26'"
-    "Trilinos_NUM_TPLS='20'"
+    "Trilinos_NUM_DEFINED_TPLS='20'"
     "Skipping reading packages and TPLs for POST extra repo Dakota because marked NOPACKAGES"
     )
   # NOTE: Above tets with default Trilinos_GIT_REPOSITORY_REMOTE=origin which
@@ -512,10 +512,10 @@ create_ctest_dependency_handling_test_case(
     "Adding POST extra Continuous repository preCopyrightTrilinos"
     "Adding POST extra Continuous repository Dakota"
     "Trilinos_NUM_PACKAGES='24'"
-    "Trilinos_NUM_TPLS='19'"
+    "Trilinos_NUM_DEFINED_TPLS='19'"
     "Reading list of POST extra packages from .*/MockTrilinos/preCopyrightTrilinos/PackagesList.cmake"
     "Trilinos_NUM_PACKAGES='26'"
-    "Trilinos_NUM_TPLS='20'"
+    "Trilinos_NUM_DEFINED_TPLS='20'"
     "Skipping reading packages and TPLs for POST extra repo Dakota because marked NOPACKAGES"
     )
 

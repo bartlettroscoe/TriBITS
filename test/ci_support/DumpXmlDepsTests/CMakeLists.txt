@@ -222,7 +222,7 @@ create_dependency_xml_dump_test_case(
   BasePackagesTpls
   PASS_REGULAR_EXPRESSION_ALL
     "Trilinos_NUM_PACKAGES='24'"
-    "Trilinos_NUM_TPLS='19'"
+    "Trilinos_NUM_DEFINED_TPLS='19'"
   COMPARE_XML_FILE
     TrilinosPackageDependencies.gold.xml
   )
@@ -235,7 +235,7 @@ create_dependency_xml_dump_test_case(
     -DLIST_ALWAYS_MISSING_PACKAGE=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Trilinos_NUM_PACKAGES='26'"
-    "Trilinos_NUM_TPLS='20'"
+    "Trilinos_NUM_DEFINED_TPLS='20'"
   COMPARE_XML_FILE
     TrilinosPackageDependencies.preCopyrightTrilinos.gold.xml
   )
@@ -253,7 +253,7 @@ create_dependency_xml_dump_test_case(
     -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos,extraTrilinosRepo
   PASS_REGULAR_EXPRESSION_ALL
     "Trilinos_NUM_PACKAGES='26'"
-    "Trilinos_NUM_TPLS='22'"
+    "Trilinos_NUM_DEFINED_TPLS='22'"
   COMPARE_XML_FILE
     TrilinosPackageDependencies.preCopyrightTrilinos.extraTrilinosRepo.gold.xml
   )
@@ -265,7 +265,7 @@ create_dependency_xml_dump_test_case(
     -DTrilinos_EXTRA_REPOSITORIES=extraRepoOnePackage
   PASS_REGULAR_EXPRESSION_ALL
     "Trilinos_NUM_PACKAGES='24'"
-    "Trilinos_NUM_TPLS='19'"
+    "Trilinos_NUM_DEFINED_TPLS='19'"
   COMPARE_XML_FILE
     TrilinosPackageDependencies.extraRepoOnePackage.gold.xml
   )
@@ -279,7 +279,7 @@ create_dependency_xml_dump_test_case(
     -DLIST_ALWAYS_MISSING_PACKAGE=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Trilinos_NUM_PACKAGES='27'"
-    "Trilinos_NUM_TPLS='20'"
+    "Trilinos_NUM_DEFINED_TPLS='20'"
   COMPARE_XML_FILE
     TrilinosPackageDependencies.preRepoOnePackage.preCopyrightTrilinos.gold.xml
   )

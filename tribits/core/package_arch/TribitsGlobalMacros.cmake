@@ -1408,7 +1408,7 @@ macro(tribits_handle_project_extra_link_flags_as_a_tpl)
 
     # Tack on ${PROJECT_NAME}TribitsLastLib as a dependency to all enabled
     # external packages/TPLs
-    foreach(TPL_NAME ${${PROJECT_NAME}_TPLS})
+    foreach(TPL_NAME ${${PROJECT_NAME}_DEFINED_TPLS})
       list(APPEND ${TPL_NAME}_LIB_ALL_DEPENDENCIES ${lastLibTplName})
       if (TPL_ENABLE_${TPL_NAME})
         list(APPEND ${TPL_NAME}_LIB_ENABLED_DEPENDENCIES ${lastLibTplName})
@@ -1417,7 +1417,6 @@ macro(tribits_handle_project_extra_link_flags_as_a_tpl)
 
     # Prepend ${PROJECT_NAME}TribitsLastLib to the list of external packages/TPLs
     list(PREPEND ${PROJECT_NAME}_DEFINED_TPLS ${lastLibTplName})
-    list(PREPEND ${PROJECT_NAME}_TPLS ${lastLibTplName})
     set(TPL_ENABLE_${lastLibTplName} ON)
     set(${lastLibTplName}_PACKAGE_BUILD_STATUS EXTERNAL)
 
@@ -1441,7 +1440,7 @@ macro(tribits_process_enabled_tpls)
 
   tribits_config_code_start_timer(CONFIGURE_TPLS_TIME_START_SECONDS)
 
-  foreach(TPL_NAME ${${PROJECT_NAME}_TPLS})
+  foreach(TPL_NAME ${${PROJECT_NAME}_DEFINED_TPLS})
     if (TPL_ENABLE_${TPL_NAME})
       tribits_process_enabled_tpl(${TPL_NAME})
     endif()

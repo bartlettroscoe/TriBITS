@@ -141,7 +141,6 @@ macro(tribits_read_defined_external_and_internal_toplevel_packages_lists)
 
   # Set to empty (legacy #63)
   set(${PROJECT_NAME}_PACKAGES "")
-  set(${PROJECT_NAME}_TPLS "")
 
   #
   # A) Read list of packages and TPLs from 'PRE' extra repos
@@ -248,8 +247,6 @@ macro(tribits_read_defined_external_and_internal_toplevel_packages_lists)
     ${PROJECT_NAME}_NUM_ALL_DEFINED_TOPLEVEL_PACKAGES)
 
   # Set old vars from new vars (#63) (ToDo: Remove these)
-  set(${PROJECT_NAME}_TPLS ${${PROJECT_NAME}_DEFINED_TPLS})
-  set(${PROJECT_NAME}_NUM_TPLS ${${PROJECT_NAME}_NUM_DEFINED_TPLS})
 
 endmacro()
 

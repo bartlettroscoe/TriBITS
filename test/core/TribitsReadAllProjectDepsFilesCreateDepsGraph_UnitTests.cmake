@@ -381,9 +381,9 @@ function(unittest_read_tpls_lists_wtih_duplicate_tpls)
   tribits_process_tpls_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
 
   # The TPL is not added again
-  unittest_compare_const( ${PROJECT_NAME}_TPLS "MPI;BLAS;LAPACK;Boost;EXTPL2")
-  unittest_compare_const( ${PROJECT_NAME}_NUM_TPLS "5" )
-  unittest_compare_const( ${PROJECT_NAME}_REVERSE_TPLS "EXTPL2;Boost;LAPACK;BLAS;MPI" )
+  unittest_compare_const( ${PROJECT_NAME}_DEFINED_TPLS "MPI;BLAS;LAPACK;Boost;EXTPL2")
+  unittest_compare_const( ${PROJECT_NAME}_NUM_DEFINED_TPLS "5" )
+  unittest_compare_const( ${PROJECT_NAME}_REVERSE_DEFINED_TPLS "EXTPL2;Boost;LAPACK;BLAS;MPI" )
   unittest_compare_const( MPI_FINDMOD "cmake/TPLs/FindTPLMPI.cmake" )
   unittest_compare_const( MPI_TESTGROUP "PT" )
   unittest_compare_const( BLAS_FINDMOD "cmake/TPLs/FindTPLBLAS.cmake" )
@@ -409,8 +409,8 @@ function(unittest_read_packages_and_dependencies)
 
   unittest_helper_read_packages_and_dependencies()
 
-  unittest_compare_const(${PROJECT_NAME}_TPLS "MPI;BLAS;LAPACK;Boost")
-  unittest_compare_const(${PROJECT_NAME}_NUM_TPLS 4)
+  unittest_compare_const(${PROJECT_NAME}_DEFINED_TPLS "MPI;BLAS;LAPACK;Boost")
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
   unittest_compare_const(${PROJECT_NAME}_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
   unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
 

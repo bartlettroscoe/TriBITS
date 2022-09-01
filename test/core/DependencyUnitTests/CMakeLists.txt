@@ -1101,7 +1101,7 @@ create_dependency_handling_test_case(
     -DTrilinos_ENABLE_Teko=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Trilinos_NUM_PACKAGES='26'"
-    "Trilinos_NUM_TPLS='20'"
+    "Trilinos_NUM_DEFINED_TPLS='20'"
     "Explicitly enabled packages on input .* Teko 1"
     "Explicitly disabled packages on input .* Stokhos Stalix 2"
     "Setting Trilinos_ENABLE_Teuchos=ON because Teko has a required dependence on Teuchos"
@@ -1124,7 +1124,7 @@ create_dependency_handling_test_case(
     -DTrilinos_ENABLE_Teko=ON
   PASS_REGULAR_EXPRESSION_ALL
     "Trilinos_NUM_PACKAGES='26'"
-    "Trilinos_NUM_TPLS='20'"
+    "Trilinos_NUM_DEFINED_TPLS='20'"
     "Explicitly enabled packages on input .* Teko 1"
   )
 
@@ -1327,7 +1327,7 @@ create_dependency_handling_test_case(
   ARGS "-DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos,extraTrilinosRepo"
     -DTrilinos_ENABLE_ExtraPack=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Trilinos_NUM_TPLS='22'"
+    "Trilinos_NUM_DEFINED_TPLS='22'"
     "Explicitly enabled packages on input .* ExtraPack 1"
     "Explicitly disabled packages on input .* Stokhos Stalix 2"
     "Setting Trilinos_ENABLE_Teuchos=ON because ExtraPack has a required dependence on Teuchos"
@@ -1344,7 +1344,7 @@ create_dependency_handling_test_case(
   ARGS "-DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos,extraTrilinosRepo"
     -DTrilinos_ENABLE_ExtraPack=ON -DTPL_ENABLE_ExtraTPL1=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Trilinos_NUM_TPLS='22'"
+    "Trilinos_NUM_DEFINED_TPLS='22'"
     "Explicitly enabled packages on input .* ExtraPack 1"
     "Final set of enabled TPLs:  BLAS LAPACK TekoDepTPL ExtraTPL1 ExtraTPL2 5"
   )

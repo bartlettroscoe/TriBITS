@@ -222,7 +222,6 @@ macro(tribits_process_tpls_lists  REPOSITORY_NAME  REPOSITORY_DIR)
         endif()
       else()
         list(APPEND ${PROJECT_NAME}_DEFINED_TPLS ${TPL_NAME})
-        list(APPEND ${PROJECT_NAME}_TPLS ${TPL_NAME})
       endif()
 
       # Set ${TPL_NAME}_PACKAGE_BUILD_STATUS
@@ -312,16 +311,12 @@ macro(tribits_process_tpls_lists  REPOSITORY_NAME  REPOSITORY_DIR)
 
   if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
     print_var(${PROJECT_NAME}_DEFINED_TPLS)
-    print_var(${PROJECT_NAME}_TPLS)
   endif()
 
   # Get the final length
 
   list(LENGTH ${PROJECT_NAME}_DEFINED_TPLS ${PROJECT_NAME}_NUM_DEFINED_TPLS)
   print_var(${PROJECT_NAME}_NUM_DEFINED_TPLS)
-
-  list(LENGTH ${PROJECT_NAME}_TPLS ${PROJECT_NAME}_NUM_TPLS)
-  print_var(${PROJECT_NAME}_NUM_TPLS)
 
   # Create a reverse list for later use (ToDo: Remove the need for this #63)
 
@@ -332,12 +327,5 @@ macro(tribits_process_tpls_lists  REPOSITORY_NAME  REPOSITORY_DIR)
     set(${PROJECT_NAME}_REVERSE_DEFINED_TPLS)
   endif()
   # ToDo: Get rid of the usage of ${PROJECT_NAME}_REVERSE_DEFINED_TPLS (#299, #63)
-
-  if (${PROJECT_NAME}_TPLS)
-    set(${PROJECT_NAME}_REVERSE_TPLS ${${PROJECT_NAME}_TPLS})
-    list(REVERSE ${PROJECT_NAME}_REVERSE_TPLS)
-  else()
-    set(${PROJECT_NAME}_REVERSE_TPLS)
-  endif()
 
 endmacro()

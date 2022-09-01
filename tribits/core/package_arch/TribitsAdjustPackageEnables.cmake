@@ -1585,7 +1585,7 @@ macro(tribits_adjust_package_enables)
   # packages
   #
 
-  foreach(externalPkgName ${${PROJECT_NAME}_TPLS})
+  foreach(externalPkgName ${${PROJECT_NAME}_DEFINED_TPLS})
     tribits_extpkg_setup_enabled_dependencies(${externalPkgName})
     # ToDo: Assert that all of the listed dependencies in
     # ${externalPkgName}_LIB_ENABLED_DEPENDENCIES exist and are upstream from

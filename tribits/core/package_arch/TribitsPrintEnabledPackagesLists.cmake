@@ -120,16 +120,16 @@ endfunction()
 #
 function(tribits_print_enabled_tpl_list  DOCSTRING  ENABLED_FLAG  INCLUDE_EMPTY)
   if (ENABLED_FLAG AND NOT INCLUDE_EMPTY)
-    tribits_get_enabled_list( ${PROJECT_NAME}_TPLS  TPL
+    tribits_get_enabled_list( ${PROJECT_NAME}_DEFINED_TPLS  TPL
       ENABLED_TPLS  NUM_ENABLED)
   elseif (ENABLED_FLAG AND INCLUDE_EMPTY)
-    tribits_get_nondisabled_list( ${PROJECT_NAME}_TPLS  TPL
+    tribits_get_nondisabled_list( ${PROJECT_NAME}_DEFINED_TPLS  TPL
       ENABLED_TPLS  NUM_ENABLED)
   elseif (NOT ENABLED_FLAG AND NOT INCLUDE_EMPTY)
-    tribits_get_disabled_list( ${PROJECT_NAME}_TPLS  TPL
+    tribits_get_disabled_list( ${PROJECT_NAME}_DEFINED_TPLS  TPL
       ENABLED_TPLS  NUM_ENABLED)
   else() # NOT ENABLED_FLAG AND INCLUDE_EMPTY
-    tribits_get_nonenabled_list( ${PROJECT_NAME}_TPLS  TPL
+    tribits_get_nonenabled_list( ${PROJECT_NAME}_DEFINED_TPLS  TPL
        ENABLED_TPLS  NUM_ENABLED)
   endif()
   tribits_print_prefix_string_and_list("${DOCSTRING}"  "${ENABLED_TPLS}")

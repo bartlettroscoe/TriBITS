@@ -71,7 +71,7 @@ endfunction()
 # Does **not** modify any state!
 #
 function(tribits_print_tentatively_enabled_tpls)
-  foreach(TPL ${${PROJECT_NAME}_TPLS})
+  foreach(TPL ${${PROJECT_NAME}_DEFINED_TPLS})
     if (TPL_TENTATIVE_ENABLE_${TPL})
       message("-- Tentatively enabling TPL '${TPL}'")
       #print_var(TPL_ENABLE_${TPL})
