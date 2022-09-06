@@ -71,6 +71,17 @@ include(DualScopeSet)
 #
 # See `Function call tree for constructing package dependency graph`_
 #
+# **__Legacy Variables #63:__**
+#
+# This macro reads from the variables::
+#
+#   ${PROJECT_NAME}_ALL_REPOSITORIES (old)
+#   ${PROJECT_NAME}_PACKAGES (old)
+#
+# and writes to the variable::
+#
+#   ${PROJECT_NAME}_SE_PACKAGES (old)
+#
 macro(tribits_read_deps_files_create_deps_graph)
 
   message("")
@@ -185,7 +196,7 @@ macro(tribits_read_all_package_deps_files_create_deps_graph)
 
   set(${PROJECT_NAME}_SE_PACKAGES "") # Packages and subpackages
 
-  foreach(TRIBITS_PACKAGE  IN  LISTS ${PROJECT_NAME}_PACKAGES)
+  foreach(TRIBITS_PACKAGE  IN  LISTS ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES)
     tribits_read_toplevel_package_deps_files_add_to_graph(${TRIBITS_PACKAGE}
       ${${TRIBITS_PACKAGE}_REL_SOURCE_DIR})
   endforeach()

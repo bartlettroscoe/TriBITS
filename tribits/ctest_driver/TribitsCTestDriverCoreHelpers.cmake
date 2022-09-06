@@ -542,7 +542,7 @@ macro(select_final_set_of_packages_to_directly_test)
 
   set(${PROJECT_NAME}_PACKAGES_TO_DIRECTLY_TEST)
 
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
+  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
 
     set(PROCESS_THE_PACKAGE FALSE)
 

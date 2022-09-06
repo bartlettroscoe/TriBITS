@@ -353,9 +353,9 @@ function(unittest_read_packages_list_with_extra_repo)
   tribits_process_packages_and_dirs_lists(${PROJECT_NAME} ".")
   tribits_process_packages_and_dirs_lists(${EXTRA_REPO_NAME} ${EXTRA_REPO_DIR})
 
-  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  unittest_compare_const( ${PROJECT_NAME}_NUM_PACKAGES 4 )
+  unittest_compare_const( ${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4 )
 
 endfunction()
 
@@ -411,8 +411,8 @@ function(unittest_read_packages_and_dependencies)
 
   unittest_compare_const(${PROJECT_NAME}_DEFINED_TPLS "MPI;BLAS;LAPACK;Boost")
   unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
-  unittest_compare_const(${PROJECT_NAME}_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
-  unittest_compare_const(${PROJECT_NAME}_NUM_PACKAGES 4)
+  unittest_compare_const(${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES "Teuchos;RTOp;Ex2Package1;Ex2Package2")
+  unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES 4)
 
   unittest_compare_const(${PROJECT_NAME}_DEFINED_TPLS "MPI;BLAS;LAPACK;Boost")
   unittest_compare_const(${PROJECT_NAME}_NUM_DEFINED_TPLS 4)
@@ -594,7 +594,7 @@ function(unittest_extra_repo_missing_optional_package)
 
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "-- ;Trilinos_NUM_SE_PACKAGES='4'")
-  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 "")
 
@@ -624,7 +624,7 @@ function(unittest_extra_repo_missing_optional_package_verbose)
 
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "NOTE: MissingUpstreamPackage is being ignored since its directory; is missing and MissingUpstreamPackage_ALLOW_MISSING_EXTERNAL_PACKAGE =; TRUE!;-- ;Trilinos_NUM_SE_PACKAGES='4'")
-  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 "")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_MissingUpstreamPackage "OFF")
@@ -653,7 +653,7 @@ function(unittest_extra_repo_missing_required_package)
 
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "NOTE: Setting Trilinos_ENABLE_Ex2Package1=OFF because; package Ex2Package1 has a required dependency on missing; package MissingUpstreamPackage!;-- ;Trilinos_NUM_SE_PACKAGES='4'")
-  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 OFF)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_MissingUpstreamPackage "OFF")
@@ -685,7 +685,7 @@ function(unittest_extra_repo_missing_required_package_verbose)
 
   unittest_compare_const(MESSAGE_WRAPPER_INPUT
     "NOTE: MissingUpstreamPackage is being ignored since its directory; is missing and MissingUpstreamPackage_ALLOW_MISSING_EXTERNAL_PACKAGE =; TRUE!;NOTE: Setting Trilinos_ENABLE_Ex2Package1=OFF because; package Ex2Package1 has a required dependency on missing; package MissingUpstreamPackage!;-- ;Trilinos_NUM_SE_PACKAGES='4'")
-  unittest_compare_const( ${PROJECT_NAME}_PACKAGES
+  unittest_compare_const( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "Teuchos;RTOp;Ex2Package1;Ex2Package2")
   unittest_compare_const(${PROJECT_NAME}_ENABLE_Ex2Package1 OFF)
   unittest_compare_const(${PROJECT_NAME}_ENABLE_MissingUpstreamPackage "OFF")

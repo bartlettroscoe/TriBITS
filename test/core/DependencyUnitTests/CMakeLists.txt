@@ -1100,7 +1100,7 @@ create_dependency_handling_test_case(
   ARGS -DTrilinos_EXTRA_REPOSITORIES=preCopyrightTrilinos
     -DTrilinos_ENABLE_Teko=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Trilinos_NUM_PACKAGES='26'"
+    "Trilinos_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES='26'"
     "Trilinos_NUM_DEFINED_TPLS='20'"
     "Explicitly enabled packages on input .* Teko 1"
     "Explicitly disabled packages on input .* Stokhos Stalix 2"
@@ -1123,7 +1123,7 @@ create_dependency_handling_test_case(
     #-DTRIBITS_PROCESS_EXTRAREPOS_LISTS_DEBUG=ON
     -DTrilinos_ENABLE_Teko=ON
   PASS_REGULAR_EXPRESSION_ALL
-    "Trilinos_NUM_PACKAGES='26'"
+    "Trilinos_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES='26'"
     "Trilinos_NUM_DEFINED_TPLS='20'"
     "Explicitly enabled packages on input .* Teko 1"
   )
@@ -1356,7 +1356,7 @@ create_dependency_handling_test_case(
     -DpreCopyrightTrilinos_PACKAGES_LIST_FILE=cmake/Reduced_preCopyrightTrilinos_PackagesList.cmake
   PASS_REGULAR_EXPRESSION_ALL
     "Reading list of POST extra packages from .*/MockTrilinos/cmake/Reduced_preCopyrightTrilinos_PackagesList.cmake"
-    "Trilinos_NUM_PACKAGES='24'"
+    "Trilinos_NUM_DEFINED_INTERNAL_TOPLEVEL_PACKAGES='24'"
     "Final set of non-enabled SE packages:  .* Phalanx Panzer Stalix 31"
   )
 

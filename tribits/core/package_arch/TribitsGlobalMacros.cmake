@@ -1422,7 +1422,7 @@ macro(tribits_handle_project_extra_link_flags_as_a_tpl)
 
     # Tack on ${PROJECT_NAME}TribitsLastLib as a dependency to all enabled
     # internal packages
-    foreach(PACKAGE_NAME ${${PROJECT_NAME}_PACKAGES})
+    foreach(PACKAGE_NAME ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
       list(APPEND ${PACKAGE_NAME}_LIB_ALL_DEPENDENCIES ${lastLibTplName})
       if (${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
         list(APPEND ${PACKAGE_NAME}_LIB_ENABLED_DEPENDENCIES ${lastLibTplName})
@@ -1762,7 +1762,7 @@ endmacro()
 # packages will be listed in the summary if they had one or more tests run.
 #
 macro(tribits_set_labels_to_subprojects_mapping)
-  set(CTEST_LABELS_FOR_SUBPROJECTS ${${PROJECT_NAME}_PACKAGES})
+  set(CTEST_LABELS_FOR_SUBPROJECTS ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
 endmacro()
 
 
@@ -2055,7 +2055,7 @@ macro(tribits_configure_enabled_packages)
   # other even downstream packages (which is pretty messed up really).
   #
 
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
+  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
 
     # Get all the package sources independent of whether they are enabled or not.
     # There are some messed up packages that grab parts out of unrelated
@@ -2106,7 +2106,7 @@ macro(tribits_configure_enabled_packages)
   # Tell packages that are also repos they are being processed as a package.
   set(TRIBITS_PROCESSING_PACKAGE TRUE)
 
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
+  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
 
     tribits_determine_if_process_package(${TRIBITS_PACKAGE}
       PROCESS_PACKAGE  PACKAGE_ENABLE_STR)
@@ -2243,7 +2243,7 @@ macro(tribits_configure_enabled_packages)
 
     # Add empty <PackageName>_libs targets for top-level packages if asked
     if (${PROJECT_NAME}_DEFINE_MISSING_PACKAGE_LIBS_TARGETS)
-      foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
+      foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
         if (NOT TARGET ${TRIBITS_PACKAGE}_libs)
           add_custom_target(${TRIBITS_PACKAGE}_libs
             COMMENT "Dummy target for ${TRIBITS_PACKAGE}_libs that builds nothing!")
@@ -2281,7 +2281,7 @@ macro(tribits_setup_packaging_and_distribution)
   if (${PROJECT_NAME}_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION)
     set(_SE_OR_FULL_PACKAGES ${${PROJECT_NAME}_SE_PACKAGES})
   else()
-    set(_SE_OR_FULL_PACKAGES ${${PROJECT_NAME}_PACKAGES})
+    set(_SE_OR_FULL_PACKAGES ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
   endif()
 
   tribits_get_nonenabled_list(
@@ -2347,7 +2347,7 @@ macro(tribits_setup_packaging_and_distribution)
   # K.3) Set up install component dependencies
 
   tribits_get_enabled_list(
-    ${PROJECT_NAME}_PACKAGES  ${PROJECT_NAME}
+    ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES  ${PROJECT_NAME}
     ENABLED_PACKAGES  NUM_ENABLED)
   #message("ENABLED PACKAGES: ${ENABLED_PACKAGES} ${NUM_ENABLED}")
 
@@ -2416,7 +2416,7 @@ endmacro()
 function(tribits_add_install_package_by_package_target)
 
   set(TRIBITS_ENABLED_PACKAGES_BINARY_DIRS)
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_PACKAGES})
+  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
     list(APPEND TRIBITS_ENABLED_PACKAGES_BINARY_DIRS "${${TRIBITS_PACKAGE}_BINARY_DIR}")
   endforeach()
 

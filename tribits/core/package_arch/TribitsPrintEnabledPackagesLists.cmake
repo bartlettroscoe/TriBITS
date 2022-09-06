@@ -91,7 +91,7 @@ endfunction()
 # Function that prints the current set of enabled/disabled packages
 #
 function(tribits_print_enabled_package_list  DOCSTRING  ENABLED_FLAG  INCLUDE_EMPTY)
-  tribits_print_enabled_packages_list_from_var( ${PROJECT_NAME}_PACKAGES
+  tribits_print_enabled_packages_list_from_var( ${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES
     "${DOCSTRING}" ${ENABLED_FLAG} ${INCLUDE_EMPTY} )
 endfunction()
 

@@ -139,9 +139,6 @@ macro(tribits_read_defined_external_and_internal_toplevel_packages_lists)
   set(${PROJECT_NAME}_DEFINED_TPLS "")
   set(${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES "")
 
-  # Set to empty (legacy #63)
-  set(${PROJECT_NAME}_PACKAGES "")
-
   #
   # A) Read list of packages and TPLs from 'PRE' extra repos
   #
