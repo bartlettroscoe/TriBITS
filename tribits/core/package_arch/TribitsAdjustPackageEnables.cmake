@@ -1345,7 +1345,7 @@ macro(tribits_adjust_package_enables)
     message("")
     message("Setting to empty '' all enabled packages on request ...")
     message("")
-    foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_SE_PACKAGES})
+    foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
       if (${PROJECT_NAME}_ENABLE_${TRIBITS_PACKAGE})
         set_cache_on_off_empty(${PROJECT_NAME}_ENABLE_${TRIBITS_PACKAGE} ""
           "Forced to empty '' by ${PROJECT_NAME}_UNENABLE_ENABLED_PACKAGES=ON" FORCE)
@@ -1363,7 +1363,7 @@ macro(tribits_adjust_package_enables)
   # A) Sweep forward through and apply all disables first!
   #
 
-  tribits_get_nondisabled_list( ${PROJECT_NAME}_SE_PACKAGES  ${PROJECT_NAME}
+  tribits_get_nondisabled_list( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES  ${PROJECT_NAME}
     ${PROJECT_NAME}_NOTDISABLED_SE_PACKAGES "")
 
   message("")
@@ -1378,7 +1378,7 @@ macro(tribits_adjust_package_enables)
   message("Disabling subpackages for hard disables of parent packages"
     " due to ${PROJECT_NAME}_ENABLE_<PARENT_PACKAGE>=OFF ...")
   message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_SE_PACKAGES})
+  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
     tribits_disable_parents_subpackages(${TRIBITS_PACKAGE})
   endforeach()
 
@@ -1387,7 +1387,7 @@ macro(tribits_adjust_package_enables)
     " support that have a dependency on disabled SE packages"
     " ${PROJECT_NAME}_ENABLE_<TRIBITS_PACKAGE>=OFF ...")
   message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_SE_PACKAGES})
+  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
     tribits_disable_forward_required_dep_packages(${TRIBITS_PACKAGE})
   endforeach()
 
@@ -1592,14 +1592,16 @@ macro(tribits_adjust_package_enables)
     # ${externalPkgName}
   endforeach()
 
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_SE_PACKAGES})
+  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
     tribits_setup_direct_package_dependencies_lists_and_lib_required_enable_vars(
       ${TRIBITS_PACKAGE})
   endforeach()
 
   if (${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES)
     message("\nDumping direct dependencies for each package ...")
-    foreach(tribitsPkg  IN  LISTS  ${PROJECT_NAME}_DEFINED_TPLS  ${PROJECT_NAME}_SE_PACKAGES)
+    foreach(tribitsPkg  IN  LISTS  ${PROJECT_NAME}_DEFINED_TPLS
+        ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES
+      )
       tribits_print_direct_package_dependencies_lists(${tribitsPkg})
     endforeach()
   endif()

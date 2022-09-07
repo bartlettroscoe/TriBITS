@@ -2279,7 +2279,7 @@ macro(tribits_setup_packaging_and_distribution)
   # K.2) Removing any packages or SE packages not enabled from the tarball
 
   if (${PROJECT_NAME}_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION)
-    set(_SE_OR_FULL_PACKAGES ${${PROJECT_NAME}_SE_PACKAGES})
+    set(_SE_OR_FULL_PACKAGES ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
   else()
     set(_SE_OR_FULL_PACKAGES ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
   endif()

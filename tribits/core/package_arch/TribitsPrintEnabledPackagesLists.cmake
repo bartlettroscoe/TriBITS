@@ -100,16 +100,16 @@ endfunction()
 #
 function(tribits_print_enabled_se_package_list  DOCSTRING  ENABLED_FLAG  INCLUDE_EMPTY)
   if (ENABLED_FLAG AND NOT INCLUDE_EMPTY)
-    tribits_get_enabled_list( ${PROJECT_NAME}_SE_PACKAGES  ${PROJECT_NAME}
+    tribits_get_enabled_list( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES  ${PROJECT_NAME}
       ENABLED_SE_PACKAGES  NUM_ENABLED)
   elseif (ENABLED_FLAG AND INCLUDE_EMPTY)
-    tribits_get_nondisabled_list( ${PROJECT_NAME}_SE_PACKAGES  ${PROJECT_NAME}
+    tribits_get_nondisabled_list( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES  ${PROJECT_NAME}
       ENABLED_SE_PACKAGES  NUM_ENABLED)
   elseif (NOT ENABLED_FLAG AND NOT INCLUDE_EMPTY)
-    tribits_get_disabled_list( ${PROJECT_NAME}_SE_PACKAGES  ${PROJECT_NAME}
+    tribits_get_disabled_list( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES  ${PROJECT_NAME}
       ENABLED_SE_PACKAGES  NUM_ENABLED)
   else() # NOT ENABLED_FLAG AND INCLUDE_EMPTY
-    tribits_get_nonenabled_list( ${PROJECT_NAME}_SE_PACKAGES  ${PROJECT_NAME}
+    tribits_get_nonenabled_list( ${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES  ${PROJECT_NAME}
       ENABLED_SE_PACKAGES  NUM_ENABLED)
   endif()
   tribits_print_prefix_string_and_list("${DOCSTRING}"  "${ENABLED_SE_PACKAGES}")

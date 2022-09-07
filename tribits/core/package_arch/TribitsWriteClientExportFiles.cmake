@@ -730,7 +730,7 @@ function(tribits_write_project_client_export_files)
 
   # Reversing the package list so that libraries will be produced in order of
   # most dependent to least dependent.
-  set(PACKAGE_LIST ${${PROJECT_NAME}_SE_PACKAGES})
+  set(PACKAGE_LIST ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
   if (PACKAGE_LIST)
     list(REVERSE PACKAGE_LIST)
   endif()

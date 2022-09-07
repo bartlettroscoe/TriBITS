@@ -154,7 +154,7 @@ function(TribitsExampleProject_ALL_ST_NoFortran  sharedOrStatic  serialOrMpi)
         "NOTE: Setting TribitsExProj_ENABLE_MixedLang=OFF because TribitsExProj_ENABLE_Fortran"
         "Printing package dependencies ..."
         "-- TribitsExProj_DEFINED_INTERNAL_TOPLEVEL_PACKAGES: SimpleCxx MixedLang WithSubpackages WrapExternal"
-        "-- TribitsExProj_SE_PACKAGES: SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
+        "-- TribitsExProj_DEFINED_INTERNAL_PACKAGES: SimpleCxx MixedLang WithSubpackagesA WithSubpackagesB WithSubpackagesC WithSubpackages WrapExternal"
 
         "-- SimpleCxx_LIB_REQUIRED_DEP_TPLS: HeaderOnlyTpl"
         "-- MixedLang: No dependencies!"

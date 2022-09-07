@@ -59,7 +59,7 @@ macro(unittest_helper_read_and_process_packages)
   set_default(${PROJECT_NAME}_ENABLE_ALL_PACKAGES OFF)
   set_default(${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE OFF)
   set(DO_PROCESS_MPI_ENABLES ON) # Should not be needed but CMake is not working!
-  foreach(SE_PKG ${${PROJECT_NAME}_SE_PACKAGES})
+  foreach(SE_PKG ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
     global_set(${SE_PKG}_FULL_ENABLED_DEP_PACKAGES)
   endforeach()
   tribits_print_enables_before_adjust_package_enables()
