@@ -441,13 +441,14 @@ As mentioned above, some subset of packages listed in
 `${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES`_ (which all have
 ``${PACKAGE_NAME}_SOURCE_DIR != ""``) may be chosen to be external packages.
 Packages that could be built internally may be chosen to be treated as
-external packages by setting::
+external packages (and therefore located on the system using
+``find_package()``) by setting::
 
-  -D TPL_ENABLE_<ExternalPackage>=ON
+  -D TPL_ENABLE_<PackageTreatedAsExternal>=ON
 
 or::
 
-  -D <ExternalPackage>_ROOT=<path>
+  -D <PackageTreatedAsExternal>_ROOT=<path>
 
 .. _${PACKAGE_NAME}_PACKAGE_BUILD_STATUS:
 
@@ -457,9 +458,9 @@ external package is provided by the variable::
   ${PACKAGE_NAME}_PACKAGE_BUILD_STATUS=[INTERNAL|EXTERNAL]
 
 As a result, every other package upstream from any of these
-``<ExternalPackage>`` packages must therefore also be treated as external
-packages automatically and will have ``${PACKAGE_NAME}_PACKAGE_BUILD_STATUS``
-set accordingly.
+``<PackageTreatedAsExternal>`` packages must therefore also be treated as
+external packages automatically and will have
+``${PACKAGE_NAME}_PACKAGE_BUILD_STATUS=EXTERNAL`` set accordingly.
 
 
 Other package-related variables
