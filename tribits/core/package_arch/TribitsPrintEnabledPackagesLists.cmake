@@ -49,17 +49,17 @@
 #
 function(tribits_print_enables_before_adjust_package_enables)
   tribits_print_enabled_package_list(
+    "\nExplicitly enabled top-level packages on input (by user)" ON FALSE)
+  tribits_print_enabled_se_package_list(
     "\nExplicitly enabled packages on input (by user)" ON FALSE)
-  tribits_print_enabled_se_package_list(
-    "\nExplicitly enabled SE packages on input (by user)" ON FALSE)
   tribits_print_enabled_package_list(
-    "\nExplicitly disabled packages on input (by user or by default)" OFF FALSE)
+    "\nExplicitly disabled top-level packages on input (by user or by default)" OFF FALSE)
   tribits_print_enabled_se_package_list(
-    "\nExplicitly disabled SE packages on input (by user or by default)" OFF FALSE)
+    "\nExplicitly disabled packages on input (by user or by default)" OFF FALSE)
   tribits_print_enabled_tpl_list(
-    "\nExplicitly enabled TPLs on input (by user)" ON FALSE)
+    "\nExplicitly enabled external packages/TPLs on input (by user)" ON FALSE)
   tribits_print_enabled_tpl_list(
-    "\nExplicitly disabled TPLs on input (by user or by default)" OFF FALSE)
+    "\nExplicitly disabled external packages/TPLs on input (by user or by default)" OFF FALSE)
 endfunction()
 
 
@@ -74,17 +74,17 @@ endfunction()
 #
 function(tribits_print_enables_after_adjust_package_enables)
   tribits_print_prefix_string_and_list(
-    "\nFinal set of enabled packages" "${${PROJECT_NAME}_ENABLED_PACKAGES}")
+    "\nFinal set of enabled top-level packages" "${${PROJECT_NAME}_ENABLED_PACKAGES}")
   tribits_print_prefix_string_and_list(
-    "\nFinal set of enabled SE packages" "${${PROJECT_NAME}_ENABLED_SE_PACKAGES}")
+    "\nFinal set of enabled packages" "${${PROJECT_NAME}_ENABLED_SE_PACKAGES}")
   tribits_print_enabled_package_list(
-    "\nFinal set of non-enabled packages" OFF TRUE)
+    "\nFinal set of non-enabled top-level packages" OFF TRUE)
   tribits_print_enabled_se_package_list(
-    "\nFinal set of non-enabled SE packages" OFF TRUE)
+    "\nFinal set of non-enabled packages" OFF TRUE)
   tribits_print_enabled_tpl_list(
-    "\nFinal set of enabled TPLs" ON FALSE)
+    "\nFinal set of enabled external packages/TPLs" ON FALSE)
   tribits_print_enabled_tpl_list(
-    "\nFinal set of non-enabled TPLs" OFF TRUE)
+    "\nFinal set of non-enabled external packages/TPLs" OFF TRUE)
 endfunction()
 
 
@@ -96,7 +96,7 @@ function(tribits_print_enabled_package_list  DOCSTRING  ENABLED_FLAG  INCLUDE_EM
 endfunction()
 
 
-# Prints the current set of enabled/disabled SE packages
+# Prints the current set of enabled/disabled packages
 #
 function(tribits_print_enabled_se_package_list  DOCSTRING  ENABLED_FLAG  INCLUDE_EMPTY)
   if (ENABLED_FLAG AND NOT INCLUDE_EMPTY)

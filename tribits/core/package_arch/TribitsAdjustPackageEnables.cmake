@@ -1270,7 +1270,7 @@ macro(tribits_enable_optional_tpls PACKAGE_NAME)
 endmacro()
 
 
-# Macro that enables upstream (required and optional) SE packages given SE
+# Macro that enables upstream (required and optional) packages given SE
 # package
 #
 # Here I have to enable the required packages too or the logic just does no
@@ -1383,8 +1383,8 @@ macro(tribits_adjust_package_enables)
   endforeach()
 
   message("")
-  message("Disabling forward required SE packages and optional intra-package"
-    " support that have a dependency on disabled SE packages"
+  message("Disabling forward required packages and optional intra-package"
+    " support that have a dependency on disabled packages"
     " ${PROJECT_NAME}_ENABLE_<TRIBITS_PACKAGE>=OFF ...")
   message("")
   foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
@@ -1412,7 +1412,7 @@ macro(tribits_adjust_package_enables)
 
   if (${PROJECT_NAME}_ENABLE_ALL_PACKAGES)
     message("")
-    message("Enabling all SE packages that are not currently disabled because of"
+    message("Enabling all packages that are not currently disabled because of"
       " ${PROJECT_NAME}_ENABLE_ALL_PACKAGES=ON"
       " (${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE=${${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE})"
       " ...")
@@ -1448,7 +1448,7 @@ macro(tribits_adjust_package_enables)
     ${PROJECT_NAME}_ENABLED_SE_PACKAGES  "")
 
   #
-  # C) Disable and enable tests for currently enabled SE packages
+  # C) Disable and enable tests for currently enabled packages
   #
 
   message("")
@@ -1486,7 +1486,7 @@ macro(tribits_adjust_package_enables)
   # sweep of downstream packages.
 
   #
-  # D) Sweep backwards and enable upstream required and optional SE packages
+  # D) Sweep backwards and enable upstream required and optional packages
   #
 
   if (${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES)
@@ -1496,7 +1496,7 @@ macro(tribits_adjust_package_enables)
   endif()
 
   message("")
-  message("Enabling all required${EXTRA_MSG_STR} upstream SE packages for current set of"
+  message("Enabling all required${EXTRA_MSG_STR} upstream packages for current set of"
     " enabled packages"
     " (${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE=${${PROJECT_NAME}_ENABLE_SECONDARY_TESTED_CODE})"
     " ...")
@@ -1506,7 +1506,7 @@ macro(tribits_adjust_package_enables)
   endforeach()
   # NOTE: Above, we have to loop through the packages backward to enable all
   # the packages that feed into these packages.  This has to include *all*
-  # upstream SE package enables including required SE packages, optional SE
+  # upstream package enables including required packages, optional SE
   # packages (when ${PROJECT_NAME}_ENABLE_ALL_OPTIONAL_PACKAGES), and SE
   # packages
 
@@ -1553,7 +1553,7 @@ macro(tribits_adjust_package_enables)
   # in bug 4298.
 
   #
-  # F) Set user cache variables for current set of enabled SE packages
+  # F) Set user cache variables for current set of enabled packages
   #
 
   message("")
@@ -1698,7 +1698,7 @@ function(tribits_set_up_enabled_only_dependencies)
   if (GENERATE_EXPORT_DEPENDENCIES
       AND ${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES
     )
-    # Find the last enabled SE package for which an export file is requested.
+    # Find the last enabled package for which an export file is requested.
     set(LAST_SE_PKG_IDX -1)
     set(LAST_SE_PKG)
     foreach(SE_PKG ${${PROJECT_NAME}_GENERATE_EXPORT_FILES_FOR_ONLY_LISTED_SE_PACKAGES})
@@ -1731,7 +1731,7 @@ function(tribits_set_up_enabled_only_dependencies)
     if (LAST_EXPORT_SE_PACKAGE)
       message("\nSetting up export dependencies up through ${LAST_EXPORT_SE_PACKAGE} ...\n")
     else()
-      message("\nSetting up export dependencies for all enabled SE packages ...\n")
+      message("\nSetting up export dependencies for all enabled packages ...\n")
     endif()
 
     foreach(TRIBITS_SE_PACKAGE ${${PROJECT_NAME}_ENABLED_SE_PACKAGES})
