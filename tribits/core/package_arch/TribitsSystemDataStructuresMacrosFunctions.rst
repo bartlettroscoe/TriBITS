@@ -123,12 +123,12 @@ List of non-cache top-level project variables:
   * Size `${PROJECT_NAME}_NUM_DEFINED_INTERNAL_PACKAGES`_
 
 * `${PROJECT_NAME}_DEFINED_PACKAGES`_: List of all defined external
-  packages/TPLs, internal top-level package, and subpackages (size
+  packages/TPLs, internal top-level packages, and subpackages (size
   `${PROJECT_NAME}_NUM_DEFINED_PACKAGES`_)
 
   * Size ${PROJECT_NAME}_NUM_DEFINED_PACKAGES
 
-* `${PROJECT_NAME}_ENABLED_PACKAGES`_: Subset of all enabled package from
+* `${PROJECT_NAME}_ENABLED_PACKAGES`_: Subset of all enabled packages from
   ``${PROJECT_NAME}_DEFINED_PACKAGES``
 
   * Size `${PROJECT_NAME}_NUM_ENABLED_PACKAGES`_
@@ -240,8 +240,6 @@ with the size::
 
   ${PROJECT_NAME}_NUM_DEFINED_PACKAGES
 
-.. _${PROJECT_NAME}_ENABLED_PACKAGES:
-
 These data-structures as well as the package dependencies graph is built up in
 the macro `tribits_read_all_project_deps_files_create_deps_graph()`_ with the
 call graph described in the section `Function call tree for constructing
@@ -250,17 +248,17 @@ packages are actually enabled or disabled.
 
 The enable/disable logic (given an initial set of enables and disables) is
 applied in the macro `tribits_adjust_package_enables()`_.  Once all of this
-logic has been applied, the final list of enabled external and internal
-packages (**including subpackages**) is given non-cache project-level list
-variable::
+logic has been applied, several lists of enabled and non-enabled packages are
+computed.
 
-  ${PROJECT_NAME}_ENABLED_PACKAGES
+The list of enabled internal **top-level** packages is given in the non-cache
+project-level list variable::
 
-.. _${PROJECT_NAME}_NUM_ENABLED_PACKAGES:
+  ${PROJECT_NAME}_ENABLED_INTERNAL_TOPLEVEL_PACKAGES
 
 with size::
 
-  ${PROJECT_NAME}_NUM_ENABLED_PACKAGES
+  ${PROJECT_NAME}_NUM_ENABLED_INTERNAL_TOPLEVEL_PACKAGES
 
 The list of enabled external packages/TPLs and internal **top-level** packages
 is given in the non-cache project-level list variable::
@@ -271,10 +269,14 @@ with size::
 
   ${PROJECT_NAME}_NUM_ENABLED_TOPLEVEL_PACKAGES
 
+.. _${PROJECT_NAME}_ENABLED_PACKAGES:
+
 The list of enabled external packages/TPLs, internal **top-level and
 subpackages** is given in the non-cache project-level list variable::
 
   ${PROJECT_NAME}_ENABLED_PACKAGES
+
+.. _${PROJECT_NAME}_NUM_ENABLED_PACKAGES:
 
 with size::
 
