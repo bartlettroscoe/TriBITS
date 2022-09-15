@@ -265,7 +265,7 @@ endfunction()
 
 # Macro that sets up the basic lists of enabled packages and packages.
 #
-macro(tribits_set_up_enabled_lists_and_se_pkg_idx)
+macro(tribits_set_up_enabled_lists_and_pkg_idx)
 
   # ${PROJECT_NAME}_ENABLED_PACKAGES
   tribits_get_enabled_list(
@@ -283,11 +283,11 @@ macro(tribits_set_up_enabled_lists_and_se_pkg_idx)
     "${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES}")
   list(REVERSE ${PROJECT_NAME}_REVERSE_ENABLED_INTERNAL_PACKAGES)
 
-  # ${PACKAGE_NAME}_SE_PKG_IDX
-  set(SE_PKG_IDX 0)
-  foreach(TRIBITS_SE_PACKAGE ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
-    set(${TRIBITS_SE_PACKAGE}_SE_PKG_IDX ${SE_PKG_IDX})
-    math(EXPR  SE_PKG_IDX  "${SE_PKG_IDX} + 1")
+  # ${PACKAGE_NAME}_PKG_IDX
+  set(PKG_IDX 0)
+  foreach(tribitsPackage ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
+    set(${tribitsPackage}_PKG_IDX ${PKG_IDX})
+    math(EXPR  PKG_IDX  "${PKG_IDX} + 1")
   endforeach()
 
   # ${PROJECT_NAME}_ENABLED_TPLS

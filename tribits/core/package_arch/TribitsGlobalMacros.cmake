@@ -2279,17 +2279,16 @@ macro(tribits_setup_packaging_and_distribution)
   # K.2) Removing any packages or packages not enabled from the tarball
 
   if (${PROJECT_NAME}_EXCLUDE_DISABLED_SUBPACKAGES_FROM_DISTRIBUTION)
-    set(_SE_OR_FULL_PACKAGES ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
+    set(tribitsPackage ${${PROJECT_NAME}_DEFINED_INTERNAL_PACKAGES})
   else()
-    set(_SE_OR_FULL_PACKAGES ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
+    set(tribitsPackage ${${PROJECT_NAME}_DEFINED_INTERNAL_TOPLEVEL_PACKAGES})
   endif()
 
   tribits_get_nonenabled_list(
-    _SE_OR_FULL_PACKAGES  ${PROJECT_NAME}
-    NON_ENABLED_SE_OR_FULL_PACKAGES  NUM_NON_ENABLED_SE_OR_FULL_PACKAGES)
-  #print_var(NON_ENABLED_SE_OR_FULL_PACKAGES)
+    tribitsPackage  ${PROJECT_NAME}
+    nonEnabledTribitsPackage  "")
 
-  foreach(TRIBITS_PACKAGE ${NON_ENABLED_SE_OR_FULL_PACKAGES})
+  foreach(TRIBITS_PACKAGE ${nonEnabledTribitsPackage})
 
     # Determine if this is a package to not ignore
     find_list_element(TRIBITS_CPACK_PACKAGES_TO_NOT_IGNORE

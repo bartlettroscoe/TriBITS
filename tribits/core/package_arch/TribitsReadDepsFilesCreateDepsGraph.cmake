@@ -533,7 +533,7 @@ function(tribits_set_dep_packages  PACKAGE_NAME   LIB_OR_TEST  REQUIRED_OR_OPTIO
 
   set(LIST_TYPE  ${LIB_OR_TEST}_${REQUIRED_OR_OPTIONAL}_DEP_PACKAGES)
   set(PACKAGE_DEPS_LIST "")
-  set(SE_PACKAGE_ENABLE_VAR  ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
+  set(PACKAGE_ENABLE_VAR  ${PROJECT_NAME}_ENABLE_${PACKAGE_NAME})
 
   foreach(DEP_PKG ${${LIST_TYPE}})
     if (TRIBITS_SET_DEP_PACKAGES_DEBUG_DUMP)
@@ -566,10 +566,10 @@ function(tribits_set_dep_packages  PACKAGE_NAME   LIB_OR_TEST  REQUIRED_OR_OPTIO
               " ${${DEP_PKG}_ALLOW_MISSING_EXTERNAL_PACKAGE}!")
           endif()
           if (REQUIRED_OR_OPTIONAL STREQUAL "REQUIRED")
-            message_wrapper("NOTE: Setting ${SE_PACKAGE_ENABLE_VAR}=OFF because"
+            message_wrapper("NOTE: Setting ${PACKAGE_ENABLE_VAR}=OFF because"
               " package ${PACKAGE_NAME} has a required dependency on missing"
               " package ${DEP_PKG}!")
-            dual_scope_set(${SE_PACKAGE_ENABLE_VAR} OFF)
+            dual_scope_set(${PACKAGE_ENABLE_VAR} OFF)
           endif()
         endif()
         if (${PROJECT_NAME}_VERBOSE_CONFIGURE)
