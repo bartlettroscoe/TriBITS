@@ -203,7 +203,7 @@ create_ctest_dependency_handling_test_case(
     "Explicitly enabled top-level packages on input .by user.:  RTOp 1"
     "NOTE: Setting Trilinos_ENABLE_RTOp=OFF which was 'ON' because RTOp has a required library dependence on disabled package Teuchos but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON!"
     "Final set of enabled top-level packages:  0"
-    "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script!"
+    "Trilinos_NUM_ENABLED_INTERNAL_TOPLEVEL_PACKAGES=0:  Exiting the script!"
   )
 # NOTE: The above test ensures that disabled packages turn off explicitly
 #  enabled downstream packages.
@@ -218,7 +218,7 @@ create_ctest_dependency_handling_test_case(
     "NOT enabling explicitly set package RTOp since it was explicitly excluded"
     "Explicitly enabled top-level packages on input .by user.:  Teuchos 1"
     "Final set of enabled top-level packages:  Teuchos 1"
-    "Trilinos_NUM_ENABLED_PACKAGES=1:  Configuring packages!"
+    "Trilinos_NUM_ENABLED_INTERNAL_TOPLEVEL_PACKAGES=1:  Configuring packages!"
   )
 # NOTE: The above test ensures that disabled packages turn off explicitly
 #  enabled downstream packages.
@@ -232,7 +232,7 @@ create_ctest_dependency_handling_test_case(
     "Explicitly disabled external packages/TPLs on input .by user or by default.:  BLAS 1"
     "NOTE: Setting Trilinos_ENABLE_Teuchos=OFF which was 'ON' because Teuchos has a required library dependence on disabled TPL BLAS but Trilinos_DISABLE_ENABLED_FORWARD_DEP_PACKAGES=ON!"
     "Final set of enabled top-level packages:  0"
-    "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script!"
+    "Trilinos_NUM_ENABLED_INTERNAL_TOPLEVEL_PACKAGES=0:  Exiting the script!"
   )
 # NOTE: The above test ensures that disabled TPLS turn off explicitly
 #  enabled downstream packages.
@@ -531,7 +531,7 @@ create_ctest_dependency_handling_test_case(
     "Enabling all packages that are not currently disabled because of Trilinos_ENABLE_ALL_PACKAGES=ON"
     "Final set of enabled top-level packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko ExtraPack 25"
     "Final set of non-enabled top-level packages:  Stokhos Stalix 2"
-    "Trilinos_NUM_ENABLED_PACKAGES=25:  Configuring packages!"
+    "Trilinos_NUM_ENABLED_INTERNAL_TOPLEVEL_PACKAGES=25:  Configuring packages!"
     "Processing current package ExtraPack: libs='ON', tests='ON'"
     "Configuring TRIBITS_PACKAGE='ExtraPack'"
   )
@@ -656,7 +656,7 @@ if (PYTHON_EXECUTABLE)
       CTEST_TEST_TYPE=Continuous CTEST_ENABLE_MODIFIED_PACKAGES_ONLY=ON
     PASS_REGULAR_EXPRESSION_ALL
       "Final set of enabled top-level packages:  0"
-      "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script"
+      "Trilinos_NUM_ENABLED_INTERNAL_TOPLEVEL_PACKAGES=0:  Exiting the script"
     SKIP_STANDARD_DEPS_CHECK
     )
 
@@ -794,7 +794,7 @@ if (PYTHON_EXECUTABLE)
       "Explicitly enabled top-level packages on input .by user.:  0"
       "Final set of enabled top-level packages:  0"
       "Directly modified or failing non-disabled packages that need to be tested:  0"
-      "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script"
+      "Trilinos_NUM_ENABLED_INTERNAL_TOPLEVEL_PACKAGES=0:  Exiting the script"
     )
   # NOTE: The above test ensures that if an ST package is changed but only PT
   # packages are enabled, then it will not be enabled.
@@ -843,7 +843,7 @@ if (PYTHON_EXECUTABLE)
       "Explicitly disabled top-level packages on input .*  Stokhos Stalix 2"
       "Final set of enabled top-level packages:  0"
       "Final set of non-enabled top-level packages:  TrilinosFramework Teuchos RTOp Epetra Zoltan Shards Triutils Tpetra EpetraExt Stokhos Sacado Thyra Isorropia AztecOO Galeri Amesos Intrepid Ifpack ML Belos Stratimikos RBGen Phalanx Panzer Teko Stalix 26"
-      "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script!"
+      "Trilinos_NUM_ENABLED_INTERNAL_TOPLEVEL_PACKAGES=0:  Exiting the script!"
     )
 
 
@@ -959,7 +959,7 @@ if (PYTHON_EXECUTABLE)
       "Explicitly enabled top-level packages on input .*  0"
       "Final set of enabled top-level packages:  0"
       "Final set of packages to be explicitly processed by CTest/CDash:  0"
-      "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script"
+      "Trilinos_NUM_ENABLED_INTERNAL_TOPLEVEL_PACKAGES=0:  Exiting the script"
     )
 
 
@@ -1003,7 +1003,7 @@ if (PYTHON_EXECUTABLE)
       "Explicitly enabled top-level packages on input .*  0"
       "Explicitly disabled top-level packages on input .*  Stokhos Stalix 2"
       "Final set of enabled top-level packages:  0"
-      "Trilinos_NUM_ENABLED_PACKAGES=0:  Exiting the script"
+      "Trilinos_NUM_ENABLED_INTERNAL_TOPLEVEL_PACKAGES=0:  Exiting the script"
     )
 
 

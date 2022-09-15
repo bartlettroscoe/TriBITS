@@ -74,9 +74,11 @@ endfunction()
 #
 function(tribits_print_enables_after_adjust_package_enables)
   tribits_print_prefix_string_and_list(
-    "\nFinal set of enabled top-level packages" "${${PROJECT_NAME}_ENABLED_PACKAGES}")
+    "\nFinal set of enabled top-level packages"
+    "${${PROJECT_NAME}_ENABLED_INTERNAL_TOPLEVEL_PACKAGES}")
   tribits_print_prefix_string_and_list(
-    "\nFinal set of enabled packages" "${${PROJECT_NAME}_ENABLED_SE_PACKAGES}")
+    "\nFinal set of enabled packages"
+    "${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES}")
   tribits_print_enabled_package_list(
     "\nFinal set of non-enabled top-level packages" OFF TRUE)
   tribits_print_enabled_se_package_list(

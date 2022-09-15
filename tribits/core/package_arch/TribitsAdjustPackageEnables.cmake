@@ -1445,7 +1445,7 @@ macro(tribits_adjust_package_enables)
   endif()
 
   tribits_get_enabled_list( ${PROJECT_NAME}_NOTDISABLED_SE_PACKAGES  ${PROJECT_NAME}
-    ${PROJECT_NAME}_ENABLED_SE_PACKAGES  "")
+    ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES  "")
 
   #
   # C) Disable and enable tests for currently enabled packages
@@ -1465,7 +1465,7 @@ macro(tribits_adjust_package_enables)
     message("Enabling all tests and/or examples that have not been"
       " explicitly disabled because ${PROJECT_NAME}_ENABLE_[TESTS,EXAMPLES]=ON ...")
     message("")
-    foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_SE_PACKAGES})
+    foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
       tribits_apply_test_example_enables(${TRIBITS_PACKAGE})
     endforeach()
   endif()
@@ -1511,13 +1511,13 @@ macro(tribits_adjust_package_enables)
   # packages
 
   tribits_get_enabled_list( ${PROJECT_NAME}_NOTDISABLED_SE_PACKAGES  ${PROJECT_NAME}
-    ${PROJECT_NAME}_ENABLED_SE_PACKAGES  "")
+    ${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES  "")
 
   message("")
   message("Enabling all optional intra-package enables <TRIBITS_PACKAGE>_ENABLE_<DEPPACKAGE>"
     " that are not currently disabled if both sets of packages are enabled ...")
   message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_SE_PACKAGES})
+  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
     tribits_postprocess_optional_package_enables(${TRIBITS_PACKAGE})
   endforeach()
 
@@ -1529,7 +1529,7 @@ macro(tribits_adjust_package_enables)
   message("Enabling all remaining required TPLs for current set of"
     " enabled packages ...")
   message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_SE_PACKAGES})
+  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
     tribits_enable_required_tpls(${TRIBITS_PACKAGE})
   endforeach()
 
@@ -1538,14 +1538,14 @@ macro(tribits_adjust_package_enables)
     " <TRIBITS_PACKAGE>_ENABLE_<DEPTPL> not currently disabled for"
     " enabled TPLs ...")
   message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_SE_PACKAGES})
+  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
     tribits_postprocess_optional_tpl_enables(${TRIBITS_PACKAGE})
   endforeach()
 
   message("")
   message("Enabling TPLs based on <TRIBITS_PACKAGE>_ENABLE_<TPL>=ON if TPL is not explicitly disabled ...")
   message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_SE_PACKAGES})
+  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
     tribits_enable_optional_tpls(${TRIBITS_PACKAGE})
   endforeach()
   # NOTE: We need to do this after the above optional package TPL support
@@ -1559,7 +1559,7 @@ macro(tribits_adjust_package_enables)
   message("")
   message("Set cache entries for optional packages/TPLs and tests/examples for packages actually enabled ...")
   message("")
-  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_SE_PACKAGES})
+  foreach(TRIBITS_PACKAGE ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
     tribits_set_up_optional_package_enables_and_cache_vars(${TRIBITS_PACKAGE})
   endforeach()
 
@@ -1734,7 +1734,7 @@ function(tribits_set_up_enabled_only_dependencies)
       message("\nSetting up export dependencies for all enabled packages ...\n")
     endif()
 
-    foreach(TRIBITS_SE_PACKAGE ${${PROJECT_NAME}_ENABLED_SE_PACKAGES})
+    foreach(TRIBITS_SE_PACKAGE ${${PROJECT_NAME}_ENABLED_INTERNAL_PACKAGES})
       tribits_package_set_full_enabled_dep_packages(${TRIBITS_SE_PACKAGE})
       if (${PROJECT_NAME}_DUMP_PACKAGE_DEPENDENCIES)
         set(PRINTED_VAR FALSE)
