@@ -78,7 +78,7 @@ function(tribits_add_enum_cache_var  cacheVarName  defaultVal  docString
   if (PREFIX_IS_ADVANCED)
     mark_as_advanced(${cacheVarName})
   endif()
-  set_property(CACHE  ${VAR}  PROPERTY  STRINGS
+  set_property(CACHE  ${cacheVarName}  PROPERTY  STRINGS
     ${PREFIX_ALLOWED_STRINGS_LIST} )
   # Assert in list of allowed strings
   if (NOT  ${cacheVarName}  IN_LIST  PREFIX_ALLOWED_STRINGS_LIST)
