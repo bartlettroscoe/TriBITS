@@ -1018,10 +1018,9 @@ def addOptionParserChoiceOption(
   ):
   """ Add a general choice option to a optparse.OptionParser object"""
   defaultOptionValue = choiceOptions[defaultChoiceIndex]
-  optionParser.add_option(
+  optionParser.add_argument(
     optionName,
     dest=optionDest,
-    type="choice",
     choices=choiceOptions,
     default=defaultOptionValue,
     help='%s Choices = (\'%s\').  [default = \'%s\']'
@@ -1224,7 +1223,11 @@ def getCommandlineOps():
 
   usageHelp = getUsageHelpStr(helpTopicArg)
 
-  clp = OptionParser(usage=usageHelp)
+  from argparse import ArgumentParser, RawDescriptionHelpFormatter
+
+  clp = ArgumentParser(
+      description=usageHelp,
+      formatter_class=RawDescriptionHelpFormatter)
 
   addOptionParserChoiceOption(
     distHelpArgName, "helpTopic", [""]+helpTopics+["all"], 0,
@@ -1234,8 +1237,8 @@ def getCommandlineOps():
     +" command-line 'options' are also printed." ,
     clp )
 
-  clp.add_option(
-    withGitArgName, dest="useGit", type="string",
+  clp.add_argument(
+    withGitArgName, dest="useGit",
     default=defaultGit,
     help="Path to the git executable to use for each git repo command."
     +"  By default, gitdist will use 'git' in the environment.  If it can't find"
@@ -1244,8 +1247,8 @@ def getCommandlineOps():
     +" testing.) (default='"+defaultGit+"')"
     )
 
-  clp.add_option(
-    reposArgName, dest="repos", type="string", default="",
+  clp.add_argument(
+    reposArgName, dest="repos", default="",
     help="Comma-separated list of repo relative paths '<repo0>,<repo1>,...'."
     +" The base repo is specified with '.' and should usually be listed first."
     +" If left empty '', then the list of repos to process is taken from"
@@ -1260,13 +1263,13 @@ def getCommandlineOps():
     +" (default='')"
     )
 
-  clp.add_option(
-    notReposArgName, dest="notRepos", type="string", default="",
+  clp.add_argument(
+    notReposArgName, dest="notRepos", default="",
     help="Comma-separated list of extra repo relative paths" \
     +" '<repoX>,<repoY>,...' to *not* process. (default='')"
     )
 
-  clp.add_option(
+  clp.add_argument(
     modifiedOnlyName, dest="modifiedOnly", action="store_true",
     help="If set, then only git repos that have changes w.r.t." \
       " their tracking branches will be processed.  That is, only repos" \
@@ -1280,7 +1283,7 @@ def getCommandlineOps():
       " status of each local git repo to know which repos don't have tracking branches.",
     default=False )
 
-  clp.add_option(
+  clp.add_argument(
     legendName, dest="printLegend", action="store_true",
     help="If set, then a legend will be printed below the repo summary table"\
       " for the special dist-repo-status command.  Only applicable with" \
@@ -1288,29 +1291,29 @@ def getCommandlineOps():
     default=False )
 
   if sys.version_info > (3,):
-    clp.add_option(
+    clp.add_argument(
       utf8Name, dest="utf8", action="store_true",
       help="If set, use UTF-8 box drawing characters instead of ASCII ones" \
         " when creating the repo summary table.",
       default=False )
 
-  clp.add_option(
-    versionFileName, dest="versionFile", type="string",
+  clp.add_argument(
+    versionFileName, dest="versionFile",
     default="",
     help="Path to a file which contains a list of extra repo relative directories"
     +" and git versions (replaces _VERSION_)." \
     +" (See --dist-help=repo-versions.) (default='')"
     )
 
-  clp.add_option(
-    versionFile2Name, dest="versionFile2", type="string",
+  clp.add_argument(
+    versionFile2Name, dest="versionFile2",
     default="",
     help="Path to a second file contains a list of extra repo relative"
     +" directories and git versions (replaces _VERSION2_)."
     +" (See --dist-help=repo-versions.) (default='')"
     )
 
-  clp.add_option(
+  clp.add_argument(
     noColorArgName, dest="useColor", action="store_false",
     help="If set, don't use color in the output for gitdist and set"
     +" '-c color.status=never' before the git command (like 'status')."
@@ -1318,24 +1321,24 @@ def getCommandlineOps():
     +" accept that argument.  (Better for output to a file).",
     default=True )
 
-  clp.add_option(
+  clp.add_argument(
     debugArgName, dest="debug", action="store_true",
     help="If set, then debugging info is printed.",
     default=False )
 
-  clp.add_option(
+  clp.add_argument(
     noOptName, dest="noOpt", action="store_true",
     help="If set, then no git commands will be run but instead will just be printed.",
     default=False )
 
-  clp.add_option(
+  clp.add_argument(
     shortName, dest="short", action="store_true",
     help="If set, then the repo versions table will only include the Repo " \
       "Dir and SHA1 columns; Commit Date, Author, and Summary will be " \
       "omitted.",
     default=False )
 
-  (options, args) = clp.parse_args(nativeArgs)
+  options = clp.parse_args(nativeArgs)
 
   debugFromEnv = os.environ.get("GITDIST_DEBUG_OVERRIDE")
   if debugFromEnv:

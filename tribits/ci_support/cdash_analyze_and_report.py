@@ -77,42 +77,42 @@ automated workflows by examining data on CDash.
 
 def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
 
-  clp.add_option(
-    "--date", dest="date", type="string", default='yesterday',
+  clp.add_argument(
+    "--date", dest="date", default='yesterday',
     help="Date for the testing day <YYYY-MM-DD> or special values 'today'"+\
       " or 'yesterday'. [default 'yesterday']" )
 
-  clp.add_option(
+  clp.add_argument(
     "--cdash-project-testing-day-start-time", dest="cdashProjectTestingDayStartTime",
-    type="string", default="00:00",
+    default="00:00",
     help="The CDash project testing day build star time in UTC in format '<hh>:<mm>'."+\
       " [default = '00:00']" )
 
-  clp.add_option(
-    "--cdash-project-name", dest="cdashProjectName", type="string", default="",
+  clp.add_argument(
+    "--cdash-project-name", dest="cdashProjectName", default="",
     help="CDash project name (e.g. 'Trilinos'). [REQUIRED]" )
 
-  clp.add_option(
-    "--build-set-name", dest="buildSetName", type="string", default="",
+  clp.add_argument(
+    "--build-set-name", dest="buildSetName", default="",
     help="Name for the set of builds, (e.g. 'Trilinos Nightly Builds)."+\
       "  This used in the email summary line and in the HTML file body"+\
       " to identify the set of builds and tests being examined."+\
       " [REQUIRED]" )
 
-  clp.add_option(
-    "--cdash-site-url", dest="cdashSiteUrl", type="string", default="",
+  clp.add_argument(
+    "--cdash-site-url", dest="cdashSiteUrl", default="",
     help="Base CDash site (e.g. 'https://testing.sandia.gov/cdash')."+\
       " [REQUIRED]" )
 
-  clp.add_option(
-    "--cdash-builds-filters", dest="cdashBuildsFilters", type="string",
+  clp.add_argument(
+    "--cdash-builds-filters", dest="cdashBuildsFilters",
     default="",
     help="Partial URL fragment for index.php making of the filters for"+\
       " the set of builds (e.g. 'filtercount=1&showfilters=1&field1=groupname&compare1=61&value1=ATDM')."+\
       " [REQUIRED]" )
 
-  clp.add_option(
-    "--cdash-nonpassed-tests-filters", dest="cdashNonpassedTestsFilters", type="string",
+  clp.add_argument(
+    "--cdash-nonpassed-tests-filters", dest="cdashNonpassedTestsFilters",
     default="",
     help="Partial URL fragment for queryTests.php making of the filters for"+\
       " the set of non-passing tests matching this set of builds (e.g."+\
@@ -122,17 +122,17 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
       " case, one should also set --require-test-history-match-nonpassing-tests=off."+\
       " [REQUIRED]" )
 
-  clp.add_option(
-    "--expected-builds-file", dest="expectedBuildsFile", type="string",
+  clp.add_argument(
+    "--expected-builds-file", dest="expectedBuildsFile",
     default="",
     help="Path to a CSV file that lists the expected builds.  Each of these builds"+\
       " must have unique 'site' and 'buildname' field pairs or an error will be"+\
       " raised and the tool will abort.  A list of files is also allowed that are"+\
       " separated with ',' as <file1>,<file2>,... [default = '']" )
 
-  clp.add_option(
+  clp.add_argument(
     "--tests-with-issue-trackers-file", dest="testsWithIssueTrackersFile",
-    type="string",  default="",
+    default="",
     help="Path to CSV file that lists tests with issue trackers (and other data)."+\
     "  Each of these tests must have a unique 'site', 'buildName', and 'testname'"+\
     " sets or an error will be raised and the tool will abort.  [default = '']" )
@@ -151,14 +151,14 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
 
   cdashQueriesCacheDir_default=os.getcwd()
 
-  clp.add_option(
-    "--cdash-queries-cache-dir", dest="cdashQueriesCacheDir", type="string",
+  clp.add_argument(
+    "--cdash-queries-cache-dir", dest="cdashQueriesCacheDir",
     default=cdashQueriesCacheDir_default,
     help="Cache CDash query data this directory." \
       +" [default = '"+cdashQueriesCacheDir_default+"']" )
 
-  clp.add_option(
-    "--cdash-base-cache-files-prefix", dest="cdashBaseCacheFilesPrefix", type="string",
+  clp.add_argument(
+    "--cdash-base-cache-files-prefix", dest="cdashBaseCacheFilesPrefix",
     default="",
     help="Prefix given to the base-level cache files outside of the test_history/"+\
       " directory.   This is to allow multiple invocations of this script to share"+\
@@ -179,16 +179,16 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
 
   testHistoryDaysDefault= 30
 
-  clp.add_option(
+  clp.add_argument(
     "--limit-test-history-days", dest="testHistoryDays",
-    default=testHistoryDaysDefault, type="int",
+    default=testHistoryDaysDefault,
     help="Number of days to go back in history for each test."+\
       "  [default = '"+str(testHistoryDaysDefault)+"']" )
 
   limitTableRows = 10
 
-  clp.add_option(
-    "--limit-table-rows", dest="limitTableRows", type="int",
+  clp.add_argument(
+    "--limit-table-rows", dest="limitTableRows",
     default=limitTableRows,
     help="Limit to the number of rows displayed in many of"+\
       " the tables.  This impacts tables like 'twoif' and 'twoinr'"+\
@@ -230,39 +230,39 @@ def injectCmndLineOptionsInParser(clp, gitoliteRootDefault=""):
     "List unexpected builds downloaded from CDash (i.e. not matching an expected build)'.",
     clp )
 
-  clp.add_option(
+  clp.add_argument(
     "--write-unexpected-builds-to-file",
-    dest="writeUnexpectedBuildsToFile", type="string", default="",
+    dest="writeUnexpectedBuildsToFile", default="",
     help="Write a CSV file with a list of unexpected builds 'bu'." \
     +"  This is to make it easy to add new entries to the file read by" \
     +" the option --expected-builds-file=<csv-file>. [default = '']" )
 
-  clp.add_option(
+  clp.add_argument(
     "--write-failing-tests-without-issue-trackers-to-file",
-    dest="writeFailingTestsWithoutIssueTrackersToFile", type="string", default="",
+    dest="writeFailingTestsWithoutIssueTrackersToFile", default="",
     help="Write a CSV file with a list of tests with issue trackers failed 'twif'." \
     +"  This is to make it easy to add new entries to the file read by" \
     +" the option --tests-with-issue-trackers-file=<csv-file>. [default = '']" )
 
-  clp.add_option(
+  clp.add_argument(
     "--write-test-data-to-file",
-    dest="writeTestDataToFile", type="string", default="",
+    dest="writeTestDataToFile", default="",
     help="Write pretty-printed Python list of dictionaries for tests" \
     +" with issue trackers.  This includes the history of the tests for" \
     +" --limit-test-history-days=<days> of history.  This contains all of the" \
     +" information that appears in the generated summary tables for tests with" \
     +" associated issue trackers.  [default = '']" )
 
-  clp.add_option(
-    "--write-email-to-file", dest="writeEmailToFile", type="string", default="",
+  clp.add_argument(
+    "--write-email-to-file", dest="writeEmailToFile", default="",
     help="Write the body of the HTML email to this file. [default = '']" )
 
-  clp.add_option(
-    "--email-from-address=", dest="emailFromAddress", type="string", default="",
+  clp.add_argument(
+    "--email-from-address=", dest="emailFromAddress", default="",
     help="Address reported in the sent email. [default '']" )
 
-  clp.add_option(
-    "--send-email-to=", dest="sendEmailTo", type="string", default="",
+  clp.add_argument(
+    "--send-email-to=", dest="sendEmailTo", default="",
     help="Send email to 'address1, address2, ...'.  [default '']" )
 
   addOptionParserChoiceOption(
@@ -314,10 +314,12 @@ def setExtraCmndLineOptionsAfterParse(inOptions_inout):
 
 
 def getCmndLineOptions():
-  from optparse import OptionParser
-  clp = OptionParser(usage=usageHelp)
+  from argparse import ArgumentParser, RawDescriptionHelpFormatter
+  clp = ArgumentParser(
+    description=usageHelp,
+    formatter_class=RawDescriptionHelpFormatter)
   injectCmndLineOptionsInParser(clp)
-  (options, args) = clp.parse_args()
+  options = clp.parse_args(sys.argv[1:])
   validateAndConvertCmndLineOptions(options)
   setExtraCmndLineOptionsAfterParse(options)
   return options
