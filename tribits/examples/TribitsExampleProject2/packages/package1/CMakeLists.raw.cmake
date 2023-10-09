@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.23.0 FATAL_ERROR)
 
 if (COMMAND tribits_package)
-  message("Configuring raw CMake package Package1")
+  message("Configuring raw CMake package Package1 within a TriBITS project")
 else()
   message("Configuring raw CMake project Package1")
 endif()

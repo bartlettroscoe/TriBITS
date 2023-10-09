@@ -559,7 +559,7 @@ function(TribitsExampleProject2_find_package  sharedOrStatic  package1TribitsOrR
   elseif (package1TribitsOrRawCMake STREQUAL "PACKAGE1_USE_RAW_CMAKE")
     set(package1UseRawCMakeArgs "-D Package1_USE_RAW_CMAKE=TRUE")
     set(testNameSuffix "_${package1TribitsOrRawCMake}")
-    set(package1ConfigRegex "Configuring raw CMake package Package1")
+    set(package1ConfigRegex "Configuring raw CMake package Package1 within a TriBITS project")
   else()
     message(FATAL_ERROR "package1UseRawCMakeArgs='${package1UseRawCMakeArgs}' Invalid!")
   endif()
