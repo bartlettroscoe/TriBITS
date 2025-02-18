@@ -73,6 +73,13 @@ include(TribitsSetAndIncDirs)
 #     = ``'.a'`` static lib) (see documentation for the built-in CMake command
 #     ``add_library()``.
 #
+#   ``INCLUDE_DIRS <d0> <d1> ...``
+#
+#     List of include directories to be set with
+#     ``target_include_directories()``.  If not specified, then the
+#     ``INTERFACE_INCLUDE_DIRECTORIES`` directory property is pulled off the
+#     current directory and passed to ``target_include_directories()``
+#
 #   ``HEADERS <h0> <h1> ...``
 #
 #     List of public header files for using this library.  By default, these
@@ -329,7 +336,7 @@ function(tribits_add_library  LIBRARY_NAME_IN)
     #one_value_keywords
     ""
     #mulit_value_keywords
-    "HEADERS;HEADERS_INSTALL_SUBDIR;NOINSTALLHEADERS;SOURCES;DEPLIBS;IMPORTEDLIBS;DEFINES;ADDED_LIB_TARGET_NAME_OUT"
+    "INCLUDE_DIRS;HEADERS;HEADERS_INSTALL_SUBDIR;NOINSTALLHEADERS;SOURCES;DEPLIBS;IMPORTEDLIBS;DEFINES;ADDED_LIB_TARGET_NAME_OUT"
     ${ARGN}
     )
 
@@ -526,9 +533,13 @@ function(tribits_add_library  LIBRARY_NAME_IN)
       endif()
     endif()
 
+    if (PARSE_INCLUDE_DIRS)
+      set(INCLUDE_DIRS_CURRENT  ${PARSE_INCLUDE_DIRS} )
+    else()
+      get_directory_property(INCLUDE_DIRS_CURRENT  INCLUDE_DIRECTORIES)
+    endif()
     # Set INTERFACE_INCLUDE_DIRECTORIES property for added library and must
     # only do for the build interface (not the install interface).
-    get_directory_property(INCLUDE_DIRS_CURRENT  INCLUDE_DIRECTORIES)
     set(buildInterfaceIncludeDirs)
     foreach (includeDir IN LISTS INCLUDE_DIRS_CURRENT)
       list(APPEND buildInterfaceIncludeDirs "$<BUILD_INTERFACE:${includeDir}>")
