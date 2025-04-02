@@ -2697,8 +2697,12 @@ To turn on support for coverage testing set::
 
   -D <Project>_ENABLE_COVERAGE_TESTING=ON 
 
-This will set compile and link options -fprofile-arcs -ftest-coverage for GCC.
-Use 'make dashboard' (see below) to submit coverage results to CDash
+This will automatically set compile and link options for GNU and Clang.  To
+change the compile and link coverage options, set::
+
+  -D <Project>_COVERAGE_OPTIONS="<opt1> <opt2> ..."
+
+Use 'make dashboard' (see below) to submit coverage results to CDash.
 
 
 Viewing configure options and documentation

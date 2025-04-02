@@ -89,9 +89,9 @@ endmacro()
 macro(tribits_set_language_coverage_flags LANG)
 
   dual_scope_prepend_cmndline_args(CMAKE_${LANG}_FLAGS
-   "${COVERAGE_OPTIONS}")
-  if(COVERAGE_OPTIONS AND ${PROJECT_NAME}_VERBOSE_CONFIGURE)
-    message(STATUS "Adding coverage ${LANG} flags \"${COVERAGE_OPTIONS}\"")
+   "${${PROJECT_NAME}_COVERAGE_OPTIONS}")
+  if(${PROJECT_NAME}_COVERAGE_OPTIONS AND ${PROJECT_NAME}_VERBOSE_CONFIGURE)
+    message(STATUS "Adding coverage ${LANG} flags \"${${PROJECT_NAME}_COVERAGE_OPTIONS}\"")
     print_var(CMAKE_${LANG}_FLAGS)
   endif()
 
@@ -122,18 +122,23 @@ function(tribits_setup_basic_compile_link_flags)
   # Set up coverage testing options
   #
 
+  set(${PROJECT_NAME}_COVERAGE_OPTIONS_DEFAULT "")
   if (${PROJECT_NAME}_ENABLE_COVERAGE_TESTING)
-    set(COVERAGE_OPTIONS "-fprofile-arcs -ftest-coverage")
-  else()
-    set(COVERAGE_OPTIONS "")
+    if (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+      set(${PROJECT_NAME}_COVERAGE_OPTIONS_DEFAULT "-fprofile-arcs -ftest-coverage")
+    elseif (CMAKE_C_COMPILER_ID STREQUAL "Clang")  # gcov compatible
+      set(${PROJECT_NAME}_COVERAGE_OPTIONS_DEFAULT "--coverage")
+    endif()
   endif()
+  set(${PROJECT_NAME}_COVERAGE_OPTIONS "${${PROJECT_NAME}_COVERAGE_OPTIONS_DEFAULT}"
+    CACHE STRING "Coverage options to use when ${PROJECT_NAME}_ENABLE_COVERAGE_TESTING=ON")
 
   #
   # C compiler options
   #
 
   assert_defined(${PROJECT_NAME}_ENABLE_C CMAKE_C_COMPILER_ID)
-  if (${PROJECT_NAME}_ENABLE_C AND CMAKE_C_COMPILER_ID STREQUAL "GNU")
+  if (${PROJECT_NAME}_ENABLE_C AND ${PROJECT_NAME}_COVERAGE_OPTIONS_DEFAULT)
     tribits_set_language_buildtype_flags(C DEBUG)
     tribits_set_language_buildtype_flags(C RELEASE)
     tribits_set_language_general_flags(C)
@@ -146,7 +151,7 @@ function(tribits_setup_basic_compile_link_flags)
   #
 
   assert_defined(${PROJECT_NAME}_ENABLE_CXX CMAKE_CXX_COMPILER_ID)
-  if (${PROJECT_NAME}_ENABLE_CXX AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  if (${PROJECT_NAME}_ENABLE_CXX AND ${PROJECT_NAME}_COVERAGE_OPTIONS_DEFAULT)
     tribits_set_language_buildtype_flags(CXX DEBUG)
     tribits_set_language_buildtype_flags(CXX RELEASE)
     tribits_set_language_general_flags(CXX)
@@ -171,12 +176,13 @@ function(tribits_setup_basic_compile_link_flags)
   # Linker options
   #
 
-  assert_defined(${PROJECT_NAME}_ENABLE_COVERAGE_TESTING COVERAGE_OPTIONS)
-  if (${PROJECT_NAME}_ENABLE_COVERAGE_TESTING AND COVERAGE_OPTIONS)
+  assert_defined(${PROJECT_NAME}_ENABLE_COVERAGE_TESTING
+    ${PROJECT_NAME}_COVERAGE_OPTIONS)
+  if (${PROJECT_NAME}_ENABLE_COVERAGE_TESTING AND ${PROJECT_NAME}_COVERAGE_OPTIONS)
     dual_scope_prepend_cmndline_args(CMAKE_EXE_LINKER_FLAGS
-     "${COVERAGE_OPTIONS} ${CMAKE_EXE_LINKER_FLAGS}")
+     "${${PROJECT_NAME}_COVERAGE_OPTIONS} ${CMAKE_EXE_LINKER_FLAGS}")
     if(${PROJECT_NAME}_VERBOSE_CONFIGURE)
-      message(STATUS "Adding coverage linker flags flags \"${COVERAGE_OPTIONS}\"")
+      message(STATUS "Adding coverage linker flags flags \"${${PROJECT_NAME}_COVERAGE_OPTIONS}\"")
       print_var(CMAKE_EXE_LINKER_FLAGS)
     endif()
   endif()
